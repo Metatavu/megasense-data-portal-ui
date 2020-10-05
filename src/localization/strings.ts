@@ -4,7 +4,9 @@ import LocalizedStrings, { LocalizedStringsMethods } from "localized-strings";
  * Interface describing localized strings
  */
 export interface IStrings extends LocalizedStringsMethods {
-  yourTokenIs: string
+  to: string;
+  from: string;
+  map: string;
 }
 
 const strings: IStrings = new LocalizedStrings({

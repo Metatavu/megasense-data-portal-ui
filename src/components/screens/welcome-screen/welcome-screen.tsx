@@ -1,9 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { AppAction } from "../../actions";
-import strings from "../../localization/strings";
-import { AccessToken, StoreState } from "../../types";
+import { AppAction } from "../../../actions";
+import strings from "../../../localization/strings";
+import { AccessToken, StoreState } from "../../../types";
+import AppLayout from "../../layouts/app-layout/app-layout";
 
 /**
  * Interface describing component props
@@ -21,7 +22,7 @@ interface State {
 /**
  * Component for warehouses screen
  */
-class TestScreen extends React.Component<Props, State> {
+class WelcomeScreen extends React.Component<Props, State> {
 
   /**
    * Component constructor
@@ -41,11 +42,9 @@ class TestScreen extends React.Component<Props, State> {
 
 
     return (
-      <div>
-        <h1>{ strings.yourTokenIs }</h1>
-        <p>{ this.props.accessToken?.token }</p>
-      </div>
-    
+      <AppLayout>
+
+      </AppLayout>
     );
   }
 
@@ -72,4 +71,4 @@ export function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TestScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(WelcomeScreen);

@@ -1,3 +1,6 @@
 {
-  "yourTokenIs": "Your token is: "
+  "yourTokenIs": "Your token is: ",
+  "map": "Map",
+  "from": "From",
+  "to": "To"
 }

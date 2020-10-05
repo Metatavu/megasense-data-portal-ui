@@ -1,3 +1,6 @@
 {
-  "yourTokenIs": "Avaimesi on: "
+  "yourTokenIs": "Avaimesi on: ",
+  "map": "Kartta",
+  "from": "Paikasta",
+  "to": "Paikkaan"
 }

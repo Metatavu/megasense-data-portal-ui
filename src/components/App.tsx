@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import AccessTokenRefresh from "./containers/access-token-refresh";
-import TestScreen from "./screens/test-screen";
+import WelcomeScreen from "./screens/welcome-screen/welcome-screen";
+import MapScreen from "./screens/map-screen/map-screen";
 
 /**
  * Interface describing component properties
@@ -34,9 +35,16 @@ class App extends React.Component<Props, State> {
               exact
               path="/"
               render={() => (
-                <TestScreen/>
+                <WelcomeScreen/>
               )}
-            ></Route>
+            />
+            <Route
+              exact
+              path="/map"
+              render={() => (
+                <MapScreen/>
+              )}
+            />
           </Switch>
         </BrowserRouter>
 
