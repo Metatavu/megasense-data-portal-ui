@@ -17,6 +17,7 @@
     "keycloak-js": "^11.0.2",
     "leaflet": "^1.7.1",
     "localized-strings": "^0.2.4",
+    "polyline-encoded": "0.0.9",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-leaflet": "^2.7.0",

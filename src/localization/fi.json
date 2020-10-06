@@ -2,5 +2,7 @@
   "yourTokenIs": "Avaimesi on: ",
   "map": "Kartta",
   "from": "Paikasta",
-  "to": "Paikkaan"
+  "to": "Paikkaan",
+  "findRoute": "Löydä reitti",
+  "saveRoute": "Tallenna reitti"
 }

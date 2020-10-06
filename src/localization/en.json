@@ -2,5 +2,7 @@
   "yourTokenIs": "Your token is: ",
   "map": "Map",
   "from": "From",
-  "to": "To"
+  "to": "To",
+  "findRoute": "Find route",
+  "saveRoute": "Save route"
 }

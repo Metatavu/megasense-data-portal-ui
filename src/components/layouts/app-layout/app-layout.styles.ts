@@ -4,6 +4,7 @@ export const styles = createStyles({
   root: {
   },
   content: {
-    overflowX: "hidden"
+    overflowX: "hidden",
+    marginTop: 130
   }
 });

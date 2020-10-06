@@ -3,7 +3,7 @@ import { createStyles } from "@material-ui/core";
 export const styles = createStyles({
 
   menu: {
-    marginTop: 80,
+    marginTop: 130,
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
