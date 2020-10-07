@@ -251,8 +251,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ loadingRoute: true });
 
     try {
-      const locationFrom = this.state.locationFrom;
-      const locationTo = this.state.locationTo;
+      const { locationTo, locationFrom, mapViewport } = this.state;
 
       if (locationFrom && !locationFrom.coordinates) {
         locationFrom.coordinates = locationFrom.name;
@@ -265,7 +264,15 @@ class MapScreen extends React.Component<Props, State> {
       const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=10:10pm&date=08-29-2019&mode=WALK&option=STRICT_AQ&maxWalkDistance=10000&arriveBy=false&wheelchair=false&locale=en`);
       const jsonResponse = await routingResponse.json();
       const route = PolyUtil.decode(jsonResponse.plan.itineraries[0].legs[0].legGeometry.points);
-      this.setState({ route, locationFrom, locationTo, loadingRoute: false }); 
+
+      const newCenter = [mapViewport.center![0], mapViewport.center![1]];
+      if (locationFrom && locationFrom.coordinates) {
+        const newCenterCoordinates = this.coordinatesFromString(locationFrom.coordinates);
+        newCenter[0] = newCenterCoordinates[0];
+        newCenter[1] = newCenterCoordinates[1];
+      }
+
+      this.setState({ route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 } }); 
     } catch (error) {
       this.setState({ locationFrom: undefined, locationTo: undefined, route: undefined, loadingRoute: false });
       console.log(error);
