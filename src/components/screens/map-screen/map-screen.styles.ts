@@ -10,10 +10,6 @@ export const styles = createStyles({
     display: "flex",
     flexDirection: "column"
   },
-  routingFormInput: {
-    margin: 10,
-    backgroundColor: "white"
-  },
   routingFormButton: {
     margin: 10,
     backgroundColor: "#F6AB6C",
@@ -23,5 +19,10 @@ export const styles = createStyles({
   routingFormLoader: {
     margin: 10,
     color: "#F6AB6C"
+  },
+  routingFormInput: {
+    width: 400, 
+    backgroundColor: "white", 
+    margin: "auto"
   }
 });
