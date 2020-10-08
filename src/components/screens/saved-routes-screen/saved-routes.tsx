@@ -89,8 +89,7 @@ export function mapStateToProps(state: StoreState) {
  * @param dispatch dispatch method
  */
 export function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
-  return {
-  };
+  return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SavedRoutes);
