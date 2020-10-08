@@ -4,5 +4,9 @@
   "from": "Paikasta",
   "to": "Paikkaan",
   "findRoute": "Löydä reitti",
-  "saveRoute": "Tallenna reitti"
+  "saveRoute": "Tallenna reitti",
+  "savedRoutes": "Tallennetut reitit",
+  "savedRoutesFrom": "Mistä",
+  "savedRoutesTo": "Minne",
+  "savedRoutesSavedText": "Tallennettu"
 }

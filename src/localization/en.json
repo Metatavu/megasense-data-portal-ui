@@ -4,5 +4,9 @@
   "from": "From",
   "to": "To",
   "findRoute": "Find route",
-  "saveRoute": "Save route"
+  "saveRoute": "Save route",
+  "savedRoutes": "Saved routes",
+  "savedRoutesFrom": "From",
+  "savedRoutesTo": "To",
+  "savedRoutesSavedText": "Saved"
 }
