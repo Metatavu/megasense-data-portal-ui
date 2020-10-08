@@ -9,6 +9,10 @@ export interface IStrings extends LocalizedStringsMethods {
   map: string;
   findRoute: string;
   saveRoute: string;
+  savedRoutes: string;
+  savedRoutesTo: string;
+  savedRoutesFrom: string;
+  savedRoutesSavedText: string;
 }
 
 const strings: IStrings = new LocalizedStrings({

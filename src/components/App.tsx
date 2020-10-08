@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import AccessTokenRefresh from "./containers/access-token-refresh";
 import WelcomeScreen from "./screens/welcome-screen/welcome-screen";
 import MapScreen from "./screens/map-screen/map-screen";
-
+import SavedRoutes from "./screens/saved-routes-screen/saved-routes";
 /**
  * Interface describing component properties
  */
@@ -42,7 +42,14 @@ class App extends React.Component<Props, State> {
               exact
               path="/map"
               render={() => (
-                <MapScreen/>
+                <MapScreen />
+              )}
+            />
+            <Route
+            exact
+            path="/saved-routes"
+            render={() => (
+              <SavedRoutes />
               )}
             />
           </Switch>
