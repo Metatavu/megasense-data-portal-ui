@@ -149,8 +149,6 @@ class MapScreen extends React.Component<Props, State> {
           }
           
         </Map>
-
-
       </AppLayout>
       
     );
