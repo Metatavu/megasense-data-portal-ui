@@ -99,7 +99,6 @@ class MapScreen extends React.Component<Props, State> {
             } 
           />
 
-
         </div>
         <div className={ classes.routingFormPart }>
           { !this.state.loadingRoute && 
