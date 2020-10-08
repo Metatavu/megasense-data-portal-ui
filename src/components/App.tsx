@@ -35,7 +35,7 @@ class App extends React.Component<Props, State> {
               exact
               path="/"
               render={() => (
-                <WelcomeScreen/>
+                <WelcomeScreen />
               )}
             />
             <Route
