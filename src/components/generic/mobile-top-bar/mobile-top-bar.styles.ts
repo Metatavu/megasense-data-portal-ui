@@ -10,7 +10,7 @@ export const styles = createStyles({
     height: 130
   },
   menuButton: {
-    color: "white",
+    color: "#ffffff",
     fontSize: 40,
     marginTop: 20,
     marginBottom: "auto"
