@@ -22,7 +22,7 @@ export const styles = createStyles({
   },
   routingFormInput: {
     width: 400, 
-    backgroundColor: "white", 
+    backgroundColor: "#ffffff", 
     margin: "auto"
   }
 });
