@@ -62,7 +62,6 @@ class ResponsiveSideMenu extends React.Component<Props, State> {
               { strings.map }
             </Link>
           </MenuItem>
-
         </List>
       </div>
     );
