@@ -24,8 +24,7 @@ class AppLayout extends React.Component<Props, State> {
 
   public render = () => {
     const { classes, children } = this.props;
-
-
+    
     return (
       <div className={ classes.root }>
         <MobileTopBar
