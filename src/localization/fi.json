@@ -8,5 +8,21 @@
   "savedRoutes": "Tallennetut reitit",
   "savedRoutesFrom": "Mistä",
   "savedRoutesTo": "Minne",
-  "savedRoutesSavedText": "Tallennettu"
+  "savedRoutesSavedText": "Tallennettu",
+  "statistics": "Statistiikka",
+  "pollutantPM25": "PM25",
+  "pollutantPM10": "PM10",
+  "pollutantOzone": "Otsooni",
+  "pollutantNitrogen": "Nitrogen dioxine",
+  "pollutanSulfur": "Sulfur dioxine",
+  "cancel": "cancel",
+  "confirmTimeRange": "Valitse aikaväli",
+  "selectPollution": "Valitse ilmansaaste",
+  "reset": "Palauta",
+  "weeklyExposure": "Viikottainen altistuminen",
+  "monthlyExposure": "Kuukausittainen altistuminen",
+  "annualExposure": "Vuosittainen altistuminen",
+  "displayTables": "Valitse aika, jotta voit nähdä taulukot",
+  "selectTime": "Valitse aika"
+
 }
