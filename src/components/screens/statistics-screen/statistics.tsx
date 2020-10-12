@@ -131,7 +131,7 @@ class SavedRoutes extends React.Component<Props, State> {
               </Button>
               <Button onClick={() => this.DisplayPollutionDialog()} color="primary">
                 { strings.cancel }
-          </Button>
+              </Button>
             </DialogActions>
           </Dialog>
         </Container>
