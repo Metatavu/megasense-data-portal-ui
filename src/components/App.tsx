@@ -8,12 +8,12 @@ import Statistics from "./screens/statistics-screen/statistics"
 /**
  * Interface describing component properties
  */
-interface Props { }
+interface Props {}
 
 /**
  * Interface describing component state
  */
-interface State { }
+interface State {}
 
 /**
  * App component

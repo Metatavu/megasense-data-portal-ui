@@ -76,7 +76,7 @@ class SavedRoutes extends React.Component<Props, State> {
           </Typography>
           <Button variant="contained" color="primary" onClick={() => this.DisplayTimeDialog()}>
             Select time range
-      </Button>
+          </Button>
           { this.DisplayPollutantButton() }
           { this.DisplayAllData() }
           { this.DisplaySinglePollution() }
@@ -131,7 +131,7 @@ class SavedRoutes extends React.Component<Props, State> {
               </Button>
               <Button onClick={() => this.DisplayPollutionDialog()} color="primary">
                 { strings.cancel }
-          </Button>
+              </Button>
             </DialogActions>
           </Dialog>
         </Container>
