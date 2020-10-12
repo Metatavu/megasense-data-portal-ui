@@ -21,8 +21,8 @@ interface Props extends WithStyles<typeof styles>{
 }
 
 interface Location {
-  name?: string;
-  coordinates?: string;
+  name: string;
+  coordinates: string;
 }
 
 /**
@@ -37,6 +37,8 @@ interface State {
   loadingRoute: boolean;
   locationFromOptions: Location[];
   locationToOptions: Location[];
+  locationFromTextInput: string;
+  locationToTextInput: string;
 }
 
 class MapScreen extends React.Component<Props, State> {
@@ -51,25 +53,27 @@ class MapScreen extends React.Component<Props, State> {
       editingLocationFrom: true,
       loadingRoute: false,
       locationFromOptions: [],
-      locationToOptions: []
+      locationToOptions: [],
+      locationFromTextInput: "",
+      locationToTextInput: ""
     };
 
   }
 
   public render = () => {
     const { classes } = this.props;
-    const { route, locationFrom, locationTo, locationFromOptions, locationToOptions } = this.state;
+    const { route, locationFrom, locationTo, locationFromOptions, locationToOptions, locationFromTextInput, locationToTextInput } = this.state;
 
     const routingComponents = (
       <div className={ classes.routingForm }>
         <div className={ classes.routingFormPart }>
           <Autocomplete 
             onInputChange={ this.onLocationFromChange } 
-            inputValue={ locationFrom?.name || "" } 
+            inputValue={ locationFromTextInput } 
             onChange={ this.onLocationFromSelected } 
             options={ locationFromOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
-            value={ locationFrom || {} } 
+            value={ locationFrom } 
             className={ classes.routingFormInput }
             size="small" 
             renderInput={ (params) => 
@@ -83,11 +87,11 @@ class MapScreen extends React.Component<Props, State> {
 
           <Autocomplete 
             onInputChange={ this.onLocationToChange } 
-            inputValue={ locationTo?.name || "" } 
+            inputValue={ locationToTextInput } 
             onChange={this.onLocationToSelected} 
             options={ locationToOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
-            value={ locationTo || {} } 
+            value={ locationTo } 
             className={ classes.routingFormInput }
             size="small" 
             renderInput={ (params) => 
@@ -183,13 +187,13 @@ class MapScreen extends React.Component<Props, State> {
    * Fires when the value of the text input for locationFrom changes and updates the list of options
    * 
    * @param event React event
-   * @param name a new value for the text input for locationFrom
+   * @param locationFromTextInput a new value for the text input for locationFrom
    * @param reason autocomplete change reason
    */
-  private onLocationFromChange = async (event: ChangeEvent<{}>, name: string, reason: AutocompleteInputChangeReason) => {
-    this.setState({ locationFrom: { name } });
+  private onLocationFromChange = async (event: ChangeEvent<{}>, locationFromTextInput: string, reason: AutocompleteInputChangeReason) => {
+    this.setState({ locationFromTextInput });
     try {
-      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: name });
+      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: locationFromTextInput });
       const locationFromOptions = nominatimResponse.map(option => {
         const coordinates = option.lat + "," + option.lon;
         const name = option.display_name;
@@ -224,10 +228,10 @@ class MapScreen extends React.Component<Props, State> {
    * @param name a new value for the text input for locationTo
    * @param reason autocomplete change reason
    */
-  private onLocationToChange = async (event: ChangeEvent<{}>, name: string, reason: AutocompleteInputChangeReason) => {
-    this.setState({ locationTo: { name } });
+  private onLocationToChange = async (event: ChangeEvent<{}>, locationToTextInput: string, reason: AutocompleteInputChangeReason) => {
+    this.setState({ locationToTextInput });
     try {
-      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: name });
+      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: locationToTextInput });
       const locationToOptions = nominatimResponse.map(option => {
         const coordinates = option.lat + "," + option.lon;
         const name = option.display_name;
@@ -295,9 +299,9 @@ class MapScreen extends React.Component<Props, State> {
     const location = { name: position, coordinates: position };
     if (this.state.editingLocationFrom) {
       const locationFromOptions = [location];
-      this.setState({ locationFromOptions, locationFrom: location, editingLocationFrom: false });
+      this.setState({ locationFromOptions, locationFrom: location, editingLocationFrom: false, locationFromTextInput: position });
     } else {
-      this.setState({ locationTo: location, editingLocationFrom: true });
+      this.setState({ locationTo: location, editingLocationFrom: true, locationToTextInput: position });
     }
   }
 
