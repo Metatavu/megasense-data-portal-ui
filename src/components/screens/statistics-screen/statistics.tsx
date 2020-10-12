@@ -183,7 +183,6 @@ class SavedRoutes extends React.Component<Props, State> {
    * Event that handles radio button value changes in the pollution dialog
    */
   private handlePollutantChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value)
     this.setState({
       pollutantValue: event.target.value,
     })
