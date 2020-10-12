@@ -138,11 +138,19 @@ class SavedRoutes extends React.Component<Props, State> {
       </AppLayout>
     );
   }
+
+  /**
+   * Displays time dialog
+   */
   private DisplayTimeDialog = () => {
     this.setState({
       visibleTimeDialog: this.state.visibleTimeDialog ? false : true,
     })
   }
+
+  /**
+   * Close time dialog and makes pollution button visible
+   */
   private CloseTimeDialog() {
     if (this.state.timeValue.length > 0) {
       this.setState({
@@ -152,23 +160,39 @@ class SavedRoutes extends React.Component<Props, State> {
       })
     }
   }
+  
+  /**
+   * Displays pollution dialog
+   */
   private DisplayPollutionDialog = () => {
     this.setState({
       visiblePollutionDialog: this.state.visiblePollutionDialog ? false : true
     })
   }
+
+  /**
+   * Event that handles radio button value changes in the time dialog
+   */
   private handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value)
     this.setState({
       timeValue: event.target.value,
     })
   }
+
+  /**
+   * Event that handles radio button value changes in the pollution dialog
+   */
   private handlePollutantChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value)
     this.setState({
       pollutantValue: event.target.value,
     })
   }
+
+  /**
+   * Displays pollution button
+   */
   private DisplayPollutantButton = () => {
     if (this.state.DisplayPollutantButton) {
       return (
@@ -176,13 +200,17 @@ class SavedRoutes extends React.Component<Props, State> {
           <Button variant="contained" color="secondary" onClick={() => this.DisplayPollutionDialog()}>
             { strings.selectPollution }
           </Button>
-          <Button variant="contained" color="default" onClick={() => this.DisplayPollutionDialog()}>
+          <Button variant="contained" color="default" onClick={() => this.reset()}>
             { strings.reset }
           </Button>
         </>
       )
     }
   }
+
+  /**
+   * Displays all data related to selected time range
+   */
   private DisplayAllData = () => {
     if (this.state.DisplayAllData) {
       switch (this.state.timeValue) {
@@ -220,6 +248,10 @@ class SavedRoutes extends React.Component<Props, State> {
       }
     }
   }
+
+  /**
+   * Closes pollution dialog and hides all which are related to time 
+   */
   private ClosePollutionDialog = () => {
     if (this.state.pollutantValue.length > 0) {
       this.setState({
@@ -229,6 +261,10 @@ class SavedRoutes extends React.Component<Props, State> {
       })
     }
   }
+
+  /**
+   * Resrets values
+   */
   private reset = () => {
     this.setState({
       visibleTimeDialog: false,
@@ -241,6 +277,10 @@ class SavedRoutes extends React.Component<Props, State> {
       timeValue: ""
     })
   }
+
+  /**
+   * Displays single pollution data with user chosen time value
+   */
   private DisplaySinglePollution = () => {
     if (this.state.DisplaySinglePollutionData) {
       if (this.state.timeValue === "weekly") {
