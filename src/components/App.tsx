@@ -13,7 +13,7 @@ interface Props {}
 /**
  * Interface describing component state
  */
-interface State { }
+interface State {}
 
 /**
  * App component
