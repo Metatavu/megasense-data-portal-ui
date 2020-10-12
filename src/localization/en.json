@@ -8,5 +8,21 @@
   "savedRoutes": "Saved routes",
   "savedRoutesFrom": "From",
   "savedRoutesTo": "To",
-  "savedRoutesSavedText": "Saved"
+  "savedRoutesSavedText": "Saved",
+  "statistics": "Statistics",
+  "pollutantPM25": "PM25",
+  "pollutantPM10": "PM10",
+  "pollutantOzone": "Ozone",
+  "pollutantNitrogen": "Nitrogen dioxine",
+  "pollutanSulfur": "Sulfur dioxine",
+  "cancel": "cancel",
+  "confirmTimeRange": "Confirm time range",
+  "selectPollution": "Select pollution",
+  "reset": "reset",
+  "weeklyExposure": "Weekly exposure",
+  "monthlyExposure": "Monthly exposure",
+  "annualExposure": "Annual exposure",
+  "displayTables": "Select time to display tables",
+  "selectTime": "Select time"
+
 }
