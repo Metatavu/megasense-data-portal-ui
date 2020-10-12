@@ -174,7 +174,6 @@ class SavedRoutes extends React.Component<Props, State> {
    * Event that handles radio button value changes in the time dialog
    */
   private handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value)
     this.setState({
       timeValue: event.target.value,
     })
