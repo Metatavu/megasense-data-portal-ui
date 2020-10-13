@@ -13,10 +13,17 @@ import Divider from '@material-ui/core/Divider';
 import InputLabel from '@material-ui/core/InputLabel';
 import Box from '@material-ui/core/Box/Box';
 import TextField from '@material-ui/core/TextField/TextField';
+import { globalStyles } from "../../../styles/globalStyles"
+import { withStyles } from '@material-ui/core';
+import { WithStyles } from '@material-ui/core/styles/withStyles';
 
 /**
  * Interface describing component props
  */
+interface Props extends WithStyles<typeof globalStyles>{
+
+}
+
 interface Props {
   accessToken?: AccessToken;
 }
@@ -45,6 +52,7 @@ class Settings extends React.Component<Props, State> {
    * Component render method
    */
   render() {
+    const { classes } = this.props;
 
     return (
       <AppLayout>
@@ -89,21 +97,21 @@ class Settings extends React.Component<Props, State> {
             <TextField id="outlined-basic" label={ strings.country } variant="outlined" />
           </Box>
           <Box mt={ 2 } mb={ 2 }>
-            <Button variant="contained">{ strings.applyChanges }</Button>
+            <Button variant="contained" className={ classes.successButton }>{ strings.applyChanges }</Button>
           </Box>
           <Divider variant="fullWidth" orientation="horizontal" />
           <Box pt={ 3 } pb={ 3 }>
-            <Button variant="contained">
+            <Button variant="contained" className={ classes.primaryButton }>
               { strings.downloadData }
             </Button>
           </Box>
           <Box pt={ 3 } pb={ 3 }>
-            <Button variant="contained">
+            <Button variant="contained" className={ classes.successButton }>
               { strings.changeUserData }
             </Button>
           </Box>
           <Box pt={ 3 } pb={ 3 }>
-            <Button variant="contained" color="secondary">
+            <Button variant="contained" className={classes.errorButton}>
               { strings.deleteAccount }
             </Button>
           </Box>
@@ -132,4 +140,4 @@ export function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
   return {};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Settings);
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(globalStyles)(Settings));
