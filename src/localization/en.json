@@ -23,6 +23,20 @@
   "monthlyExposure": "Monthly exposure",
   "annualExposure": "Annual exposure",
   "displayTables": "Select time to display tables",
-  "selectTime": "Select time"
+  "selectTime": "Select time",
+  "settings": "Settings",
+  "airQualityMode": "Air quality mode",
+  "movementOptions": "Movement options",
+  "waliking": "Walking",
+  "wheelerchair": "Wheelerchair",
+  "homeAddress": "Home address",
+  "streetAddress": "Street address",
+  "city": "City",
+  "zipCode": "Zip code",
+  "country": "Country",
+  "applyChanges": "Apply changes",
+  "downloadData": "Download your data",
+  "changeUserData": "Change your user data",
+  "deleteAccount": "Delete account"
 
 }
