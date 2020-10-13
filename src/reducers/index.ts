@@ -26,7 +26,8 @@ export const processAction = (storeState?: StoreState, action?: AppAction): Stor
       return { ...storeState, locale: action.locale }
     case constants.USER_LOGIN:
       const keycloak = action.keycloak;
-      const { token } = keycloak;
+      const { token, tokenParsed } = keycloak;
+      const userId = tokenParsed?.sub;
       const accessToken = token ?
         { token } :
         undefined;

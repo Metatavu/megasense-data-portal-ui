@@ -286,7 +286,7 @@ export interface ResponseTransformer<T> {
 export class JSONApiResponse<T> {
     constructor(public raw: Response, private transformer: ResponseTransformer<T> = (jsonValue: any) => jsonValue) {}
 
-    async value(): Promise<T> {
+    async value() {
         return this.transformer(await this.raw.json());
     }
 }
@@ -294,7 +294,7 @@ export class JSONApiResponse<T> {
 export class VoidApiResponse {
     constructor(public raw: Response) {}
 
-    async value(): Promise<void> {
+    async value() {
         return undefined;
     }
 }
@@ -302,7 +302,7 @@ export class VoidApiResponse {
 export class BlobApiResponse {
     constructor(public raw: Response) {}
 
-    async value(): Promise<Blob> {
+    async value() {
         return await this.raw.blob();
     };
 }
@@ -310,7 +310,7 @@ export class BlobApiResponse {
 export class TextApiResponse {
     constructor(public raw: Response) {}
 
-    async value(): Promise<string> {
+    async value() {
         return await this.raw.text();
     };
 }
