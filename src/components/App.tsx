@@ -6,7 +6,8 @@ import MapScreen from "./screens/map-screen/map-screen";
 import SavedRoutes from "./screens/saved-routes-screen/saved-routes";
 import Statistics from "./screens/statistics-screen/statistics";
 import Settings from "./screens/settings-screen/settings-screen";
-
+import { ThemeProvider } from '@material-ui/core';
+import  theme  from "../theme/theme"
 /**
  * Interface describing component properties
  */
@@ -29,6 +30,7 @@ class App extends React.Component<Props, State> {
 
   render() {
     return (
+      <ThemeProvider theme={ theme }>
       <AccessTokenRefresh>
         <BrowserRouter>
           <Switch>
@@ -61,16 +63,16 @@ class App extends React.Component<Props, State> {
             )}
             />
             <Route
-              exact
-              path="/settings"
-              render={() => (
-                <Settings />
-              )}
+            exact
+            path="/settings"
+            render={() => (
+              <Settings />
+            )}
             />
           </Switch>
         </BrowserRouter>
-
       </AccessTokenRefresh>
+      </ThemeProvider>
     );
   }
 }

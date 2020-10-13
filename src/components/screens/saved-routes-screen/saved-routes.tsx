@@ -9,12 +9,18 @@ import { AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-
 import { Card, CardContent, CardActions } from "@material-ui/core";
+import { globalStyles } from "../../../styles/globalStyles"
+import { withStyles } from '@material-ui/core';
+import { WithStyles } from '@material-ui/core/styles/withStyles';
 
 /**
  * Interface describing component props
  */
+interface Props extends WithStyles<typeof globalStyles>{
+
+}
+
 interface Props {
   accessToken?: AccessToken;
 }
@@ -43,7 +49,8 @@ class SavedRoutes extends React.Component<Props, State> {
    * Component render method
    */
   render() {
-
+    const { classes } = this.props;
+    
     return (
       <AppLayout>
         <Container>
@@ -63,7 +70,7 @@ class SavedRoutes extends React.Component<Props, State> {
             </CardContent>
             <CardActions>
               <Button variant="contained" color="primary" size="small">Preview routew</Button>
-              <Button variant="contained" color="secondary" size="small">Delete route</Button>
+              <Button variant="contained" className={ classes.errorButton } size="small">Delete route</Button>
             </CardActions>
           </Card>
         </Container>
@@ -91,4 +98,4 @@ export function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
   return {};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SavedRoutes);
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(globalStyles)(SavedRoutes));
