@@ -1,4 +1,4 @@
-import { Configuration, ExposureInstancesApi, RoutesApi, TotalExposureApi } from "../generated/client";
+import { AirQualityApi, Configuration, ExposureInstancesApi, RoutesApi, TotalExposureApi } from "../generated/client";
 import { AccessToken } from "../types";
 
 /**
@@ -11,7 +11,7 @@ export default class Api {
    * @param accessToken access token
    */
   public static getRoutesApi (accessToken: AccessToken): RoutesApi {
-    return new RoutesApi(this.getConfiguration(accessToken))
+    return new RoutesApi(this.getConfiguration(accessToken));
   }
 
   /**
@@ -30,6 +30,15 @@ export default class Api {
    */
   public static getTotalExposureApi (accessToken: AccessToken): TotalExposureApi {
     return new TotalExposureApi(this.getConfiguration(accessToken))
+  }
+
+    /**
+   * Gets initialized air quality API
+   * 
+   * @param accessToken access token
+   */
+  public static getAirQualityApi (accessToken: AccessToken): AirQualityApi {
+    return new AirQualityApi(this.getConfiguration(accessToken));
   }
 
 

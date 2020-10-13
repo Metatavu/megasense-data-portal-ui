@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { AppAction } from "../../../actions";
 import strings from "../../../localization/strings";
-import { StoreState } from "../../../types";
+import { AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { styles } from "./map-screen.styles";
 import { Map, TileLayer, Polyline, Viewport, Marker } from "react-leaflet";
@@ -12,12 +12,15 @@ import * as PolyUtil from "polyline-encoded";
 import { LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
 import * as Nominatim from "nominatim-browser";
 import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from '@material-ui/lab/Autocomplete';
+import Api from "../../../api";
+import HeatmapLayer from "react-leaflet-heatmap-layer";
+import { AirQuality } from "../../../generated/client";
 
 /**
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles>{
-
+  accessToken?: AccessToken
 }
 
 interface Location {
@@ -37,32 +40,42 @@ interface State {
   loadingRoute: boolean;
   locationFromOptions: Location[];
   locationToOptions: Location[];
+  polyline? : string;
+  savingRoute: boolean;
+  airQuality: AirQuality[];
+  previousZoom: number;
   locationFromTextInput: string;
   locationToTextInput: string;
 }
 
 class MapScreen extends React.Component<Props, State> {
+  mapRef: React.RefObject<Map>;
 
   constructor (props: Props) {
     super(props);
     this.state = {
       mapViewport: {
         zoom: 12 , 
-        center: [61.6887, 27.2721]
+        center: [60.1699, 24.9384]
       },
       editingLocationFrom: true,
       loadingRoute: false,
       locationFromOptions: [],
       locationToOptions: [],
+      savingRoute: false,
+      airQuality: [],
+      previousZoom: 12,
       locationFromTextInput: "",
       locationToTextInput: ""
     };
+
+    this.mapRef = React.createRef();
 
   }
 
   public render = () => {
     const { classes } = this.props;
-    const { route, locationFrom, locationTo, locationFromOptions, locationToOptions, locationFromTextInput, locationToTextInput } = this.state;
+    const { route, locationFrom, locationTo, locationFromOptions, locationToOptions, locationFromTextInput, locationToTextInput, airQuality } = this.state;
 
     const routingComponents = (
       <div className={ classes.routingForm }>
@@ -114,7 +127,14 @@ class MapScreen extends React.Component<Props, State> {
             <CircularProgress color="inherit" className={ classes.routingFormLoader } />
           }
 
-          <Button className={ classes.routingFormButton }>{ strings.saveRoute }</Button>
+          { !this.state.savingRoute && 
+            <Button onClick={ this.saveRoute } className={ classes.routingFormButton }>{ strings.saveRoute }</Button>
+          }
+
+          {
+            this.state.savingRoute &&
+            <CircularProgress color="inherit" className={ classes.routingFormLoader } />
+          }
 
         </div>
 
@@ -125,6 +145,7 @@ class MapScreen extends React.Component<Props, State> {
       <AppLayout routing={ routingComponents }>
  
         <Map 
+          ref={ this.mapRef }
           zoomControl={ false } 
           ondblclick={ this.addRoutePoint } 
           doubleClickZoom={ false } 
@@ -150,11 +171,46 @@ class MapScreen extends React.Component<Props, State> {
             locationTo?.coordinates &&
             <Marker position={ this.coordinatesFromString(locationTo.coordinates) }/>
           }
-          
+
+          <HeatmapLayer
+            points={ airQuality }
+            longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
+            latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
+            intensityExtractor={ (airQuality: AirQuality) => (airQuality.pollutionValue * 2) }
+            gradient={{
+              0.1: '#89BDE0', 0.2: '#96E3E6', 0.4: '#82CEB6',
+              0.6: '#FAF3A5', 0.8: '#F5D98B', '1.0': '#DE9A96'
+            }}
+            blur={ 50 }
+            radius={ 60 }
+          />
         </Map>
       </AppLayout>
       
     );
+  }
+
+  /**
+   * Saves the route that is currently displayed on the map
+   */
+  private saveRoute = async () => {
+    const accessToken = this.props.accessToken;
+    const polyline = this.state.polyline;
+
+    if (!accessToken || !polyline) {
+      return;
+    }
+
+    try {
+      const routesApi = Api.getRoutesApi(accessToken);
+      this.setState({ savingRoute: true });
+      await routesApi.createRoute({ route: { routePoints: polyline } });
+      this.setState({ savingRoute: false });
+    } catch (error) {
+      this.setState({ savingRoute: false });
+      console.log(error);
+    }
+
   }
 
   /**
@@ -264,7 +320,8 @@ class MapScreen extends React.Component<Props, State> {
 
       const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=10:10pm&date=08-29-2019&mode=WALK&option=STRICT_AQ&maxWalkDistance=10000&arriveBy=false&wheelchair=false&locale=en`);
       const jsonResponse = await routingResponse.json();
-      const route = PolyUtil.decode(jsonResponse.plan.itineraries[0].legs[0].legGeometry.points);
+      const polyline = jsonResponse.plan.itineraries[0].legs[0].legGeometry.points;
+      const route = PolyUtil.decode(polyline);
 
       const newCenter = [mapViewport.center![0], mapViewport.center![1]];
       if (locationFrom && locationFrom.coordinates) {
@@ -273,7 +330,7 @@ class MapScreen extends React.Component<Props, State> {
         newCenter[1] = newCenterCoordinates[1];
       }
 
-      this.setState({ route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 } }); 
+      this.setState({ route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13, polyline }); 
     } catch (error) {
       this.setState({ locationFrom: undefined, locationTo: undefined, route: undefined, loadingRoute: false });
       console.log(error);
@@ -285,8 +342,38 @@ class MapScreen extends React.Component<Props, State> {
    * 
    * @param mapViewport a new viewport
    */
-  private onViewportChange = (mapViewport: Viewport) => {
-    this.setState({ mapViewport });
+  private onViewportChange = async (mapViewport: Viewport) => {
+    this.setState({ mapViewport, airQuality: [] });
+
+    if (!this.props.accessToken) {
+      return;
+    }
+
+    const airQualityApi = Api.getAirQualityApi(this.props.accessToken);
+    const bounds = this.mapRef.current?.leafletElement.getBounds();
+    const southWestBound = bounds?.getSouthWest();
+    const northEastBound = bounds?.getNorthEast();
+
+    const previousZoom = this.state.previousZoom;
+    this.setState({ previousZoom: mapViewport.zoom!});
+    if (southWestBound && northEastBound && mapViewport.zoom && previousZoom != 13 && mapViewport.zoom == 13) {
+
+      if (southWestBound.lat < 55 || southWestBound.lng < 20 || northEastBound.lat > 65 || northEastBound.lng > 29 ) {
+        return;
+      }
+  
+      const boundingBoxCorner1 =  southWestBound.lat + "," + southWestBound.lng;
+      const boundingBoxCorner2 =  northEastBound.lat + "," + northEastBound.lng;
+  
+      try {
+        const airQuality = await airQualityApi.getAirQuality({ pollutant: "MICRO_PARTICLES", precision: 300, boundingBoxCorner1, boundingBoxCorner2 });
+        console.log(airQuality);
+        this.setState({ airQuality });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    
   }
 
   /**
