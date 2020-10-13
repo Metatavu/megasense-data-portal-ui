@@ -61,11 +61,11 @@ class App extends React.Component<Props, State> {
             )}
             />
             <Route
-            exact
-            path="/settings"
-            render={() => (
-              <Settings />
-            )}
+              exact
+              path="/settings"
+              render={() => (
+                <Settings />
+              )}
             />
           </Switch>
         </BrowserRouter>
