@@ -62,9 +62,19 @@ class ResponsiveSideMenu extends React.Component<Props, State> {
               { strings.map }
             </Link>
           </MenuItem>
-          <MenuItem className={ classes.menuItem }>
+          <MenuItem className={ classes.menuItemContainer }>
             <Link className={ classes.menuItem } to="/saved-routes">
               { strings.savedRoutes }
+            </Link>
+          </MenuItem>
+          <MenuItem className={ classes.menuItemContainer }>
+            <Link className={ classes.menuItem } to="/saved-routes">
+              { strings.savedRoutes }
+            </Link>
+          </MenuItem>
+          <MenuItem className={ classes.menuItemContainer }>
+            <Link className={ classes.menuItem } to="/settings">
+              { strings.settings }
             </Link>
           </MenuItem>
         </List>

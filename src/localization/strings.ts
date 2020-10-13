@@ -13,6 +13,35 @@ export interface IStrings extends LocalizedStringsMethods {
   savedRoutesTo: string;
   savedRoutesFrom: string;
   savedRoutesSavedText: string;
+  statistics: string;
+  pollutantPM25: string;
+  pollutantPM10: string;
+  pollutantOzone: string;
+  pollutantNitrogen: string;
+  pollutanSulfur: string;
+  cancel: string;
+  confirmTimeRange: string;
+  selectPollution: string;
+  reset: string,
+  weeklyExposure: string,
+  monthlyExposure: string,
+  annualExposure: string
+  displayTables: string;
+  selectTime: string;
+  settings: string;
+  airQualityMode: string;
+  movementOptions: string;
+  waliking: string;
+  wheelerchair: string;
+  homeAddress: string;
+  streetAddress: string;
+  city: string;
+  zipCode: string;
+  country: string;
+  applyChanges: string;
+  downloadData: string;
+  changeUserData: string;
+  deleteAccount: string;
 }
 
 const strings: IStrings = new LocalizedStrings({
