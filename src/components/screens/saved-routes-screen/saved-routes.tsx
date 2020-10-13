@@ -6,15 +6,12 @@ import strings from "../../../localization/strings";
 import { AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { globalStyles } from "../../../styles/globalStyles"
-import { WithStyles } from '@material-ui/core/styles/withStyles';
-import { Container, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, Select } from '@material-ui/core';
+import { Container, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, WithStyles } from '@material-ui/core';
 
 /**
  * Interface describing component props
  */
-interface Props extends WithStyles<typeof globalStyles>{
-
-}
+interface Props extends WithStyles<typeof globalStyles> { }
 
 interface Props {
   accessToken?: AccessToken;
@@ -49,46 +46,46 @@ class SavedRoutes extends React.Component<Props, State> {
    */
   render() {
     const { classes } = this.props;
-    
+
     return (
       <AppLayout>
         <Container>
           <Typography variant="h3" component="h1">
             Saved routes
           </Typography>
-            <Card variant="outlined">
-              <CardContent>
-                <Typography variant="subtitle1" component="p">
-                  { strings.savedRoutesFrom }: Hallituskatu
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="subtitle1" component="p">
+                { strings.savedRoutesFrom }: Hallituskatu
                   <br />
-                  { strings.savedRoutesTo }: Otavankatu
+                { strings.savedRoutesTo }: Otavankatu
                 </Typography>
-                <Typography variant="caption" component="p">
-                  { strings.savedRoutesSavedText }: 40.40.2020
+              <Typography variant="caption" component="p">
+                { strings.savedRoutesSavedText }: 40.40.2020
                 </Typography>
             </CardContent>
             <CardActions>
               <Button variant="contained" color="primary" size="small">Preview routew</Button>
-              <Button variant="contained" className={ classes.errorButton } size="small" onClick={() => this.DisplayDeleteDialog()}>Delete route</Button>
+              <Button variant="contained" className={classes.errorButton} size="small" onClick={() => this.DisplayDeleteDialog()}>Delete route</Button>
             </CardActions>
           </Card>
           <Dialog
-            open={ this.state.visible }
-            onClose={ () => this.DisplayDeleteDialog() }
+            open={this.state.visible}
+            onClose={() => this.DisplayDeleteDialog()}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{ strings.DeleteTitle }</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{strings.DeleteTitle}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
                 { strings.savedRoutesFrom }: Hallituskatu
-          </DialogContentText>
+              </DialogContentText>
               <DialogContentText id="alert-dialog-description">
                 { strings.savedRoutesTo }: Otavankatu
-          </DialogContentText>
+              </DialogContentText>
               <DialogContentText id="alert-dialog-description">
                 { strings.savedRoutesSavedText }:  40.40.2020
-          </DialogContentText>
+              </DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button variant="contained" className={ classes.errorButton } onClick={() => this.DisplayDeleteDialog()}>

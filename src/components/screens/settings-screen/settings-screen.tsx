@@ -6,15 +6,14 @@ import strings from "../../../localization/strings";
 import { AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { globalStyles } from "../../../styles/globalStyles"
-import { Container, Box, Divider, InputLabel ,TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, Select } from '@material-ui/core';
-import { WithStyles } from '@material-ui/core/styles/withStyles';
+import { Container, Box, Divider, InputLabel, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, Select, WithStyles } from '@material-ui/core';
 
 
 
 /**
  * Interface describing component props
  */
-interface Props extends WithStyles<typeof globalStyles>{
+interface Props extends WithStyles<typeof globalStyles> {
 
 }
 
@@ -56,10 +55,10 @@ class Settings extends React.Component<Props, State> {
       <AppLayout>
         <Container>
           <Typography variant="h3" component="h3">
-            { strings.settings }
+            {strings.settings}
           </Typography>
           <Box mt={ 3 } mb={ 3 }>
-            <InputLabel htmlFor="outlined-age-native-simple">{ strings.airQualityMode }</InputLabel>
+            <InputLabel htmlFor="outlined-age-native-simple">{strings.airQualityMode}</InputLabel>
             <Select
               native
               variant="outlined"
@@ -70,13 +69,13 @@ class Settings extends React.Component<Props, State> {
             </Select>
           </Box>
           <Box mt={ 3 } mb={ 3 }>
-            <InputLabel htmlFor="outlined-age-native-simple">{ strings.movementOptions }</InputLabel>
+            <InputLabel htmlFor="outlined-age-native-simple">{strings.movementOptions}</InputLabel>
             <Select
               native
               variant="outlined"
             >
-              <option>{ strings.waliking }</option>
-              <option>{ strings.wheelerchair }</option>
+              <option>{strings.waliking}</option>
+              <option>{strings.wheelerchair}</option>
             </Select>
           </Box>
           <Box mt={ 3 } mb={ 3 }>
@@ -109,13 +108,13 @@ class Settings extends React.Component<Props, State> {
             </Button>
           </Box>
           <Box pt={ 3 } pb={ 3 }>
-            <Button variant="contained" className={ classes.errorButton } onClick={() => this.DisplayDeleteDialog()}>
+            <Button variant="contained" className={classes.errorButton} onClick={() => this.DisplayDeleteDialog()}>
               { strings.deleteAccount }
             </Button>
           </Box>
           <Dialog
             open={ this.state.visible }
-            onClose={ () => this.DisplayDeleteDialog() }
+            onClose={() => this.DisplayDeleteDialog()}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
@@ -123,7 +122,7 @@ class Settings extends React.Component<Props, State> {
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
                 { strings.deleteAccountDialogText }
-          </DialogContentText>
+              </DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button variant="contained" className={classes.errorButton} onClick={() => this.DisplayDeleteDialog()}>
