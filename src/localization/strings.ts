@@ -13,6 +13,8 @@ export interface IStrings extends LocalizedStringsMethods {
   savedRoutesTo: string;
   savedRoutesFrom: string;
   savedRoutesSavedText: string;
+  DeleteTitle: string;
+  yes: string,
   statistics: string;
   pollutantPM25: string;
   pollutantPM10: string;
@@ -42,6 +44,8 @@ export interface IStrings extends LocalizedStringsMethods {
   downloadData: string;
   changeUserData: string;
   deleteAccount: string;
+  deleteAccountDialogTitle: string;
+  deleteAccountDialogText: string;
 }
 
 const strings: IStrings = new LocalizedStrings({

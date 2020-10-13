@@ -1,5 +1,3 @@
-import Alert from "@material-ui/lab/Alert";
-import Container from '@material-ui/core/Container';
 import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
@@ -7,19 +5,13 @@ import { AppAction } from "../../../actions";
 import strings from "../../../localization/strings";
 import { AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import { Card, CardContent, CardActions } from "@material-ui/core";
 import { globalStyles } from "../../../styles/globalStyles"
-import { withStyles } from '@material-ui/core';
-import { WithStyles } from '@material-ui/core/styles/withStyles';
+import { Container, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, WithStyles } from '@material-ui/core';
 
 /**
  * Interface describing component props
  */
-interface Props extends WithStyles<typeof globalStyles>{
-
-}
+interface Props extends WithStyles<typeof globalStyles> { }
 
 interface Props {
   accessToken?: AccessToken;
@@ -28,7 +20,9 @@ interface Props {
 /**
  * Interface describing component state
  */
-interface State {}
+interface State {
+  visible: boolean
+}
 
 /**
  * Component for warehouses screen
@@ -42,7 +36,9 @@ class SavedRoutes extends React.Component<Props, State> {
    */
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      visible: false
+    };
   }
 
   /**
@@ -50,32 +46,68 @@ class SavedRoutes extends React.Component<Props, State> {
    */
   render() {
     const { classes } = this.props;
-    
+
     return (
       <AppLayout>
         <Container>
           <Typography variant="h3" component="h1">
             Saved routes
           </Typography>
-            <Card variant="outlined">
-              <CardContent>
-                <Typography variant="subtitle1" component="p">
-                  { strings.savedRoutesFrom }: Hallituskatu
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="subtitle1" component="p">
+                { strings.savedRoutesFrom }: Hallituskatu
                   <br />
-                  { strings.savedRoutesTo }: Otavankatu
+                { strings.savedRoutesTo }: Otavankatu
                 </Typography>
-                <Typography variant="caption" component="p">
-                  { strings.savedRoutesSavedText }: 40.40.2020
+              <Typography variant="caption" component="p">
+                { strings.savedRoutesSavedText }: 40.40.2020
                 </Typography>
             </CardContent>
             <CardActions>
               <Button variant="contained" color="primary" size="small">Preview routew</Button>
-              <Button variant="contained" className={ classes.errorButton } size="small">Delete route</Button>
+              <Button variant="contained" className={classes.errorButton} size="small" onClick={() => this.DisplayDeleteDialog()}>Delete route</Button>
             </CardActions>
           </Card>
+          <Dialog
+            open={this.state.visible}
+            onClose={() => this.DisplayDeleteDialog()}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{strings.DeleteTitle}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                { strings.savedRoutesFrom }: Hallituskatu
+              </DialogContentText>
+              <DialogContentText id="alert-dialog-description">
+                { strings.savedRoutesTo }: Otavankatu
+              </DialogContentText>
+              <DialogContentText id="alert-dialog-description">
+                { strings.savedRoutesSavedText }:  40.40.2020
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button variant="contained" className={ classes.errorButton } onClick={() => this.DisplayDeleteDialog()}>
+                { strings.yes }
+              </Button>
+              <Button variant="contained" className={ classes.warningButton } onClick={() => this.DisplayDeleteDialog()} color="primary" autoFocus>
+                { strings.cancel }
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Container>
       </AppLayout>
     );
+  }
+
+  /**
+   * Displays delete dialog
+   */
+  private DisplayDeleteDialog = () => {
+    this.setState({
+      visible: this.state.visible ? false : true,
+    })
   }
 }
 

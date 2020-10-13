@@ -1,4 +1,3 @@
-import Container from '@material-ui/core/Container';
 import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
@@ -6,17 +5,7 @@ import { AppAction } from "../../../actions";
 import strings from "../../../localization/strings";
 import { AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import FormControl from '@material-ui/core/FormControl';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
-import Radio from '@material-ui/core/Radio';
+import { Container, Dialog, DialogTitle, DialogContent, FormControl, DialogActions, Button, RadioGroup, Radio, Typography, FormControlLabel, FormLabel} from '@material-ui/core';
 
 /**
  * Interface describing component props

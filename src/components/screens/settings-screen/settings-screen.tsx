@@ -1,4 +1,3 @@
-import Container from '@material-ui/core/Container';
 import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
@@ -6,21 +5,15 @@ import { AppAction } from "../../../actions";
 import strings from "../../../localization/strings";
 import { AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import Select from '@material-ui/core/Select';
-import Divider from '@material-ui/core/Divider';
-import InputLabel from '@material-ui/core/InputLabel';
-import Box from '@material-ui/core/Box/Box';
-import TextField from '@material-ui/core/TextField/TextField';
 import { globalStyles } from "../../../styles/globalStyles"
-import { withStyles } from '@material-ui/core';
-import { WithStyles } from '@material-ui/core/styles/withStyles';
+import { Container, Box, Divider, InputLabel, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, Select, WithStyles } from '@material-ui/core';
+
+
 
 /**
  * Interface describing component props
  */
-interface Props extends WithStyles<typeof globalStyles>{
+interface Props extends WithStyles<typeof globalStyles> {
 
 }
 
@@ -31,7 +24,9 @@ interface Props {
 /**
  * Interface describing component state
  */
-interface State {}
+interface State {
+  visible: boolean
+}
 
 /**
  * Component for warehouses screen
@@ -45,7 +40,9 @@ class Settings extends React.Component<Props, State> {
    */
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      visible: false
+    };
   }
 
   /**
@@ -58,10 +55,10 @@ class Settings extends React.Component<Props, State> {
       <AppLayout>
         <Container>
           <Typography variant="h3" component="h3">
-            { strings.settings }
+            {strings.settings}
           </Typography>
           <Box mt={ 3 } mb={ 3 }>
-            <InputLabel htmlFor="outlined-age-native-simple">{ strings.airQualityMode }</InputLabel>
+            <InputLabel htmlFor="outlined-age-native-simple">{strings.airQualityMode}</InputLabel>
             <Select
               native
               variant="outlined"
@@ -72,13 +69,13 @@ class Settings extends React.Component<Props, State> {
             </Select>
           </Box>
           <Box mt={ 3 } mb={ 3 }>
-            <InputLabel htmlFor="outlined-age-native-simple">{ strings.movementOptions }</InputLabel>
+            <InputLabel htmlFor="outlined-age-native-simple">{strings.movementOptions}</InputLabel>
             <Select
               native
               variant="outlined"
             >
-              <option>{ strings.waliking }</option>
-              <option>{ strings.wheelerchair }</option>
+              <option>{strings.waliking}</option>
+              <option>{strings.wheelerchair}</option>
             </Select>
           </Box>
           <Box mt={ 3 } mb={ 3 }>
@@ -111,13 +108,43 @@ class Settings extends React.Component<Props, State> {
             </Button>
           </Box>
           <Box pt={ 3 } pb={ 3 }>
-            <Button variant="contained" className={classes.errorButton}>
+            <Button variant="contained" className={classes.errorButton} onClick={() => this.DisplayDeleteDialog()}>
               { strings.deleteAccount }
             </Button>
           </Box>
+          <Dialog
+            open={ this.state.visible }
+            onClose={() => this.DisplayDeleteDialog()}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{ strings.deleteAccountDialogTitle }</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                { strings.deleteAccountDialogText }
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button variant="contained" className={classes.errorButton} onClick={() => this.DisplayDeleteDialog()}>
+                { strings.yes }
+              </Button>
+              <Button variant="contained" className={classes.warningButton} onClick={() => this.DisplayDeleteDialog()} color="primary" autoFocus>
+                { strings.cancel }
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Container>
       </AppLayout>
     );
+  }
+
+  /**
+   * Displays delete dialog
+   */
+  private DisplayDeleteDialog = () => {
+    this.setState({
+      visible: this.state.visible ? false : true,
+    })
   }
 }
 
