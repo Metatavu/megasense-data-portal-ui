@@ -9,6 +9,8 @@
   "savedRoutesFrom": "From",
   "savedRoutesTo": "To",
   "savedRoutesSavedText": "Saved",
+  "DeleteTitle": "Are you sure you want to delete this?",
+  "yes": "Yes",
   "statistics": "Statistics",
   "pollutantPM25": "PM25",
   "pollutantPM10": "PM10",
@@ -37,6 +39,7 @@
   "applyChanges": "Apply changes",
   "downloadData": "Download your data",
   "changeUserData": "Change your user data",
-  "deleteAccount": "Delete account"
-
+  "deleteAccount": "Delete account",
+  "deleteAccountDialogTitle": "Are you sure you want to delete your account?",
+  "deleteAccountDialogText": "If you press yes your account can't be recovered. You will be redirected to login page."
 }

@@ -13,6 +13,11 @@ import { Card, CardContent, CardActions } from "@material-ui/core";
 import { globalStyles } from "../../../styles/globalStyles"
 import { withStyles } from '@material-ui/core';
 import { WithStyles } from '@material-ui/core/styles/withStyles';
+import Dialog from "@material-ui/core/Dialog/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions/DialogActions";
+import DialogContentText from "@material-ui/core/DialogContentText/DialogContentText";
 
 /**
  * Interface describing component props
@@ -28,7 +33,9 @@ interface Props {
 /**
  * Interface describing component state
  */
-interface State {}
+interface State {
+  visible: boolean
+}
 
 /**
  * Component for warehouses screen
@@ -42,7 +49,9 @@ class SavedRoutes extends React.Component<Props, State> {
    */
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      visible: false
+    };
   }
 
   /**
@@ -70,12 +79,48 @@ class SavedRoutes extends React.Component<Props, State> {
             </CardContent>
             <CardActions>
               <Button variant="contained" color="primary" size="small">Preview routew</Button>
-              <Button variant="contained" className={ classes.errorButton } size="small">Delete route</Button>
+              <Button variant="contained" className={ classes.errorButton } size="small" onClick={() => this.DisplayDeleteDialog()}>Delete route</Button>
             </CardActions>
           </Card>
+          <Dialog
+            open={ this.state.visible }
+            onClose={ () => this.DisplayDeleteDialog() }
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{ strings.DeleteTitle }</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                { strings.savedRoutesFrom }: Hallituskatu
+          </DialogContentText>
+              <DialogContentText id="alert-dialog-description">
+                { strings.savedRoutesTo }: Otavankatu
+          </DialogContentText>
+              <DialogContentText id="alert-dialog-description">
+                { strings.savedRoutesSavedText }:  40.40.2020
+          </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button variant="contained" className={ classes.errorButton } onClick={() => this.DisplayDeleteDialog()}>
+                { strings.yes }
+              </Button>
+              <Button variant="contained" className={ classes.warningButton } onClick={() => this.DisplayDeleteDialog()} color="primary" autoFocus>
+                { strings.cancel }
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Container>
       </AppLayout>
     );
+  }
+  
+  /**
+   * Displays delete dialog
+   */
+  private DisplayDeleteDialog = () => {
+    this.setState({
+      visible: this.state.visible ? false : true,
+    })
   }
 }
 

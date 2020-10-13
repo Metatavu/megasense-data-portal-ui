@@ -16,6 +16,11 @@ import TextField from '@material-ui/core/TextField/TextField';
 import { globalStyles } from "../../../styles/globalStyles"
 import { withStyles } from '@material-ui/core';
 import { WithStyles } from '@material-ui/core/styles/withStyles';
+import Dialog from "@material-ui/core/Dialog/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions/DialogActions";
+import DialogContentText from "@material-ui/core/DialogContentText/DialogContentText";
 
 /**
  * Interface describing component props
@@ -31,7 +36,9 @@ interface Props {
 /**
  * Interface describing component state
  */
-interface State {}
+interface State {
+  visible: boolean
+}
 
 /**
  * Component for warehouses screen
@@ -45,7 +52,9 @@ class Settings extends React.Component<Props, State> {
    */
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      visible: false
+    };
   }
 
   /**
@@ -111,13 +120,43 @@ class Settings extends React.Component<Props, State> {
             </Button>
           </Box>
           <Box pt={ 3 } pb={ 3 }>
-            <Button variant="contained" className={classes.errorButton}>
+            <Button variant="contained" className={ classes.errorButton } onClick={() => this.DisplayDeleteDialog()}>
               { strings.deleteAccount }
             </Button>
           </Box>
+          <Dialog
+            open={ this.state.visible }
+            onClose={ () => this.DisplayDeleteDialog() }
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{ strings.deleteAccountDialogTitle }</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                { strings.deleteAccountDialogText }
+          </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button variant="contained" className={classes.errorButton} onClick={() => this.DisplayDeleteDialog()}>
+                { strings.yes }
+              </Button>
+              <Button variant="contained" className={classes.warningButton} onClick={() => this.DisplayDeleteDialog()} color="primary" autoFocus>
+                { strings.cancel }
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Container>
       </AppLayout>
     );
+  }
+  
+  /**
+   * Displays delete dialog
+   */
+  private DisplayDeleteDialog = () => {
+    this.setState({
+      visible: this.state.visible ? false : true,
+    })
   }
 }
 

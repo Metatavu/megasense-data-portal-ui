@@ -9,6 +9,8 @@
   "savedRoutesFrom": "Mistä",
   "savedRoutesTo": "Minne",
   "savedRoutesSavedText": "Tallennettu",
+  "DeleteTitle": "Oletko varma että haluat poistaa tämän?",
+  "yes": "Yes",
   "statistics": "Statistiikka",
   "pollutantPM25": "PM25",
   "pollutantPM10": "PM10",
@@ -37,5 +39,7 @@
   "applyChanges": "Tallenna muutokset",
   "downloadData": "Lataa datasi",
   "changeUserData": "Muokkaa käyttäjätietoja",
-  "deleteAccount": "Poista tilisi"
+  "deleteAccount": "Poista tilisi",
+  "deleteAccountDialogTitle": "Oletko varma että haluat poistaa tilisi?",
+  "deleteAccountDialogText": "Jos painat kyllä, tätä tiliä ei voi enää palauttaa. Sinut ohjataan kirjautumissivulle."
 }
