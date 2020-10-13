@@ -24,7 +24,7 @@ interface Props {
 /**
  * Interface describing component state
  */
-interface State { }
+interface State {}
 
 /**
  * Component for warehouses screen
