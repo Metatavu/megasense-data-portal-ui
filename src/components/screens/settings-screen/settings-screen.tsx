@@ -1,4 +1,3 @@
-import Container from '@material-ui/core/Container';
 import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
@@ -6,21 +5,11 @@ import { AppAction } from "../../../actions";
 import strings from "../../../localization/strings";
 import { AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import Select from '@material-ui/core/Select';
-import Divider from '@material-ui/core/Divider';
-import InputLabel from '@material-ui/core/InputLabel';
-import Box from '@material-ui/core/Box/Box';
-import TextField from '@material-ui/core/TextField/TextField';
 import { globalStyles } from "../../../styles/globalStyles"
-import { withStyles } from '@material-ui/core';
+import { Container, Box, Divider, InputLabel ,TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, Select } from '@material-ui/core';
 import { WithStyles } from '@material-ui/core/styles/withStyles';
-import Dialog from "@material-ui/core/Dialog/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions/DialogActions";
-import DialogContentText from "@material-ui/core/DialogContentText/DialogContentText";
+
+
 
 /**
  * Interface describing component props
@@ -149,7 +138,7 @@ class Settings extends React.Component<Props, State> {
       </AppLayout>
     );
   }
-  
+
   /**
    * Displays delete dialog
    */
