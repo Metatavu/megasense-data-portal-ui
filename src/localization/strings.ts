@@ -28,6 +28,20 @@ export interface IStrings extends LocalizedStringsMethods {
   annualExposure: string
   displayTables: string;
   selectTime: string;
+  settings: string;
+  airQualityMode: string;
+  movementOptions: string;
+  waliking: string;
+  wheelerchair: string;
+  homeAddress: string;
+  streetAddress: string;
+  city: string;
+  zipCode: string;
+  country: string;
+  applyChanges: string;
+  downloadData: string;
+  changeUserData: string;
+  deleteAccount: string;
 }
 
 const strings: IStrings = new LocalizedStrings({
