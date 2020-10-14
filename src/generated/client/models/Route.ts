@@ -31,6 +31,24 @@ export interface Route {
      * @memberof Route
      */
     routePoints: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Route
+     */
+    locationFromName: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Route
+     */
+    locationToName: string;
+    /**
+     * 
+     * @type {Date}
+     * @memberof Route
+     */
+    savedAt?: Date;
 }
 
 export function RouteFromJSON(json: any): Route {
@@ -45,6 +63,9 @@ export function RouteFromJSONTyped(json: any, ignoreDiscriminator: boolean): Rou
         
         'id': !exists(json, 'id') ? undefined : json['id'],
         'routePoints': json['routePoints'],
+        'locationFromName': json['locationFromName'],
+        'locationToName': json['locationToName'],
+        'savedAt': !exists(json, 'savedAt') ? undefined : (new Date(json['savedAt'])),
     };
 }
 
@@ -59,6 +80,9 @@ export function RouteToJSON(value?: Route | null): any {
         
         'id': value.id,
         'routePoints': value.routePoints,
+        'locationFromName': value.locationFromName,
+        'locationToName': value.locationToName,
+        'savedAt': value.savedAt === undefined ? undefined : (value.savedAt.toISOString()),
     };
 }
 

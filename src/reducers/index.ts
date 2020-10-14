@@ -26,14 +26,15 @@ export const processAction = (storeState?: StoreState, action?: AppAction): Stor
       return { ...storeState, locale: action.locale }
     case constants.USER_LOGIN:
       const keycloak = action.keycloak;
-      const { token, tokenParsed } = keycloak;
-      const userId = tokenParsed?.sub;
+      const { token } = keycloak;
       const accessToken = token ?
         { token } :
         undefined;
       return { ...storeState, keycloak, accessToken }
     case constants.USER_LOGOUT:
       return { ...storeState, keycloak: undefined }
+    case constants.DISPLAYED_ROUTE_UPDATE:
+      return { ...storeState, displayedRoute: action.displayedRoute }
     default:
       return storeState
   }
