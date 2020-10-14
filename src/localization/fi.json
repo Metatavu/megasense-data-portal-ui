@@ -9,7 +9,7 @@
   "savedRoutesFrom": "Mistä",
   "savedRoutesTo": "Minne",
   "savedRoutesSavedText": "Tallennettu",
-  "DeleteTitle": "Oletko varma että haluat poistaa tämän?",
+  "deleteConfirm": "Oletko varma että haluat poistaa tämän?",
   "yes": "Yes",
   "statistics": "Statistiikka",
   "pollutantPM25": "PM25",
@@ -41,5 +41,8 @@
   "changeUserData": "Muokkaa käyttäjätietoja",
   "deleteAccount": "Poista tilisi",
   "deleteAccountDialogTitle": "Oletko varma että haluat poistaa tilisi?",
-  "deleteAccountDialogText": "Jos painat kyllä, tätä tiliä ei voi enää palauttaa. Sinut ohjataan kirjautumissivulle."
+  "deleteAccountDialogText": "Jos painat kyllä, tätä tiliä ei voi enää palauttaa. Sinut ohjataan kirjautumissivulle.",
+
+  "viewRoute": "Näytä reitti",
+  "deleteRoute": "Poista reitti"
 }

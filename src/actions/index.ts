@@ -1,5 +1,6 @@
 import { KeycloakInstance } from "keycloak-js";
 import * as constants from "../constants";
+import { Route } from "../generated/client";
 import { Locale } from "../types";
 
 /**
@@ -25,7 +26,15 @@ interface LocaleUpdate {
   locale: Locale
 }
 
-export type AppAction = LoginAction | LogoutAction | LocaleUpdate;
+/**
+ * Interface desicribing displayed route update action
+ */
+interface DisplayedRouteUpdateAction {
+  type: constants.DISPLAYED_ROUTE_UPDATE,
+  displayedRoute?: Route
+}
+
+export type AppAction = LoginAction | LogoutAction | LocaleUpdate | DisplayedRouteUpdateAction;
 
 /**
  * Redux login action
@@ -58,5 +67,17 @@ export const updateLocale = (locale: Locale): LocaleUpdate => {
   return {
     type: constants.LOCALE_UPDATE,
     locale
+  }
+}
+
+/**
+ * Redux displayed route update action
+ * 
+ * @param displayedRoute a new route
+ */
+export const updateDisplayedRoute = (displayedRoute?: Route): DisplayedRouteUpdateAction => {
+  return {
+    type: constants.DISPLAYED_ROUTE_UPDATE,
+    displayedRoute
   }
 }

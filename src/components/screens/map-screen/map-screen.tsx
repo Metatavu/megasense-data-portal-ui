@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { AppAction } from "../../../actions";
 import strings from "../../../localization/strings";
-import { AccessToken, StoreState } from "../../../types";
+import { Location, AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { styles } from "./map-screen.styles";
 import { Map, TileLayer, Polyline, Viewport, Marker } from "react-leaflet";
@@ -14,18 +14,16 @@ import * as Nominatim from "nominatim-browser";
 import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from '@material-ui/lab/Autocomplete';
 import Api from "../../../api";
 import HeatmapLayer from "react-leaflet-heatmap-layer";
-import { AirQuality } from "../../../generated/client";
+import { AirQuality, Route } from "../../../generated/client";
+import * as actions from "../../../actions";
 
 /**
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles>{
-  accessToken?: AccessToken
-}
-
-interface Location {
-  name: string;
-  coordinates: string;
+  accessToken?: AccessToken;
+  updateDisplayedRoute: (displayedRoute?: Route) => void;
+  displayedRoute?: Route;
 }
 
 /**
@@ -71,6 +69,33 @@ class MapScreen extends React.Component<Props, State> {
 
     this.mapRef = React.createRef();
 
+  }
+
+  public componentDidMount = () => {
+    const { displayedRoute, updateDisplayedRoute } = this.props;
+    if (displayedRoute) {
+      updateDisplayedRoute(undefined);
+      const route = PolyUtil.decode(displayedRoute.routePoints);
+      const firstItem = route[0];
+      const lastItem = route[ route.length - 1 ];
+
+      const locationFromCoordinates = `${ firstItem[0] },${ firstItem[1] }`;
+      const locationFrom = { coordinates: locationFromCoordinates, name: displayedRoute.locationFromName };
+      
+      const locationToCoordinates = `${ lastItem[0] },${ lastItem[1] }`;
+      const locationTo = { coordinates: locationToCoordinates, name: displayedRoute.locationToName };
+      
+      const newCenterCoordinates = this.coordinatesFromString(locationFromCoordinates);
+      const newState = {
+        route, 
+        locationFrom, 
+        locationTo, 
+        locationFromTextInput: displayedRoute.locationFromName, 
+        locationToTextInput: displayedRoute.locationToName,
+        mapViewport: { center: [ newCenterCoordinates[0], newCenterCoordinates[1] ] as [number, number], zoom: 13 }
+      }
+      this.setState(newState);
+    }
   }
 
   public render = () => {
@@ -195,16 +220,18 @@ class MapScreen extends React.Component<Props, State> {
    */
   private saveRoute = async () => {
     const accessToken = this.props.accessToken;
-    const polyline = this.state.polyline;
+    const { polyline, locationFrom, locationTo } = this.state;
 
-    if (!accessToken || !polyline) {
+    if (!accessToken || !polyline || !locationFrom || !locationTo) {
       return;
     }
 
     try {
       const routesApi = Api.getRoutesApi(accessToken);
       this.setState({ savingRoute: true });
-      await routesApi.createRoute({ route: { routePoints: polyline } });
+
+      await routesApi.createRoute({ route: { routePoints: polyline, locationFromName: locationFrom?.name, locationToName: locationTo?.name } });
+
       this.setState({ savingRoute: false });
     } catch (error) {
       this.setState({ savingRoute: false });
@@ -249,7 +276,7 @@ class MapScreen extends React.Component<Props, State> {
   private onLocationFromChange = async (event: ChangeEvent<{}>, locationFromTextInput: string, reason: AutocompleteInputChangeReason) => {
     this.setState({ locationFromTextInput });
     try {
-      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: locationFromTextInput });
+      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: locationFromTextInput }, process.env.REACT_APP_NOMINATIM_URL);
       const locationFromOptions = nominatimResponse.map(option => {
         const coordinates = option.lat + "," + option.lon;
         const name = option.display_name;
@@ -287,7 +314,7 @@ class MapScreen extends React.Component<Props, State> {
   private onLocationToChange = async (event: ChangeEvent<{}>, locationToTextInput: string, reason: AutocompleteInputChangeReason) => {
     this.setState({ locationToTextInput });
     try {
-      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: locationToTextInput });
+      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: locationToTextInput }, process.env.REACT_APP_NOMINATIM_URL);
       const locationToOptions = nominatimResponse.map(option => {
         const coordinates = option.lat + "," + option.lon;
         const name = option.display_name;
@@ -356,7 +383,7 @@ class MapScreen extends React.Component<Props, State> {
 
     const previousZoom = this.state.previousZoom;
     this.setState({ previousZoom: mapViewport.zoom!});
-    if (southWestBound && northEastBound && mapViewport.zoom && previousZoom != 13 && mapViewport.zoom == 13) {
+    if (southWestBound && northEastBound && mapViewport.zoom && previousZoom !== 13 && mapViewport.zoom === 13) {
 
       if (southWestBound.lat < 55 || southWestBound.lng < 20 || northEastBound.lat > 65 || northEastBound.lng > 29 ) {
         return;
@@ -401,7 +428,8 @@ class MapScreen extends React.Component<Props, State> {
  */
 export function mapStateToProps(state: StoreState) {
   return {
-    accessToken: state.accessToken
+    accessToken: state.accessToken,
+    displayedRoute: state.displayedRoute
   };
 }
 
@@ -412,6 +440,7 @@ export function mapStateToProps(state: StoreState) {
  */
 export function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
   return {
+    updateDisplayedRoute: (displayedRoute?: Route) => dispatch(actions.updateDisplayedRoute(displayedRoute))
   };
 }
 
