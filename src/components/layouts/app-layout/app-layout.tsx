@@ -1,9 +1,9 @@
 import { withStyles, WithStyles } from "@material-ui/core/styles";
 import React from "react";
 import { styles } from "./app-layout.styles";
-import MobileTopBar from "../../generic/mobile-top-bar/mobile-top-bar";
-import ResponsiveSideMenu from "../../generic/responsive-side-menu/responsive-side-menu";
-import { Grid } from "@material-ui/core";
+import Header from "../../generic/header/header";
+import Drawer from "../../generic/drawer-menu/drawer-menu";
+import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
 
 interface Props extends WithStyles<typeof styles> {
   routing?: JSX.Element
@@ -26,12 +26,8 @@ class AppLayout extends React.Component<Props, State> {
     
     return (
       <div className={ classes.root }>
-        <MobileTopBar
+        <Header
           routing={ this.props.routing }
-          toggleSideMenu={ this.toggleSideMenu }
-        />
-        <ResponsiveSideMenu
-          open={ this.state.sideMenuOpen }
           toggleSideMenu={ this.toggleSideMenu }
         />
         <div className={ classes.content }>

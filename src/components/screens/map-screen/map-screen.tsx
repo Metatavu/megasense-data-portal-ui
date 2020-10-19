@@ -16,6 +16,7 @@ import Api from "../../../api";
 import HeatmapLayer from "react-leaflet-heatmap-layer";
 import { AirQuality, Route } from "../../../generated/client";
 import * as actions from "../../../actions";
+import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
 
 /**
  * Interface describing component props
@@ -126,7 +127,7 @@ class MapScreen extends React.Component<Props, State> {
           <Autocomplete 
             onInputChange={ this.onLocationToChange } 
             inputValue={ locationToTextInput } 
-            onChange={this.onLocationToSelected} 
+            onChange={ this.onLocationToSelected } 
             options={ locationToOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
             value={ locationTo } 
@@ -167,8 +168,8 @@ class MapScreen extends React.Component<Props, State> {
     );
   
     return (
-      <AppLayout routing={ routingComponents }>
- 
+      <AppLayout>
+        <DrawerMenu open={ true } routing= { routingComponents }/>
         <Map 
           ref={ this.mapRef }
           zoomControl={ false } 

@@ -5,7 +5,7 @@ export default createMuiTheme({
 
   palette: {
     primary: {
-      main: "#8FCFD1"
+      main: "#6FCF97"
     },
     secondary: {
       main: "#52A8D9"
@@ -44,6 +44,11 @@ export default createMuiTheme({
   typography: {},
 
   overrides: {
+    MuiTextField: {
+      root: {
+        variant: "outlined"
+      }
+    },
     MuiCssBaseline: {
       "@global": {
         "::-webkit-scrollbar-track": {
