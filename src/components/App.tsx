@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import AccessTokenRefresh from "./containers/access-token-refresh";
-import WelcomeScreen from "./screens/welcome-screen/welcome-screen";
+import Home from "./screens/home-screen/home-screen";
 import MapScreen from "./screens/map-screen/map-screen";
 import SavedRoutes from "./screens/saved-routes-screen/saved-routes";
 import Statistics from "./screens/statistics-screen/statistics";
@@ -38,7 +38,7 @@ class App extends React.Component<Props, State> {
               exact
               path="/"
               render={() => (
-                <WelcomeScreen />
+                <Home />
               )}
             />
             <Route

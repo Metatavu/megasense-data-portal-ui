@@ -1,9 +1,11 @@
+import { Container, Typography } from "@material-ui/core";
 import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { AppAction } from "../../../actions";
 import strings from "../../../localization/strings";
 import { AccessToken, StoreState } from "../../../types";
+import accessTokenRefresh from "../../containers/access-token-refresh";
 import AppLayout from "../../layouts/app-layout/app-layout";
 
 /**
@@ -22,7 +24,7 @@ interface State {
 /**
  * Component for warehouses screen
  */
-class WelcomeScreen extends React.Component<Props, State> {
+class Home extends React.Component<Props, State> {
 
   /**
    * Component constructor
@@ -40,10 +42,13 @@ class WelcomeScreen extends React.Component<Props, State> {
    */
   render() {
 
-
     return (
       <AppLayout>
-
+        <Container>
+        <Typography variant="h3">
+          { strings.hello } User's name here
+        </Typography>
+        </Container>
       </AppLayout>
     );
   }
@@ -71,4 +76,4 @@ export function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(WelcomeScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -4,6 +4,8 @@ import LocalizedStrings, { LocalizedStringsMethods } from "localized-strings";
  * Interface describing localized strings
  */
 export interface IStrings extends LocalizedStringsMethods {
+  frontPage: string;
+  hello: string;
   to: string;
   from: string;
   map: string;
@@ -46,7 +48,6 @@ export interface IStrings extends LocalizedStringsMethods {
   deleteAccount: string;
   deleteAccountDialogTitle: string;
   deleteAccountDialogText: string;
-
   viewRoute: string;
   deleteRoute: string;
 }

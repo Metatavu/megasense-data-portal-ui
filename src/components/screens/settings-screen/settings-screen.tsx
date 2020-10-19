@@ -6,9 +6,7 @@ import strings from "../../../localization/strings";
 import { AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { globalStyles } from "../../../styles/globalStyles"
-import { Container, Box, Divider, InputLabel, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, Select, WithStyles } from '@material-ui/core';
-
-
+import { Container, Box, Divider, InputLabel, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, Select, WithStyles, Card, CardHeader, Grid, CardContent } from '@material-ui/core';
 
 /**
  * Interface describing component props
@@ -54,71 +52,70 @@ class Settings extends React.Component<Props, State> {
     return (
       <AppLayout>
         <Container>
-          <Typography variant="h3" component="h3">
-            {strings.settings}
-          </Typography>
-          <Box mt={ 3 } mb={ 3 }>
-            <InputLabel htmlFor="outlined-age-native-simple">{strings.airQualityMode}</InputLabel>
-            <Select
-              native
-              variant="outlined"
-            >
-              <option>Air quality mode 1</option>
-              <option>Air quality mode 2</option>
-              <option>Air quality mode 3</option>
-            </Select>
-          </Box>
-          <Box mt={ 3 } mb={ 3 }>
-            <InputLabel htmlFor="outlined-age-native-simple">{strings.movementOptions}</InputLabel>
-            <Select
-              native
-              variant="outlined"
-            >
-              <option>{strings.waliking}</option>
-              <option>{strings.wheelerchair}</option>
-            </Select>
-          </Box>
-          <Box mt={ 3 } mb={ 3 }>
-            <Typography variant="h4" component="h4">
-              { strings.homeAddress }
-            </Typography>
-            <TextField id="outlined-basic" label={ strings.streetAddress } variant="outlined" />
-          </Box>
-          <Box mt={ 3 } mb={ 3 }>
-            <TextField id="outlined-basic" label={ strings.city } variant="outlined" />
-          </Box>
-          <Box mt={ 3 } mb={ 3 }>
-            <TextField id="outlined-basic" label={ strings.zipCode } variant="outlined" />
-          </Box>
-          <Box mt={ 3 } mb={ 3 }>
-            <TextField id="outlined-basic" label={ strings.country } variant="outlined" />
-          </Box>
-          <Box mt={ 2 } mb={ 2 }>
-            <Button variant="contained" className={ classes.successButton }>{ strings.applyChanges }</Button>
-          </Box>
-          <Divider variant="fullWidth" orientation="horizontal" />
-          <Box pt={ 3 } pb={ 3 }>
-            <Button variant="contained" className={ classes.primaryButton }>
-              { strings.downloadData }
-            </Button>
-          </Box>
-          <Box pt={ 3 } pb={ 3 }>
-            <Button variant="contained" className={ classes.successButton }>
-              { strings.changeUserData }
-            </Button>
-          </Box>
-          <Box pt={ 3 } pb={ 3 }>
-            <Button variant="contained" className={classes.errorButton} onClick={() => this.DisplayDeleteDialog()}>
-              { strings.deleteAccount }
-            </Button>
-          </Box>
+          <Grid container spacing = { 3 }>
+          <Grid item xs={ 12 }>
+            <Card>
+              <CardHeader>
+              </CardHeader>
+              <Typography variant="h3" component="h3">
+                { strings.settings }
+              </Typography>
+            </Card>
+          </Grid>
+          <Grid item xs={ 12 } sm={ 6 }>
+            <Card>
+              <CardHeader>
+                Something here
+              </CardHeader>
+              <CardContent>
+                <Box pt={ 3 } pb={ 3 }>
+                  <Button variant="contained" >
+                    { strings.downloadData }
+                  </Button>
+                </Box>
+                <Box pt={ 3 } pb={ 3 }>
+                  <Button variant="contained" >
+                    { strings.changeUserData }
+                  </Button>
+                </Box>
+                <Box pt={ 3 } pb={ 3 }>
+                  <Button variant="contained" className={classes.errorButton} onClick={() => this.DisplayDeleteDialog()}>
+                    { strings.deleteAccount }
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid xs={ 6 }>
+            <Card>
+              <CardHeader>
+                { strings.homeAddress }
+              </CardHeader>
+              <CardContent>
+                <Box mt={ 2 } mb={ 2 }>
+                  <TextField id="outlined-basic" label={strings.streetAddress} variant="outlined" />
+                </Box>
+                <Box mt={ 3 } mb={ 3 }>
+                  <TextField id="outlined-basic" label={strings.city} variant="outlined" />
+                </Box>
+                <Box mt={ 3 } mb={ 3 }>
+                  <TextField id="outlined-basic" label={strings.zipCode} variant="outlined" />
+                </Box>
+                <Box mt={ 3 } mb={ 3 }>
+                  <TextField id="outlined-basic" label={strings.country} variant="outlined" />
+                </ Box>
+                <Button variant="contained" className={classes.successButton}>{strings.applyChanges}</Button>
+              </CardContent>
+            </Card>
+          </Grid>
+          </Grid>
           <Dialog
-            open={ this.state.visible }
+            open={this.state.visible}
             onClose={() => this.DisplayDeleteDialog()}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{ strings.deleteAccountDialogTitle }</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{strings.deleteAccountDialogTitle}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
                 { strings.deleteAccountDialogText }

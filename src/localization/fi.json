@@ -1,5 +1,7 @@
 {
   "yourTokenIs": "Avaimesi on: ",
+  "frontPage": "Etusivu",
+  "hello": "Hei,",
   "map": "Kartta",
   "from": "Paikasta",
   "to": "Paikkaan",
@@ -42,7 +44,6 @@
   "deleteAccount": "Poista tilisi",
   "deleteAccountDialogTitle": "Oletko varma että haluat poistaa tilisi?",
   "deleteAccountDialogText": "Jos painat kyllä, tätä tiliä ei voi enää palauttaa. Sinut ohjataan kirjautumissivulle.",
-
   "viewRoute": "Näytä reitti",
   "deleteRoute": "Poista reitti"
 }
