@@ -5,7 +5,6 @@ import { Dispatch } from "redux";
 import { AppAction } from "../../../actions";
 import strings from "../../../localization/strings";
 import { AccessToken, StoreState } from "../../../types";
-import accessTokenRefresh from "../../containers/access-token-refresh";
 import AppLayout from "../../layouts/app-layout/app-layout";
 
 /**
@@ -13,6 +12,7 @@ import AppLayout from "../../layouts/app-layout/app-layout";
  */
 interface Props {
   accessToken?: AccessToken;
+  keycloak?: Keycloak.KeycloakInstance
 }
 
 /**
@@ -41,12 +41,11 @@ class Home extends React.Component<Props, State> {
    * Component render method
    */
   render() {
-
     return (
       <AppLayout>
         <Container>
         <Typography variant="h3">
-          { strings.hello } User's name here
+          { strings.hello } { this.props.keycloak?.profile?.firstName || strings.user.toLowerCase() }
         </Typography>
         </Container>
       </AppLayout>
@@ -62,7 +61,8 @@ class Home extends React.Component<Props, State> {
  */
 export function mapStateToProps(state: StoreState) {
   return {
-    accessToken: state.accessToken
+    accessToken: state.accessToken,
+    keycloak: state.keycloak
   };
 }
 
