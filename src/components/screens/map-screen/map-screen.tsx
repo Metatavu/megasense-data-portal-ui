@@ -121,6 +121,10 @@ class MapScreen extends React.Component<Props, State> {
       } catch (error) {}
       this.setState({ loadingUserSettings: false });
     }
+
+    const airQualityApi = Api.getAirQualityApi(accessToken);
+    const airQuality = await airQualityApi.getAirQuality({ pollutant: "SULFUR_DIOXIDE", boundingBoxCorner1: "55,20", boundingBoxCorner2: "65,30" });
+    this.setState({ airQuality });
   }
 
   public render = () => {
@@ -251,18 +255,15 @@ class MapScreen extends React.Component<Props, State> {
           <Marker position={ this.coordinatesFromString(locationTo.coordinates) }/>
         }
 
-        <HeatmapLayer
-          points={ airQuality }
-          longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
-          latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
-          intensityExtractor={ (airQuality: AirQuality) => (airQuality.pollutionValue * 2) }
-          gradient={{
-            0.1: '#89BDE0', 0.2: '#96E3E6', 0.4: '#82CEB6',
-            0.6: '#FAF3A5', 0.8: '#F5D98B', '1.0': '#DE9A96'
-          }}
-          blur={ 50 }
-          radius={ 60 }
-        />
+        { this.state.mapViewport.zoom === 6 &&
+          <HeatmapLayer
+            points={ airQuality }
+            longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
+            latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
+            intensityExtractor={ (airQuality: AirQuality) => airQuality.pollutionValue }
+            />
+        }
+
       </Map>
     );
   }
@@ -422,37 +423,7 @@ class MapScreen extends React.Component<Props, State> {
    * @param mapViewport a new viewport
    */
   private onViewportChange = async (mapViewport: Viewport) => {
-    this.setState({ mapViewport, airQuality: [] });
-
-    if (!this.props.accessToken) {
-      return;
-    }
-
-    const airQualityApi = Api.getAirQualityApi(this.props.accessToken);
-    const bounds = this.mapRef.current?.leafletElement.getBounds();
-    const southWestBound = bounds?.getSouthWest();
-    const northEastBound = bounds?.getNorthEast();
-
-    const previousZoom = this.state.previousZoom;
-    this.setState({ previousZoom: mapViewport.zoom!});
-    if (southWestBound && northEastBound && mapViewport.zoom && previousZoom !== 13 && mapViewport.zoom === 13) {
-
-      if (southWestBound.lat < 55 || southWestBound.lng < 20 || northEastBound.lat > 65 || northEastBound.lng > 29 ) {
-        return;
-      }
-  
-      const boundingBoxCorner1 =  southWestBound.lat + "," + southWestBound.lng;
-      const boundingBoxCorner2 =  northEastBound.lat + "," + northEastBound.lng;
-  
-      try {
-        const airQuality = await airQualityApi.getAirQuality({ pollutant: "MICRO_PARTICLES", precision: 300, boundingBoxCorner1, boundingBoxCorner2 });
-        console.log(airQuality);
-        this.setState({ airQuality });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    
+    this.setState({ mapViewport });
   }
 
   /**
