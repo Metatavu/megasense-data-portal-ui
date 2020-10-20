@@ -1,8 +1,5 @@
-import classes from "*.module.css";
-import { Box, Button, Divider, Drawer, Hidden, List, ListItem, MenuItem, Typography, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Button, Divider, Drawer, List, ListItem, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
-import { Link } from "react-router-dom";
-import strings from "../../../localization/strings";
 import { styles } from "./drawer-menu.styles"
 
 /**
@@ -32,26 +29,26 @@ class DrawerMenu extends React.Component<Props, State> {
   }
 
   public render = () => {
-    const { classes, routing } = this.props;
+    const { classes, routing, statisticsControls, open } = this.props;
     
     return (
       <div>
         <Drawer
           variant="permanent"
           anchor="left"
-          open={ this.props.open }
+          open={ open }
           ModalProps={{
             keepMounted: true
           }}
         >
-          <div className={classes.drawerContainer}>
+          <div className={ classes.drawerContainer }>
             <Box mt={10}>
               <List>
                 <ListItem>
-                  {this.props.routing}
+                  { routing }
                 </ListItem>
                 <ListItem>
-                  {this.props.statisticsControls}
+                  { statisticsControls }
                 </ListItem>
                 <Divider />
                 <Button variant="text">

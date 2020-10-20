@@ -45,6 +45,7 @@ interface State {
   previousZoom: number;
   locationFromTextInput: string;
   locationToTextInput: string;
+  loadingUserSettings: boolean;
 }
 
 class MapScreen extends React.Component<Props, State> {
@@ -65,15 +66,21 @@ class MapScreen extends React.Component<Props, State> {
       airQuality: [],
       previousZoom: 12,
       locationFromTextInput: "",
-      locationToTextInput: ""
+      locationToTextInput: "",
+      loadingUserSettings: false
     };
 
     this.mapRef = React.createRef();
 
   }
 
-  public componentDidMount = () => {
-    const { displayedRoute, updateDisplayedRoute } = this.props;
+  public componentDidMount = async () => {
+    const { displayedRoute, updateDisplayedRoute, accessToken } = this.props;
+
+    if (!accessToken) {
+      return;
+    }
+
     if (displayedRoute) {
       updateDisplayedRoute(undefined);
       const route = PolyUtil.decode(displayedRoute.routePoints);
@@ -96,14 +103,55 @@ class MapScreen extends React.Component<Props, State> {
         mapViewport: { center: [ newCenterCoordinates[0], newCenterCoordinates[1] ] as [number, number], zoom: 13 }
       }
       this.setState(newState);
+    } else {
+      this.setState({ loadingUserSettings: true });
+      try {
+        const userSettingsApi = Api.getUserSettingsApi(accessToken);
+        const userSettings = await userSettingsApi.getUserSettings();
+        const homeAddress = userSettings.homeAddress;
+
+        if (homeAddress) {
+          const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: homeAddress }, process.env.REACT_APP_NOMINATIM_URL);
+          if (nominatimResponse.length === 1) {
+            const center = [Number.parseFloat(nominatimResponse[0].lat), Number.parseFloat(nominatimResponse[0].lon)] as [number, number];
+            const mapViewport = { center, zoom: 13 }
+            this.setState({ mapViewport });
+          }
+        }
+      } catch (error) {}
+      this.setState({ loadingUserSettings: false });
     }
   }
 
   public render = () => {
-    const { classes } = this.props;
-    const { route, locationFrom, locationTo, locationFromOptions, locationToOptions, locationFromTextInput, locationToTextInput, airQuality } = this.state;
+    const { loadingUserSettings } = this.state;
 
-    const routingComponents = (
+    if (loadingUserSettings) {
+      return (
+        <AppLayout>
+          <CircularProgress size={ 200 }/>
+        </AppLayout>
+      );
+    }
+  
+    return (
+      <AppLayout>
+        <DrawerMenu open={ true } routing= { this.renderRoutingForm() }/>
+        { this.renderMap() }
+      </AppLayout>
+      
+    );
+  }
+
+
+  /**
+   * Renders the form for routing
+   */
+  private renderRoutingForm = (): JSX.Element => {
+    const { classes } = this.props;
+    const { locationFrom, locationTo, locationFromOptions, locationToOptions, locationFromTextInput, locationToTextInput, loadingRoute, savingRoute } = this.state;
+
+    return (
       <div className={ classes.routingForm }>
         <div className={ classes.routingFormPart }>
           <Autocomplete 
@@ -116,7 +164,7 @@ class MapScreen extends React.Component<Props, State> {
             className={ classes.routingFormInput }
             size="small" 
             renderInput={ (params) => 
-              <TextField 
+              <TextField
                 placeholder={ strings.from } 
                 {...params} 
                 variant="outlined" 
@@ -144,21 +192,21 @@ class MapScreen extends React.Component<Props, State> {
 
         </div>
         <div className={ classes.routingFormPart }>
-          { !this.state.loadingRoute && 
+          { !loadingRoute && 
             <Button onClick={ this.updateRoute } className={ classes.routingFormButton }>{ strings.findRoute }</Button>
           }
 
           {
-            this.state.loadingRoute &&
+            loadingRoute &&
             <CircularProgress color="inherit" className={ classes.routingFormLoader } />
           }
 
-          { !this.state.savingRoute && 
+          { !savingRoute && 
             <Button onClick={ this.saveRoute } className={ classes.routingFormButton }>{ strings.saveRoute }</Button>
           }
 
           {
-            this.state.savingRoute &&
+            savingRoute &&
             <CircularProgress color="inherit" className={ classes.routingFormLoader } />
           }
 
@@ -166,53 +214,56 @@ class MapScreen extends React.Component<Props, State> {
 
       </div>
     );
-  
+  }
+
+  /**
+   * Renders the map
+   */
+  private renderMap = (): JSX.Element => {
+    const { route, locationFrom, locationTo, airQuality } = this.state;
+
     return (
-      <AppLayout>
-        <DrawerMenu open={ true } routing= { routingComponents }/>
-        <Map 
-          ref={ this.mapRef }
-          zoomControl={ false } 
-          ondblclick={ this.addRoutePoint } 
-          doubleClickZoom={ false } 
-          style={{ width: "100vw", height: window.innerHeight - 140 }} 
-          onViewportChange={ this.onViewportChange }  
-          viewport={ this.state.mapViewport }
+      <Map 
+        ref={ this.mapRef }
+        zoomControl={ false } 
+        ondblclick={ this.addRoutePoint } 
+        doubleClickZoom={ false } 
+        style={{ width: "100vw", height: window.innerHeight - 140 }} 
+        onViewportChange={ this.onViewportChange }  
+        viewport={ this.state.mapViewport }
         >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-          />
-          {
-            route && 
-            <Polyline positions={ route }/>
-          }
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+        />
+        {
+          route && 
+          <Polyline positions={ route }/>
+        }
 
-          {
-            locationFrom?.coordinates &&
-            <Marker position={ this.coordinatesFromString(locationFrom.coordinates) }/>
-          }
+        {
+          locationFrom?.coordinates &&
+          <Marker position={ this.coordinatesFromString(locationFrom.coordinates) }/>
+        }
 
-          {
-            locationTo?.coordinates &&
-            <Marker position={ this.coordinatesFromString(locationTo.coordinates) }/>
-          }
+        {
+          locationTo?.coordinates &&
+          <Marker position={ this.coordinatesFromString(locationTo.coordinates) }/>
+        }
 
-          <HeatmapLayer
-            points={ airQuality }
-            longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
-            latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
-            intensityExtractor={ (airQuality: AirQuality) => (airQuality.pollutionValue * 2) }
-            gradient={{
-              0.1: '#89BDE0', 0.2: '#96E3E6', 0.4: '#82CEB6',
-              0.6: '#FAF3A5', 0.8: '#F5D98B', '1.0': '#DE9A96'
-            }}
-            blur={ 50 }
-            radius={ 60 }
-          />
-        </Map>
-      </AppLayout>
-      
+        <HeatmapLayer
+          points={ airQuality }
+          longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
+          latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
+          intensityExtractor={ (airQuality: AirQuality) => (airQuality.pollutionValue * 2) }
+          gradient={{
+            0.1: '#89BDE0', 0.2: '#96E3E6', 0.4: '#82CEB6',
+            0.6: '#FAF3A5', 0.8: '#F5D98B', '1.0': '#DE9A96'
+          }}
+          blur={ 50 }
+          radius={ 60 }
+        />
+      </Map>
     );
   }
 
@@ -305,7 +356,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ locationTo });
   }
 
-    /**
+  /**
    * Fires when the value of the text input for locationTo changes and updates the list of options
    * 
    * @param event React event

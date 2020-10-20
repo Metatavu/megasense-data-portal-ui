@@ -50,6 +50,8 @@ export interface IStrings extends LocalizedStringsMethods {
   deleteAccountDialogText: string;
   viewRoute: string;
   deleteRoute: string;
+
+  user: string;
 }
 
 const strings: IStrings = new LocalizedStrings({
