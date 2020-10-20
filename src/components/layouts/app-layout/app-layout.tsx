@@ -2,8 +2,6 @@ import { withStyles, WithStyles } from "@material-ui/core/styles";
 import React from "react";
 import { styles } from "./app-layout.styles";
 import Header from "../../generic/header/header";
-import Drawer from "../../generic/drawer-menu/drawer-menu";
-import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
 
 interface Props extends WithStyles<typeof styles> {
   routing?: JSX.Element
