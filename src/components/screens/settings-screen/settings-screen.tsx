@@ -174,6 +174,11 @@ class Settings extends React.Component<Props, State> {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">{ strings.deleteAccountDialogTitle }</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                { strings.deleteAccountDialogText }
+              </DialogContentText>
+            </DialogContent>
             <DialogActions>
               <Button variant="contained" className={ classes.errorButton } onClick={ () => this.displayDeleteUserDialog() }>
                 { strings.yes }
@@ -192,11 +197,6 @@ class Settings extends React.Component<Props, State> {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">{ strings.locationNotFoundDialogText }</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                { strings.locationNotFoundDialogText }
-              </DialogContentText>
-            </DialogContent>
             <DialogActions>
               <Button variant="contained" className={ classes.errorButton } onClick={ this.closeLocationNotFoundDialog }>
                 { strings.confirmButtonText }
