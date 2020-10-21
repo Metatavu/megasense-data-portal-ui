@@ -31,11 +31,11 @@
   "settings": "Asetukset",
   "airQualityMode": "Ilmanlaadun tila",
   "movementOptions": "Liikkumisasetukset",
-  "waliking": "Kävley",
+  "walking": "Kävely",
   "wheelerchair": "Pyörätuoli",
   "homeAddress": "Kotiosoite",
   "streetAddress": "Katuosoite",
-  "city": "Maa",
+  "city": "Kaupunki",
   "zipCode": "Postinumero",
   "country": "Maa",
   "applyChanges": "Tallenna muutokset",
@@ -47,5 +47,9 @@
   "viewRoute": "Näytä reitti",
   "deleteRoute": "Poista reitti",
 
-  "user": "Käyttäjä"
+  "user": "Käyttäjä",
+
+  "postalCode": "Postinumero",
+  "confirmButtonText": "Selvä",
+  "locationNotFoundDialogText": "Paikkaa ei löydetty"
 }

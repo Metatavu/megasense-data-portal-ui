@@ -8,17 +8,13 @@ import AppLayout from "../../layouts/app-layout/app-layout";
 import { globalStyles } from "../../../styles/globalStyles"
 import { Container, Box, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, WithStyles, Card, CardHeader, Grid, CardContent, CircularProgress } from '@material-ui/core';
 import * as Nominatim from "nominatim-browser";
-import { Autocomplete, AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab";
 import Api from "../../../api";
+import { HomeAddress } from "../../../generated/client";
 
 /**
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof globalStyles> {
-
-}
-
-interface Props {
   accessToken?: AccessToken;
 }
 
@@ -26,13 +22,12 @@ interface Props {
  * Interface describing component state
  */
 interface State {
-  visible: boolean;
-  homeLocationOptions: string[];
-  homeLocation?: string;
-  homeLocationTextInput: string;
+  deleteDialogVisible: boolean;
   userSettingsExist: boolean;
   loadingUserSettings: boolean;
   savingUserSettings: boolean;
+  homeAddress: HomeAddress;
+  locationNotFoundDialogVisible: boolean;
 }
 
 /**
@@ -48,12 +43,17 @@ class Settings extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      visible: false,
-      homeLocationOptions: [],
-      homeLocationTextInput: "",
+      deleteDialogVisible: false,
       userSettingsExist: false,
       savingUserSettings: false,
-      loadingUserSettings: false
+      loadingUserSettings: false,
+      homeAddress: {
+        streetAddress: "",
+        postalCode: "",
+        city: "",
+        country: ""
+      },
+      locationNotFoundDialogVisible: false
     };
   }
 
@@ -68,14 +68,13 @@ class Settings extends React.Component<Props, State> {
     try {
       const userSettingsApi = Api.getUserSettingsApi(accessToken);
       const userSettings = await userSettingsApi.getUserSettings();
-      const homeLocationOptions = [];
       const { homeAddress } = userSettings;
 
       if (homeAddress) {
-        homeLocationOptions.push(homeAddress)
+        this.setState({ homeAddress });
       }
-
-      this.setState({ homeLocation: homeAddress, homeLocationOptions, userSettingsExist: true, homeLocationTextInput: homeAddress || "" });
+      
+      this.setState({ userSettingsExist: true });
     } catch (error) {}
     this.setState({ loadingUserSettings: false });
   }
@@ -85,7 +84,8 @@ class Settings extends React.Component<Props, State> {
    */
   render() {
     const { classes } = this.props;
-    const { homeLocationOptions, homeLocationTextInput, homeLocation, loadingUserSettings, savingUserSettings } = this.state;
+    const { homeAddress, loadingUserSettings, savingUserSettings } = this.state;
+    const { streetAddress, postalCode, city, country } = homeAddress;
 
     return (
       <AppLayout>
@@ -117,7 +117,7 @@ class Settings extends React.Component<Props, State> {
                   </Button>
                 </Box>
                 <Box pt={ 3 } pb={ 3 }>
-                  <Button variant="contained" className={classes.errorButton} onClick={() => this.DisplayDeleteDialog()}>
+                  <Button variant="contained" className={classes.errorButton} onClick={() => this.displayDeleteUserDialog()}>
                     { strings.deleteAccount }
                   </Button>
                 </Box>
@@ -132,33 +132,30 @@ class Settings extends React.Component<Props, State> {
               
               { !loadingUserSettings &&
                 <CardContent>
-                  <Autocomplete
-                    filterOptions={ (options) => options }
-                    onInputChange={ this.onHomeLocationChange } 
-                    inputValue={ homeLocationTextInput } 
-                    onChange={ this.onHomeLocationSelected } 
-                    options={ homeLocationOptions } 
-                    getOptionLabel={(option: string) => option || ""} 
-                    value={ homeLocation }
-                    renderInput={ (params) => 
-                      <Box mb={ 10 }>
-                        <TextField 
-                          placeholder={ strings.homeAddress } 
-                          {...params} 
-                          variant="outlined" 
-                        /> 
-                      </Box>
+                  
+                  <Box mt={ 5 } mb={ 5 }>
+                    <TextField placeholder={ strings.streetAddress } value={ streetAddress } onChange={ this.onStreetAddressChange } />
+                  </Box>
 
-                      } 
-                    />
+                  <Box mt={ 5 } mb={ 5 }>
+                    <TextField placeholder={ strings.postalCode } value={ postalCode } onChange={ this.onPostalCodeChange } />
+                  </Box>
 
-                    { !savingUserSettings &&
-                      <Button onClick={ this.saveHomeAddress } variant="contained" className={ classes.successButton }>{ strings.applyChanges }</Button>
-                    }
+                  <Box mt={ 5 } mb={ 5 }>
+                    <TextField placeholder={ strings.city } value={ city } onChange={ this.onCityChange } />
+                  </Box>
 
-                    {
-                      savingUserSettings && <CircularProgress/>
-                    }
+                  <Box mt={ 5 } mb={ 5 }>
+                    <TextField placeholder={ strings.country } value={ country } onChange={ this.onCountryChange } />
+                  </Box>
+
+                  { !savingUserSettings &&
+                    <Button onClick={ this.saveHomeAddress } variant="contained" className={ classes.successButton }>{ strings.applyChanges }</Button>
+                  }
+
+                  {
+                    savingUserSettings && <CircularProgress/>
+                  }
                 </CardContent>
               }
 
@@ -169,24 +166,40 @@ class Settings extends React.Component<Props, State> {
             </Card>
           </Grid>
           </Grid>
+
           <Dialog
-            open={this.state.visible}
-            onClose={() => this.DisplayDeleteDialog()}
+            open={ this.state.deleteDialogVisible }
+            onClose={ () => this.displayDeleteUserDialog() }
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{strings.deleteAccountDialogTitle}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{ strings.deleteAccountDialogTitle }</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
                 { strings.deleteAccountDialogText }
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button variant="contained" className={classes.errorButton} onClick={() => this.DisplayDeleteDialog()}>
+              <Button variant="contained" className={ classes.errorButton } onClick={ () => this.displayDeleteUserDialog() }>
                 { strings.yes }
               </Button>
-              <Button variant="contained" className={classes.warningButton} onClick={() => this.DisplayDeleteDialog()} color="primary" autoFocus>
+              <Button variant="contained" className={ classes.warningButton } onClick={ () => this.displayDeleteUserDialog() } color="primary" autoFocus>
                 { strings.cancel }
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+
+          <Dialog
+            open={ this.state.locationNotFoundDialogVisible }
+            onClose={ this.closeLocationNotFoundDialog }
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{ strings.locationNotFoundDialogText }</DialogTitle>
+            <DialogActions>
+              <Button variant="contained" className={ classes.errorButton } onClick={ this.closeLocationNotFoundDialog }>
+                { strings.confirmButtonText }
               </Button>
             </DialogActions>
           </Dialog>
@@ -196,73 +209,114 @@ class Settings extends React.Component<Props, State> {
   }
 
   /**
+   * Closes the "location not found"-dialog
+   */
+  private closeLocationNotFoundDialog = () => {
+    this.setState({ locationNotFoundDialogVisible: false });
+  }
+
+  /**
+   * Changes the value of streetAddress in the component state
+   * 
+   * @param event a change event that contains a new value
+   * 
+   */
+  private onStreetAddressChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const homeAddress = this.state.homeAddress;
+    homeAddress.streetAddress = event.target.value;
+    this.setState({ homeAddress });
+  }
+
+  /**
+   * Changes the value of postalCode in the component state
+   * 
+   * @param event a change event that contains a new value
+   * 
+   */
+  private onPostalCodeChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const homeAddress = this.state.homeAddress;
+    homeAddress.postalCode = event.target.value;
+    this.setState({ homeAddress });
+  }
+
+  /**
+   * Changes the value of city in the component state
+   * 
+   * @param event a change event that contains a new value
+   * 
+   */
+  private onCityChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const homeAddress = this.state.homeAddress;
+    homeAddress.city = event.target.value;
+    this.setState({ homeAddress });
+  }
+
+  /**
+   * Changes the value of country in the component state
+   * 
+   * @param event a change event that contains a new value
+   * 
+   */
+  private onCountryChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const homeAddress = this.state.homeAddress;
+    homeAddress.country = event.target.value;
+    this.setState({ homeAddress });
+  }
+
+  /**
    * Saves the home address
    */
   private saveHomeAddress = async () => {
     const { accessToken } = this.props;
-    const { homeLocation, userSettingsExist } = this.state;
+    const { homeAddress, userSettingsExist } = this.state;
+    const { streetAddress, postalCode, city, country } = homeAddress;
 
     if (!accessToken) {
       return;
     }
 
+    this.setState({ savingUserSettings: true });
+
     const userSettingsApi = Api.getUserSettingsApi(accessToken);
-
-    this.setState({ loadingUserSettings: true });
-    try {
-      if (userSettingsExist) {
-        await userSettingsApi.updateUserSettings({ userSettings: { homeAddress: homeLocation } });
-      } else {
-        await userSettingsApi.createUserSettings({ userSettings: { homeAddress: homeLocation } });
+    if (streetAddress === "" && postalCode === "" && city === "" && country === "") {
+      try {
+        if (userSettingsExist) {
+          await userSettingsApi.updateUserSettings({ userSettings: {} });
+        } else {
+          await userSettingsApi.createUserSettings({ userSettings: {} });
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      const geocodeRequest = { email: "devs@metatavu.fi", street: streetAddress, postalcode: postalCode, city, country };
+      const nominatimResponse: any[] = await Nominatim.geocode(geocodeRequest, process.env.REACT_APP_NOMINATIM_URL);
+      if (nominatimResponse.length !== 1) {
+        this.setState({ locationNotFoundDialogVisible: true, savingUserSettings: false });
+        return;
+      }
+  
+      try {
+        if (userSettingsExist) {
+          await userSettingsApi.updateUserSettings({ userSettings: { homeAddress } });
+        } else {
+          await userSettingsApi.createUserSettings({ userSettings: { homeAddress } });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
-    this.setState({ loadingUserSettings: false });
-  }
 
-  /**
-   * Fires when the value of the text input for home location changes and updates the list of options
-   * 
-   * @param event React event
-   * @param homeLocationTextInput a new value for the text input for home location
-   * @param reason autocomplete change reason
-   */
-  private onHomeLocationChange = async (event: ChangeEvent<{}>, homeLocationTextInput: string, reason: AutocompleteInputChangeReason) => {
-    this.setState({ homeLocationTextInput });
-    try {
-      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: homeLocationTextInput }, process.env.REACT_APP_NOMINATIM_URL);
-      const homeLocationOptions = nominatimResponse.map(option => {
-        return option.display_name;
-      });
 
-      this.setState({ homeLocationOptions });
-    } catch (error) {
-      console.log(error);
-      this.setState({ homeLocationOptions: [] });
-    }
-  }
-
-  /**
-   * Fires when a new home location is selected
-   * 
-   * @param event React event
-   * @param homeLocation a new value for home location
-   * @param reason autocomplete change reason
-   */
-  private onHomeLocationSelected = (event: React.ChangeEvent<{}>, homeLocation: string | null | undefined, reason: AutocompleteChangeReason) => {
-    if (homeLocation === null) {
-      homeLocation = undefined;
-    }
-    this.setState({ homeLocation });
+    this.setState({ savingUserSettings: false });
   }
 
   /**
    * Displays delete dialog
    */
-  private DisplayDeleteDialog = () => {
+  private displayDeleteUserDialog = () => {
     this.setState({
-      visible: this.state.visible ? false : true,
+      deleteDialogVisible: this.state.deleteDialogVisible ? false : true,
     })
   }
 }
