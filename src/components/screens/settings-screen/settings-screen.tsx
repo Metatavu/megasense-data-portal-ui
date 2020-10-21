@@ -133,32 +133,32 @@ class Settings extends React.Component<Props, State> {
               { !loadingUserSettings &&
                 <CardContent>
                   <Autocomplete
-                  onInputChange={ this.onHomeLocationChange } 
-                  inputValue={ homeLocationTextInput } 
-                  onChange={ this.onHomeLocationSelected } 
-                  options={ homeLocationOptions } 
-                  getOptionLabel={(option: string) => option || ""} 
-                  value={ homeLocation }
-                  renderInput={ (params) => 
-                    <Box mb={ 10 }>
-                      <TextField 
-                        placeholder={ strings.homeAddress } 
-                        {...params} 
-                        variant="outlined" 
-                      /> 
-                    </Box>
+                    filterOptions={ (options) => options }
+                    onInputChange={ this.onHomeLocationChange } 
+                    inputValue={ homeLocationTextInput } 
+                    onChange={ this.onHomeLocationSelected } 
+                    options={ homeLocationOptions } 
+                    getOptionLabel={(option: string) => option || ""} 
+                    value={ homeLocation }
+                    renderInput={ (params) => 
+                      <Box mb={ 10 }>
+                        <TextField 
+                          placeholder={ strings.homeAddress } 
+                          {...params} 
+                          variant="outlined" 
+                        /> 
+                      </Box>
 
-                    } 
-                  />
+                      } 
+                    />
 
-                  { !savingUserSettings &&
-                    <Button onClick={ this.saveHomeAddress } variant="contained" className={ classes.successButton }>{ strings.applyChanges }</Button>
-                  }
+                    { !savingUserSettings &&
+                      <Button onClick={ this.saveHomeAddress } variant="contained" className={ classes.successButton }>{ strings.applyChanges }</Button>
+                    }
 
-                  {
-                    savingUserSettings && <CircularProgress/>
-                  }
-                  
+                    {
+                      savingUserSettings && <CircularProgress/>
+                    }
                 </CardContent>
               }
 

@@ -22,9 +22,13 @@ import {
 
 export interface GetAirQualityRequest {
     pollutant: string;
-    precision: number;
     boundingBoxCorner1: string;
     boundingBoxCorner2: string;
+}
+
+export interface GetAirQualityForCoordinatesRequest {
+    coordinates: string;
+    pollutant: string;
 }
 
 /**
@@ -40,10 +44,6 @@ export class AirQualityApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('pollutant','Required parameter requestParameters.pollutant was null or undefined when calling getAirQuality.');
         }
 
-        if (requestParameters.precision === null || requestParameters.precision === undefined) {
-            throw new runtime.RequiredError('precision','Required parameter requestParameters.precision was null or undefined when calling getAirQuality.');
-        }
-
         if (requestParameters.boundingBoxCorner1 === null || requestParameters.boundingBoxCorner1 === undefined) {
             throw new runtime.RequiredError('boundingBoxCorner1','Required parameter requestParameters.boundingBoxCorner1 was null or undefined when calling getAirQuality.');
         }
@@ -56,10 +56,6 @@ export class AirQualityApi extends runtime.BaseAPI {
 
         if (requestParameters.pollutant !== undefined) {
             queryParameters['pollutant'] = requestParameters.pollutant;
-        }
-
-        if (requestParameters.precision !== undefined) {
-            queryParameters['precision'] = requestParameters.precision;
         }
 
         if (requestParameters.boundingBoxCorner1 !== undefined) {
@@ -95,6 +91,48 @@ export class AirQualityApi extends runtime.BaseAPI {
      */
     async getAirQuality(requestParameters: GetAirQualityRequest): Promise<Array<AirQuality>> {
         const response = await this.getAirQualityRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Get air quality for specific coordinates
+     */
+    async getAirQualityForCoordinatesRaw(requestParameters: GetAirQualityForCoordinatesRequest): Promise<runtime.ApiResponse<AirQuality>> {
+        if (requestParameters.coordinates === null || requestParameters.coordinates === undefined) {
+            throw new runtime.RequiredError('coordinates','Required parameter requestParameters.coordinates was null or undefined when calling getAirQualityForCoordinates.');
+        }
+
+        if (requestParameters.pollutant === null || requestParameters.pollutant === undefined) {
+            throw new runtime.RequiredError('pollutant','Required parameter requestParameters.pollutant was null or undefined when calling getAirQualityForCoordinates.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = typeof token === 'function' ? token("bearerAuth", []) : token;
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/airQuality/{coordinates}/{pollutant}`.replace(`{${"coordinates"}}`, encodeURIComponent(String(requestParameters.coordinates))).replace(`{${"pollutant"}}`, encodeURIComponent(String(requestParameters.pollutant))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => AirQualityFromJSON(jsonValue));
+    }
+
+    /**
+     * Get air quality for specific coordinates
+     */
+    async getAirQualityForCoordinates(requestParameters: GetAirQualityForCoordinatesRequest): Promise<AirQuality> {
+        const response = await this.getAirQualityForCoordinatesRaw(requestParameters);
         return await response.value();
     }
 

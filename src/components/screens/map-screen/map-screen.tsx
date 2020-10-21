@@ -75,52 +75,21 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   public componentDidMount = async () => {
-    const { displayedRoute, updateDisplayedRoute, accessToken } = this.props;
+    const { displayedRoute, accessToken } = this.props;
 
     if (!accessToken) {
       return;
     }
 
     if (displayedRoute) {
-      updateDisplayedRoute(undefined);
-      const route = PolyUtil.decode(displayedRoute.routePoints);
-      const firstItem = route[0];
-      const lastItem = route[ route.length - 1 ];
-
-      const locationFromCoordinates = `${ firstItem[0] },${ firstItem[1] }`;
-      const locationFrom = { coordinates: locationFromCoordinates, name: displayedRoute.locationFromName };
-      
-      const locationToCoordinates = `${ lastItem[0] },${ lastItem[1] }`;
-      const locationTo = { coordinates: locationToCoordinates, name: displayedRoute.locationToName };
-      
-      const newCenterCoordinates = this.coordinatesFromString(locationFromCoordinates);
-      const newState = {
-        route, 
-        locationFrom, 
-        locationTo, 
-        locationFromTextInput: displayedRoute.locationFromName, 
-        locationToTextInput: displayedRoute.locationToName,
-        mapViewport: { center: [ newCenterCoordinates[0], newCenterCoordinates[1] ] as [number, number], zoom: 13 }
-      }
-      this.setState(newState);
+     this.displaySavedRoute(displayedRoute);
     } else {
-      this.setState({ loadingUserSettings: true });
-      try {
-        const userSettingsApi = Api.getUserSettingsApi(accessToken);
-        const userSettings = await userSettingsApi.getUserSettings();
-        const homeAddress = userSettings.homeAddress;
-
-        if (homeAddress) {
-          const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: homeAddress }, process.env.REACT_APP_NOMINATIM_URL);
-          if (nominatimResponse.length === 1) {
-            const center = [Number.parseFloat(nominatimResponse[0].lat), Number.parseFloat(nominatimResponse[0].lon)] as [number, number];
-            const mapViewport = { center, zoom: 13 }
-            this.setState({ mapViewport });
-          }
-        }
-      } catch (error) {}
-      this.setState({ loadingUserSettings: false });
+      this.loadUserSettings(accessToken);
     }
+
+    const airQualityApi = Api.getAirQualityApi(accessToken);
+    const airQuality = await airQualityApi.getAirQuality({ pollutant: "SULFUR_DIOXIDE", boundingBoxCorner1: "55,20", boundingBoxCorner2: "65,30" });
+    this.setState({ airQuality });
   }
 
   public render = () => {
@@ -143,6 +112,57 @@ class MapScreen extends React.Component<Props, State> {
     );
   }
 
+  /**
+   * Displays already saved route
+   * 
+   * @param routeToDisplay route to display
+   */
+  private displaySavedRoute = (routeToDisplay: Route) => {
+    const { updateDisplayedRoute } = this.props;
+    updateDisplayedRoute(undefined);
+    const route = PolyUtil.decode(routeToDisplay.routePoints);
+    const firstItem = route[0];
+    const lastItem = route[ route.length - 1 ];
+
+    const locationFromCoordinates = `${ firstItem[0] },${ firstItem[1] }`;
+    const locationFrom = { coordinates: locationFromCoordinates, name: routeToDisplay.locationFromName };
+    
+    const locationToCoordinates = `${ lastItem[0] },${ lastItem[1] }`;
+    const locationTo = { coordinates: locationToCoordinates, name: routeToDisplay.locationToName };
+    
+    const newCenterCoordinates = this.coordinatesFromString(locationFromCoordinates);
+    const newState = {
+      route, 
+      locationFrom, 
+      locationTo, 
+      locationFromTextInput: routeToDisplay.locationFromName, 
+      locationToTextInput: routeToDisplay.locationToName,
+      mapViewport: { center: [ newCenterCoordinates[0], newCenterCoordinates[1] ] as [number, number], zoom: 13 }
+    }
+    this.setState(newState);
+  }
+
+  /**
+   * Loads user settings
+   */
+  private loadUserSettings = async (accessToken: AccessToken) => {
+    this.setState({ loadingUserSettings: true });
+    try {
+      const userSettingsApi = Api.getUserSettingsApi(accessToken);
+      const userSettings = await userSettingsApi.getUserSettings();
+      const homeAddress = userSettings.homeAddress;
+
+      if (homeAddress) {
+        const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: homeAddress }, process.env.REACT_APP_NOMINATIM_URL);
+        if (nominatimResponse.length === 1) {
+          const center = [Number.parseFloat(nominatimResponse[0].lat), Number.parseFloat(nominatimResponse[0].lon)] as [number, number];
+          const mapViewport = { center, zoom: 13 }
+          this.setState({ mapViewport });
+        }
+      }
+    } catch (error) {}
+    this.setState({ loadingUserSettings: false });
+  }
 
   /**
    * Renders the form for routing
@@ -154,7 +174,8 @@ class MapScreen extends React.Component<Props, State> {
     return (
       <div className={ classes.routingForm }>
         <div className={ classes.routingFormPart }>
-          <Autocomplete 
+          <Autocomplete
+            filterOptions={ (options) => options }
             onInputChange={ this.onLocationFromChange } 
             inputValue={ locationFromTextInput } 
             onChange={ this.onLocationFromSelected } 
@@ -172,7 +193,8 @@ class MapScreen extends React.Component<Props, State> {
             } 
           />
 
-          <Autocomplete 
+          <Autocomplete
+            filterOptions={ (options) => options } 
             onInputChange={ this.onLocationToChange } 
             inputValue={ locationToTextInput } 
             onChange={ this.onLocationToSelected } 
@@ -251,18 +273,15 @@ class MapScreen extends React.Component<Props, State> {
           <Marker position={ this.coordinatesFromString(locationTo.coordinates) }/>
         }
 
-        <HeatmapLayer
-          points={ airQuality }
-          longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
-          latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
-          intensityExtractor={ (airQuality: AirQuality) => (airQuality.pollutionValue * 2) }
-          gradient={{
-            0.1: '#89BDE0', 0.2: '#96E3E6', 0.4: '#82CEB6',
-            0.6: '#FAF3A5', 0.8: '#F5D98B', '1.0': '#DE9A96'
-          }}
-          blur={ 50 }
-          radius={ 60 }
-        />
+        { this.state.mapViewport.zoom === 6 &&
+          <HeatmapLayer
+            points={ airQuality }
+            longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
+            latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
+            intensityExtractor={ (airQuality: AirQuality) => airQuality.pollutionValue }
+            />
+        }
+
       </Map>
     );
   }
@@ -422,37 +441,7 @@ class MapScreen extends React.Component<Props, State> {
    * @param mapViewport a new viewport
    */
   private onViewportChange = async (mapViewport: Viewport) => {
-    this.setState({ mapViewport, airQuality: [] });
-
-    if (!this.props.accessToken) {
-      return;
-    }
-
-    const airQualityApi = Api.getAirQualityApi(this.props.accessToken);
-    const bounds = this.mapRef.current?.leafletElement.getBounds();
-    const southWestBound = bounds?.getSouthWest();
-    const northEastBound = bounds?.getNorthEast();
-
-    const previousZoom = this.state.previousZoom;
-    this.setState({ previousZoom: mapViewport.zoom!});
-    if (southWestBound && northEastBound && mapViewport.zoom && previousZoom !== 13 && mapViewport.zoom === 13) {
-
-      if (southWestBound.lat < 55 || southWestBound.lng < 20 || northEastBound.lat > 65 || northEastBound.lng > 29 ) {
-        return;
-      }
-  
-      const boundingBoxCorner1 =  southWestBound.lat + "," + southWestBound.lng;
-      const boundingBoxCorner2 =  northEastBound.lat + "," + northEastBound.lng;
-  
-      try {
-        const airQuality = await airQualityApi.getAirQuality({ pollutant: "MICRO_PARTICLES", precision: 300, boundingBoxCorner1, boundingBoxCorner2 });
-        console.log(airQuality);
-        this.setState({ airQuality });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    
+    this.setState({ mapViewport });
   }
 
   /**
