@@ -86,7 +86,7 @@ class Settings extends React.Component<Props, State> {
   render() {
     const { classes } = this.props;
     const { homeLocationOptions, homeLocationTextInput, homeLocation, loadingUserSettings, savingUserSettings } = this.state;
-    console.log(homeLocationOptions);
+
     return (
       <AppLayout>
         <Container>
