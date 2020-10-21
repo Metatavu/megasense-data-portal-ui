@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import {
+    HomeAddress,
+    HomeAddressFromJSON,
+    HomeAddressFromJSONTyped,
+    HomeAddressToJSON,
+} from './';
+
 /**
  * 
  * @export
@@ -21,10 +28,10 @@ import { exists, mapValues } from '../runtime';
 export interface UserSettings {
     /**
      * 
-     * @type {string}
+     * @type {HomeAddress}
      * @memberof UserSettings
      */
-    homeAddress?: string;
+    homeAddress?: HomeAddress;
 }
 
 export function UserSettingsFromJSON(json: any): UserSettings {

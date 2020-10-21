@@ -48,5 +48,10 @@
   "viewRoute": "View route",
   "deleteRoute": "Delete route",
 
-  "user": "User"
+  "user": "User",
+
+  "postalCode": "Postal code",
+  "confirmButtonText": "Confirmed",
+
+  "locationNotFoundDialogText": "Location not found"
 }

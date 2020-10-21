@@ -52,6 +52,10 @@ export interface IStrings extends LocalizedStringsMethods {
   deleteRoute: string;
 
   user: string;
+
+  postalCode: string;
+  confirmButtonText: string;
+  locationNotFoundDialogText: string;
 }
 
 const strings: IStrings = new LocalizedStrings({

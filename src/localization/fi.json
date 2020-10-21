@@ -47,5 +47,9 @@
   "viewRoute": "Näytä reitti",
   "deleteRoute": "Poista reitti",
 
-  "user": "Käyttäjä"
+  "user": "Käyttäjä",
+
+  "postalCode": "Postinumero",
+  "confirmButtonText": "Selvä",
+  "locationNotFoundDialogText": "Paikkaa ei löydetty"
 }

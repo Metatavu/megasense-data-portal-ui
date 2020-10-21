@@ -150,10 +150,12 @@ class MapScreen extends React.Component<Props, State> {
     try {
       const userSettingsApi = Api.getUserSettingsApi(accessToken);
       const userSettings = await userSettingsApi.getUserSettings();
-      const homeAddress = userSettings.homeAddress;
-
+      const { homeAddress } = userSettings;
+      
       if (homeAddress) {
-        const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: homeAddress }, process.env.REACT_APP_NOMINATIM_URL);
+        const { streetAddress, postalCode, city, country } = homeAddress;
+        const geocodeRequest = { email: "devs@metatavu.fi", street: streetAddress, postalcode: postalCode, city, country };
+        const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode(geocodeRequest, process.env.REACT_APP_NOMINATIM_URL);
         if (nominatimResponse.length === 1) {
           const center = [Number.parseFloat(nominatimResponse[0].lat), Number.parseFloat(nominatimResponse[0].lon)] as [number, number];
           const mapViewport = { center, zoom: 13 }
