@@ -8,7 +8,6 @@ import AppLayout from "../../layouts/app-layout/app-layout";
 import { globalStyles } from "../../../styles/globalStyles"
 import { Container, Box, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, WithStyles, Card, CardHeader, Grid, CardContent, CircularProgress } from '@material-ui/core';
 import * as Nominatim from "nominatim-browser";
-import { Autocomplete, AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab";
 import Api from "../../../api";
 import { HomeAddress } from "../../../generated/client";
 
@@ -175,11 +174,6 @@ class Settings extends React.Component<Props, State> {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">{ strings.deleteAccountDialogTitle }</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                { strings.deleteAccountDialogText }
-              </DialogContentText>
-            </DialogContent>
             <DialogActions>
               <Button variant="contained" className={ classes.errorButton } onClick={ () => this.displayDeleteUserDialog() }>
                 { strings.yes }
@@ -283,24 +277,36 @@ class Settings extends React.Component<Props, State> {
 
     this.setState({ savingUserSettings: true });
 
-    const geocodeRequest = { email: "devs@metatavu.fi", street: streetAddress, postalcode: postalCode, city, country };
-    const nominatimResponse: any[] = await Nominatim.geocode(geocodeRequest, process.env.REACT_APP_NOMINATIM_URL);
-    if (nominatimResponse.length !== 1) {
-      this.setState({ locationNotFoundDialogVisible: true });
-      return;
-    }
-
     const userSettingsApi = Api.getUserSettingsApi(accessToken);
-
-    try {
-      if (userSettingsExist) {
-        await userSettingsApi.updateUserSettings({ userSettings: { homeAddress } });
-      } else {
-        await userSettingsApi.createUserSettings({ userSettings: { homeAddress } });
+    if (streetAddress === "" && postalCode === "" && city === "" && country === "") {
+      try {
+        if (userSettingsExist) {
+          await userSettingsApi.updateUserSettings({ userSettings: {} });
+        } else {
+          await userSettingsApi.createUserSettings({ userSettings: {} });
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      const geocodeRequest = { email: "devs@metatavu.fi", street: streetAddress, postalcode: postalCode, city, country };
+      const nominatimResponse: any[] = await Nominatim.geocode(geocodeRequest, process.env.REACT_APP_NOMINATIM_URL);
+      if (nominatimResponse.length !== 1) {
+        this.setState({ locationNotFoundDialogVisible: true, savingUserSettings: false });
+        return;
+      }
+  
+      try {
+        if (userSettingsExist) {
+          await userSettingsApi.updateUserSettings({ userSettings: { homeAddress } });
+        } else {
+          await userSettingsApi.createUserSettings({ userSettings: { homeAddress } });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
+
 
     this.setState({ savingUserSettings: false });
   }

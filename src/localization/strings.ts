@@ -35,7 +35,7 @@ export interface IStrings extends LocalizedStringsMethods {
   settings: string;
   airQualityMode: string;
   movementOptions: string;
-  waliking: string;
+  walking: string;
   wheelerchair: string;
   homeAddress: string;
   streetAddress: string;
