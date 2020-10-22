@@ -40,7 +40,7 @@
   "country": "Country",
   "applyChanges": "Apply changes",
   "downloadData": "Download your data",
-  "changeUserData": "Change your user data",
+  "changeUserData": "Change account settings",
   "deleteAccount": "Delete account",
   "deleteAccountDialogTitle": "Are you sure you want to delete your account?",
   "deleteAccountDialogText": "If you press yes your account can't be recovered. You will be redirected to login page.",
