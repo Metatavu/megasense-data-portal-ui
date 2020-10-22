@@ -16,6 +16,7 @@ import { HomeAddress } from "../../../generated/client";
  */
 interface Props extends WithStyles<typeof globalStyles> {
   accessToken?: AccessToken;
+  keycloak?: Keycloak.KeycloakInstance;
 }
 
 /**
@@ -112,7 +113,7 @@ class Settings extends React.Component<Props, State> {
                   </Button>
                 </Box>
                 <Box pt={ 3 } pb={ 3 }>
-                  <Button variant="contained" >
+                  <Button onClick={ this.onChangeAccountSettings } variant="contained" >
                     { strings.changeUserData }
                   </Button>
                 </Box>
@@ -206,6 +207,19 @@ class Settings extends React.Component<Props, State> {
         </Container>
       </AppLayout>
     );
+  }
+
+  /**
+   * Opens a new tab to view account settings in Keycloak
+   */
+  private onChangeAccountSettings = () => {
+    const { keycloak } = this.props;
+
+    if (!keycloak) {
+      return;
+    }
+
+    window.open(keycloak.createAccountUrl());
   }
 
   /**
@@ -327,7 +341,8 @@ class Settings extends React.Component<Props, State> {
  */
 export function mapStateToProps(state: StoreState) {
   return {
-    accessToken: state.accessToken
+    accessToken: state.accessToken,
+    keycloak: state.keycloak
   };
 }
 
