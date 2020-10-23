@@ -31,7 +31,7 @@ export interface UpdateUserSettingsRequest {
 /**
  * no description
  */
-export class UserSettingsApi extends runtime.BaseAPI {
+export class UsersApi extends runtime.BaseAPI {
 
     /**
      * Creates user settings for the user who is logged in
@@ -56,7 +56,7 @@ export class UserSettingsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/userSettings`,
+            path: `/users/settings`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -71,6 +71,73 @@ export class UserSettingsApi extends runtime.BaseAPI {
      */
     async createUserSettings(requestParameters: CreateUserSettingsRequest): Promise<UserSettings> {
         const response = await this.createUserSettingsRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Deletes the user who is logged in and all their data
+     */
+    async deleteUserRaw(): Promise<runtime.ApiResponse<void>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = typeof token === 'function' ? token("bearerAuth", []) : token;
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/users`,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Deletes the user who is logged in and all their data
+     */
+    async deleteUser(): Promise<void> {
+        await this.deleteUserRaw();
+    }
+
+    /**
+     * Downloads the data of the user who is logged in
+     */
+    async downloadUserDataRaw(): Promise<runtime.ApiResponse<Blob>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = typeof token === 'function' ? token("bearerAuth", []) : token;
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/users/data`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.BlobApiResponse(response);
+    }
+
+    /**
+     * Downloads the data of the user who is logged in
+     */
+    async downloadUserData(): Promise<Blob> {
+        const response = await this.downloadUserDataRaw();
         return await response.value();
     }
 
@@ -91,7 +158,7 @@ export class UserSettingsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/userSettings`,
+            path: `/users/settings`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -131,7 +198,7 @@ export class UserSettingsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/userSettings`,
+            path: `/users/settings`,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,

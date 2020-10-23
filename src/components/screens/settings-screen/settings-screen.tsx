@@ -67,7 +67,7 @@ class Settings extends React.Component<Props, State> {
 
     this.setState({ loadingUserSettings: true });
     try {
-      const userSettingsApi = Api.getUserSettingsApi(accessToken);
+      const userSettingsApi = Api.getUsersApi(accessToken);
       const userSettings = await userSettingsApi.getUserSettings();
       const { homeAddress } = userSettings;
 
@@ -108,7 +108,7 @@ class Settings extends React.Component<Props, State> {
               </CardHeader>
               <CardContent>
                 <Box pt={ 3 } pb={ 3 }>
-                  <Button variant="contained" >
+                  <Button onClick={ this.downloadData } variant="contained" >
                     { strings.downloadData }
                   </Button>
                 </Box>
@@ -118,7 +118,7 @@ class Settings extends React.Component<Props, State> {
                   </Button>
                 </Box>
                 <Box pt={ 3 } pb={ 3 }>
-                  <Button variant="contained" className={classes.errorButton} onClick={() => this.displayDeleteUserDialog()}>
+                  <Button variant="contained" className={classes.errorButton} onClick={() => this.toggleDeleteUserDialog()}>
                     { strings.deleteAccount }
                   </Button>
                 </Box>
@@ -170,7 +170,7 @@ class Settings extends React.Component<Props, State> {
 
           <Dialog
             open={ this.state.deleteDialogVisible }
-            onClose={ () => this.displayDeleteUserDialog() }
+            onClose={ this.toggleDeleteUserDialog }
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
@@ -181,10 +181,10 @@ class Settings extends React.Component<Props, State> {
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button variant="contained" className={ classes.errorButton } onClick={ () => this.displayDeleteUserDialog() }>
+              <Button variant="contained" className={ classes.errorButton } onClick={ this.deleteUser }>
                 { strings.yes }
               </Button>
-              <Button variant="contained" className={ classes.warningButton } onClick={ () => this.displayDeleteUserDialog() } color="primary" autoFocus>
+              <Button variant="contained" className={ classes.warningButton } onClick={ this.toggleDeleteUserDialog } color="primary" autoFocus>
                 { strings.cancel }
               </Button>
             </DialogActions>
@@ -207,6 +207,39 @@ class Settings extends React.Component<Props, State> {
         </Container>
       </AppLayout>
     );
+  }
+
+  private downloadData = async () => {
+    const { accessToken } = this.props;
+
+    if (!accessToken) {
+      return;
+    }
+
+    const usersApi = Api.getUsersApi(accessToken);
+    const userData = await usersApi.downloadUserData();
+    const blobUrl = URL.createObjectURL(userData)
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = "data.zip";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  /**
+   * Deletes the user who is logged in and clears all their data
+   */
+  private deleteUser = async () => {
+    const { accessToken } = this.props;
+
+    if (!accessToken) {
+      return;
+    }
+
+    const usersApi = Api.getUsersApi(accessToken);
+    await usersApi.deleteUser();
+    window.location.href = "/";
   }
 
   /**
@@ -291,7 +324,7 @@ class Settings extends React.Component<Props, State> {
 
     this.setState({ savingUserSettings: true });
 
-    const userSettingsApi = Api.getUserSettingsApi(accessToken);
+    const userSettingsApi = Api.getUsersApi(accessToken);
     if (streetAddress === "" && postalCode === "" && city === "" && country === "") {
       try {
         if (userSettingsExist) {
@@ -326,9 +359,9 @@ class Settings extends React.Component<Props, State> {
   }
 
   /**
-   * Displays delete dialog
+   * Toggles the delete user dialog
    */
-  private displayDeleteUserDialog = () => {
+  private toggleDeleteUserDialog = () => {
     this.setState({
       deleteDialogVisible: this.state.deleteDialogVisible ? false : true,
     })
