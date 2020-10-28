@@ -5,7 +5,7 @@ import { AppAction } from "../../../actions";
 import strings from "../../../localization/strings";
 import { AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
-import { Container, Dialog, DialogTitle, DialogContent, FormControl, DialogActions, Button, RadioGroup, Radio, Typography, FormControlLabel, FormLabel, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem} from '@material-ui/core';
+import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem} from '@material-ui/core';
 import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
 import { styles } from "./statistics.styles";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";

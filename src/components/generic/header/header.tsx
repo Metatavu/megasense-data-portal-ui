@@ -1,7 +1,6 @@
-import { AppBar, Box, Button, IconButton, List, MenuItem, Toolbar, withStyles, WithStyles } from "@material-ui/core";
+import { AppBar, Box, Button, Toolbar, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { styles } from "./header.styles";
-import MenuIcon from '@material-ui/icons/Menu';
 import { Link } from "react-router-dom";
 import strings from "../../../localization/strings";
 

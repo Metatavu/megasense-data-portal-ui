@@ -1,11 +1,10 @@
-import classes from "*.module.css";
-import { Box, Button, Divider, Drawer, Grid, Hidden, Icon, IconButton, List, ListItem, MenuItem, Typography, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Button, Divider, Drawer, Grid, IconButton, List, ListItem, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
-import strings from "../../../localization/strings";
 import { styles } from "./drawer-menu.styles"
 import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
 import AccessibleIcon from '@material-ui/icons/Accessible';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
+import strings from "../../../localization/strings"
 /**
  * Interface describing component props
  */
@@ -33,14 +32,14 @@ class DrawerMenu extends React.Component<Props, State> {
   }
 
   public render = () => {
-    const { classes, routing } = this.props;
+    const { classes, routing, statisticsControls, open } = this.props;
     
     return (
       <div>
         <Drawer
           variant="permanent"
           anchor="left"
-          open={ this.props.open }
+          open={ open }
           ModalProps={{
             keepMounted: true
           }}
@@ -66,10 +65,10 @@ class DrawerMenu extends React.Component<Props, State> {
               </Grid>
               <List>
                 <ListItem>
-                  { this.props.routing }
+                  { routing }
                 </ListItem>
                 <ListItem>
-                  { this.props.statisticsControls }
+                  { statisticsControls }
                 </ListItem>
                 <Divider />
                 <Button variant="text">

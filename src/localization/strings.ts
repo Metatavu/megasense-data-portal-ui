@@ -35,7 +35,7 @@ export interface IStrings extends LocalizedStringsMethods {
   settings: string;
   airQualityMode: string;
   movementOptions: string;
-  waliking: string;
+  walking: string;
   wheelerchair: string;
   homeAddress: string;
   streetAddress: string;
@@ -51,6 +51,10 @@ export interface IStrings extends LocalizedStringsMethods {
   viewRoute: string;
   deleteRoute: string;
   collapseMenuText: string;
+  user: string;
+  postalCode: string;
+  confirmButtonText: string;
+  locationNotFoundDialogText: string;
 }
 
 const strings: IStrings = new LocalizedStrings({

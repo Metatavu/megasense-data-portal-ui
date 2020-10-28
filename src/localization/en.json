@@ -31,7 +31,7 @@
   "settings": "Settings",
   "airQualityMode": "Air quality mode",
   "movementOptions": "Movement options",
-  "waliking": "Walking",
+  "walking": "Walking",
   "wheelerchair": "Wheelerchair",
   "homeAddress": "Home address",
   "streetAddress": "Street address",
@@ -40,11 +40,15 @@
   "country": "Country",
   "applyChanges": "Apply changes",
   "downloadData": "Download your data",
-  "changeUserData": "Change your user data",
+  "changeUserData": "Change account settings",
   "deleteAccount": "Delete account",
   "deleteAccountDialogTitle": "Are you sure you want to delete your account?",
   "deleteAccountDialogText": "If you press yes your account can't be recovered. You will be redirected to login page.",
   "viewRoute": "View route",
   "deleteRoute": "Delete route",
-  "collapseMenuText": "Collapse menu"
+  "collapseMenuText": "Collapse menu",
+  "user": "User",
+  "postalCode": "Postal code",
+  "confirmButtonText": "Confirmed",
+  "locationNotFoundDialogText": "Location not found"
 }
