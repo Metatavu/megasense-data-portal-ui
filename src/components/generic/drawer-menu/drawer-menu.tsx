@@ -1,7 +1,10 @@
-import { Box, Button, Divider, Drawer, List, ListItem, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Button, Divider, Drawer, Grid, IconButton, List, ListItem, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { styles } from "./drawer-menu.styles"
-
+import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
+import AccessibleIcon from '@material-ui/icons/Accessible';
+import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
+import strings from "../../../localization/strings"
 /**
  * Interface describing component props
  */
@@ -43,6 +46,23 @@ class DrawerMenu extends React.Component<Props, State> {
         >
           <div className={ classes.drawerContainer }>
             <Box mt={10}>
+              <Grid container justify="center" direction="row" spacing={ 1 }>
+                <Grid xs={ 2 }>
+                  <IconButton aria-label="delete">
+                    <DirectionsWalkIcon />
+                  </IconButton>
+                </Grid>
+                <Grid xs={ 2 }>
+                  <IconButton>
+                    <AccessibleIcon />
+                  </IconButton>
+                </Grid>
+                <Grid xs={ 2 }>
+                  <IconButton>
+                    <DirectionsBikeIcon />
+                  </IconButton>
+                </Grid>
+              </Grid>
               <List>
                 <ListItem>
                   { routing }
@@ -52,7 +72,7 @@ class DrawerMenu extends React.Component<Props, State> {
                 </ListItem>
                 <Divider />
                 <Button variant="text">
-                  Collapse menu
+                  { strings.collapseMenuText }
                 </Button>
               </List>
             </Box>

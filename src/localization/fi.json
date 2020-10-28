@@ -46,9 +46,8 @@
   "deleteAccountDialogText": "Jos painat kyllä, tätä tiliä ei voi enää palauttaa. Sinut ohjataan kirjautumissivulle.",
   "viewRoute": "Näytä reitti",
   "deleteRoute": "Poista reitti",
-
+  "collapseMenuText": "Piilota menu",
   "user": "Käyttäjä",
-
   "postalCode": "Postinumero",
   "confirmButtonText": "Selvä",
   "locationNotFoundDialogText": "Paikkaa ei löydetty"

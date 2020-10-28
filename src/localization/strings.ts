@@ -50,9 +50,8 @@ export interface IStrings extends LocalizedStringsMethods {
   deleteAccountDialogText: string;
   viewRoute: string;
   deleteRoute: string;
-
+  collapseMenuText: string;
   user: string;
-
   postalCode: string;
   confirmButtonText: string;
   locationNotFoundDialogText: string;
