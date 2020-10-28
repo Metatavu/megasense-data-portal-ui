@@ -44,7 +44,7 @@
   "deleteAccount": "Delete account",
   "deleteAccountDialogTitle": "Are you sure you want to delete your account?",
   "deleteAccountDialogText": "If you press yes your account can't be recovered. You will be redirected to login page.",
-
   "viewRoute": "View route",
-  "deleteRoute": "Delete route"
+  "deleteRoute": "Delete route",
+  "collapseMenuText": "Collapse menu"
 }
