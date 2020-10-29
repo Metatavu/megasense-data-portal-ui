@@ -72,6 +72,7 @@ class SavedRoutes extends React.Component<Props, State> {
     };
   }
   
+  
   /**
    * Component life cycle method
    */
