@@ -9,6 +9,10 @@ import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, Tex
 import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
 import { styles } from "./statistics.styles";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
+import Api from "../../../api";
+import { LineChart, Line, CartesianGrid, XAxis, Tooltip, Legend, YAxis } from 'recharts';
+import { ExposureInstance } from "../../../generated/client";
+
 /**
  * Interface describing component props
  */
@@ -17,17 +21,34 @@ interface Props extends WithStyles<typeof styles> {
 }
 
 /**
+ * Exposure data for statistics table
+ */
+interface exposureData {
+  id?: string;
+  harmfulMicroparticles?: number;
+  nitrogenDioxide?: number;
+  nitrogenMonoxide?: number;
+  ozone?: number;
+  routeId: any;
+  startedAt?: string;
+  endedAt?: string;
+  sulfurDioxide?: number;
+}
+
+/**
  * Interface describing component state
  */
 interface State {
-  visibleTimeDialog: boolean,
-  visiblePollutionDialog: boolean,
-  timeValue: string,
-  pollutantValue: string,
-  DisplayPollutantButton: boolean,
-  DisplayAllData: boolean,
-  DisplayResetButton: boolean
-  DisplaySinglePollutionData: boolean
+  visibleTimeDialog: boolean;
+  visiblePollutionDialog: boolean;
+  timeValue: string;
+  pollutantValue: string;
+  DisplayPollutantButton: boolean;
+  DisplayAllData: boolean;
+  DisplayResetButton: boolean;
+  DisplaySinglePollutionData: boolean;
+  statisticsData: ExposureInstance[];
+  exposureData: exposureData[];
 }
 
 /**
@@ -50,8 +71,36 @@ class SavedRoutes extends React.Component<Props, State> {
       DisplayResetButton: false,
       DisplaySinglePollutionData: false,
       pollutantValue: "",
-      timeValue: ""
+      timeValue: "",
+      statisticsData: [],
+      exposureData: []
     };
+  }
+  
+  /**
+   * Component life cycle method
+   */
+  public componentDidMount = async () => {
+    await this.getData();
+    let exposureData: exposureData[] = [];
+    for (let i = 0; i < this.state.statisticsData.length; i++) {
+      const data = this.state.statisticsData[i];
+      exposureData.push ({
+        "id": data.id,
+        harmfulMicroparticles: data.harmfulMicroparticles,
+        nitrogenDioxide: data.nitrogenDioxide,
+        nitrogenMonoxide: data.nitrogenMonoxide,
+        ozone: data.ozone,
+        routeId: data.routeId,
+        startedAt: data.startedAt?.getDate() + "." + data.startedAt?.getMonth() + "." + data.startedAt?.getFullYear(),
+        endedAt: data.endedAt?.getDate() + "." + data.endedAt?.getMonth() + "." + data.endedAt?.getFullYear(),
+        sulfurDioxide: data.sulfurDioxide
+      });
+    }
+    
+    this.setState ({
+      exposureData: exposureData
+    })
   }
 
   /**
@@ -92,6 +141,7 @@ class SavedRoutes extends React.Component<Props, State> {
                   }}
                 >
                   <option aria-label="None" value="" />
+                  <option>Daily</option>
                   <option>Weekly</option>
                   <option>Monthly</option>
                   <option>Annual</option>
@@ -111,9 +161,10 @@ class SavedRoutes extends React.Component<Props, State> {
                   }}
                 >
                   <option aria-label="None" value="" />
-                  <option>Weekly</option>
-                  <option>Monthly</option>
-                  <option>Annual</option>
+                  <option>Carbon monoxide</option>
+                  <option>Ozone</option>
+                  <option>Nitrogen Dioxine</option>
+                  <option>Sulfur Dioxine</option>
                 </Select>
               </FormControl>
             </ListItem>
@@ -121,12 +172,13 @@ class SavedRoutes extends React.Component<Props, State> {
         </Box>
       </>
     );
+
     return (
       <AppLayout>
-        <DrawerMenu open= { true } statisticsControls={ statisticsComponent } />
+        <DrawerMenu open={ true } statisticsControls={ statisticsComponent } />
         <Container>
-          <Grid container spacing = { 3 }>
-            <Grid item xs={ 12 }>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
               <Card>
                 <Typography variant="h3">
                   { strings.statistics }
@@ -134,9 +186,43 @@ class SavedRoutes extends React.Component<Props, State> {
               </Card>
             </Grid>
           </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Card>
+                <LineChart 
+                  width={730} height={250} 
+                  data={ this.state.exposureData }
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="startedAt" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="harmfulMicroparticles" stroke="red" />
+                  <Line type="monotone" dataKey="nitrogenDioxide" stroke="black" />
+                  <Line type="monotone" dataKey="nitrogenMonoxide" stroke="blue" />
+                  <Line type="monotone" dataKey="ozone" stroke="green" />
+                  <Line type="monotone" dataKey="sulfurDioxide" stroke="orange" />
+                </LineChart>
+              </Card>
+            </Grid>
+          </Grid>
         </Container>
       </AppLayout>
     );
+  }
+  
+  /**
+   * Get data from API
+   */
+  private getData = async() => {
+    if (!this.props.accessToken) {
+        return;
+    }
+    const exposureInstanceApi = Api.getExposureInstancesApi(this.props.accessToken);
+    this.setState({
+      statisticsData: await exposureInstanceApi.listExposureInstances({})
+    })
   }
 }
 

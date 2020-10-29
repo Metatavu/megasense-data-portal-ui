@@ -52,12 +52,12 @@ class DrawerMenu extends React.Component<Props, State> {
                     <DirectionsWalkIcon />
                   </IconButton>
                 </Grid>
-                <Grid xs={ 2 }>
+                <Grid item xs={ 2 }>
                   <IconButton>
                     <AccessibleIcon />
                   </IconButton>
                 </Grid>
-                <Grid xs={ 2 }>
+                <Grid item xs={ 2 }>
                   <IconButton>
                     <DirectionsBikeIcon />
                   </IconButton>
