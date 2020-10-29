@@ -71,6 +71,7 @@ class SavedRoutes extends React.Component<Props, State> {
       exposureData: []
     };
   }
+  
   /**
    * Component life cycle method
    */
