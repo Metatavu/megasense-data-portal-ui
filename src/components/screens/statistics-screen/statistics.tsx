@@ -218,7 +218,6 @@ class SavedRoutes extends React.Component<Props, State> {
       statisticsData: await exposureInstanceApi.listExposureInstances({})
     })
   }
-
 }
 
 /**
