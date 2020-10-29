@@ -92,6 +92,7 @@ class SavedRoutes extends React.Component<Props, State> {
         sulfurDioxide: data.sulfurDioxide
       });
     }
+    
     this.setState ({
       exposureData: exposureData
     })
