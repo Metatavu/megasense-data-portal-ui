@@ -46,7 +46,6 @@ interface State {
   exposureData: exposureData[];
 }
 
-
 /**
  * Component for warehouses screen
  */
