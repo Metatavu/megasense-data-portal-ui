@@ -19,6 +19,10 @@ import { ExposureInstance } from "../../../generated/client";
 interface Props extends WithStyles<typeof styles> {
   accessToken?: AccessToken;
 }
+
+/**
+ * Exposure data for statistics table
+ */
 interface exposureData {
   id?: string;
   harmfulMicroparticles?: number;
@@ -30,6 +34,7 @@ interface exposureData {
   endedAt?: string;
   sulfurDioxide?: number;
 }
+
 /**
  * Interface describing component state
  */
@@ -71,7 +76,6 @@ class SavedRoutes extends React.Component<Props, State> {
       exposureData: []
     };
   }
-  
   
   /**
    * Component life cycle method
@@ -168,6 +172,7 @@ class SavedRoutes extends React.Component<Props, State> {
         </Box>
       </>
     );
+
     return (
       <AppLayout>
         <DrawerMenu open={ true } statisticsControls={ statisticsComponent } />
