@@ -205,6 +205,7 @@ class SavedRoutes extends React.Component<Props, State> {
       </AppLayout>
     );
   }
+  
   /**
    * Get data from API
    */
