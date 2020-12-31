@@ -46,6 +46,7 @@ interface State {
   locationFromTextInput: string;
   locationToTextInput: string;
   loadingUserSettings: boolean;
+  userSavedRoutes: Route[];
 }
 
 class MapScreen extends React.Component<Props, State> {
@@ -67,7 +68,8 @@ class MapScreen extends React.Component<Props, State> {
       previousZoom: 12,
       locationFromTextInput: "",
       locationToTextInput: "",
-      loadingUserSettings: false
+      loadingUserSettings: false,
+      userSavedRoutes: []
     };
 
     this.mapRef = React.createRef();
@@ -90,6 +92,8 @@ class MapScreen extends React.Component<Props, State> {
     const airQualityApi = Api.getAirQualityApi(accessToken);
     const airQuality = await airQualityApi.getAirQuality({ pollutant: "SULFUR_DIOXIDE", boundingBoxCorner1: "55,20", boundingBoxCorner2: "65,30" });
     this.setState({ airQuality });
+
+    this.getUserSavedRoutes();
   }
 
   public render = () => {
@@ -105,7 +109,7 @@ class MapScreen extends React.Component<Props, State> {
   
     return (
       <AppLayout>
-        <DrawerMenu open={ true } routing= { this.renderRoutingForm() }/>
+        <DrawerMenu open={ true } routing={ this.renderRoutingForm() } savedRoutes={ this.state.userSavedRoutes } showSavedRoutes={ this.props.accessToken ? true : false } />
         { this.renderMap() }
       </AppLayout>
       
@@ -144,6 +148,8 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Loads user settings
+   * 
+   * @param accessToken access token 
    */
   private loadUserSettings = async (accessToken: AccessToken) => {
     this.setState({ loadingUserSettings: true });
@@ -164,6 +170,24 @@ class MapScreen extends React.Component<Props, State> {
       }
     } catch (error) {}
     this.setState({ loadingUserSettings: false });
+  }
+
+  /**
+   * Loads user saved routes
+   */
+  private getUserSavedRoutes = async () => {
+    const { accessToken } = this.props;
+    
+    if (!accessToken) {
+      return;
+    }
+
+    const routesApi = Api.getRoutesApi(accessToken);
+    const userRoutes = await routesApi.listRoutes();
+
+    this.setState({
+      userSavedRoutes: userRoutes
+    });
   }
 
   /**
@@ -303,7 +327,7 @@ class MapScreen extends React.Component<Props, State> {
       const routesApi = Api.getRoutesApi(accessToken);
       this.setState({ savingRoute: true });
 
-      await routesApi.createRoute({ route: { routePoints: polyline, locationFromName: locationFrom?.name, locationToName: locationTo?.name } });
+      await routesApi.createRoute({ route: { routePoints: polyline, locationFromName: locationFrom?.name, locationToName: locationTo?.name, savedAt: new Date() } });
 
       this.setState({ savingRoute: false });
     } catch (error) {
@@ -451,14 +475,20 @@ class MapScreen extends React.Component<Props, State> {
    * 
    * @param mouseEvent mouse event
    */
-  private addRoutePoint = (mouseEvent: LeafletMouseEvent) => {
+  private addRoutePoint = async (mouseEvent: LeafletMouseEvent) => {
     const position = mouseEvent.latlng.lat.toString() + "," + mouseEvent.latlng.lng.toString();
     const location = { name: position, coordinates: position };
     if (this.state.editingLocationFrom) {
       const locationFromOptions = [location];
-      this.setState({ locationFromOptions, locationFrom: location, editingLocationFrom: false, locationFromTextInput: position });
+      const nominatimResponse: Nominatim.NominatimResponse = await Nominatim.reverseGeocode({ lat: mouseEvent.latlng.lat.toString(), lon: mouseEvent.latlng.lng.toString() }, process.env.REACT_APP_NOMINATIM_URL)
+      if (nominatimResponse) {
+        this.setState({ locationFromOptions, locationFrom: location, editingLocationFrom: false, locationFromTextInput: nominatimResponse.display_name });
+      }
     } else {
-      this.setState({ locationTo: location, editingLocationFrom: true, locationToTextInput: position });
+      const nominatimResponse: Nominatim.NominatimResponse = await Nominatim.reverseGeocode({ lat: mouseEvent.latlng.lat.toString(), lon: mouseEvent.latlng.lng.toString() }, process.env.REACT_APP_NOMINATIM_URL)
+      if (nominatimResponse) {
+        this.setState({ locationTo: location, editingLocationFrom: true, locationToTextInput: nominatimResponse.display_name });
+      }
     }
   }
 
