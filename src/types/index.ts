@@ -1,23 +1,23 @@
-import { KeycloakInstance } from "keycloak-js";
-import { Route } from "../generated/client";
-
 export type Locale = "fi" | "en";
 
 /**
- * Interface describing the Redux store
+ * Union type for nullable access token
  */
-export interface StoreState {
-  locale: Locale;
-  keycloak?: KeycloakInstance;
-  accessToken?: AccessToken;
-  displayedRoute?: Route;
-}
+export type NullableToken = AccessToken | null;
 
 /**
  * Interface describing an access token
  */
 export interface AccessToken {
-  token: string;
+  created: Date;
+  access_token: string;
+  expires_in?: number;
+  refresh_token?: string;
+  refresh_expires_in?: number;
+  firstName?: string;
+  lastName?: string;
+  userId?: string;
+  email?: string;
 }
 
 /**

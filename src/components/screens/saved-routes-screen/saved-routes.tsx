@@ -1,16 +1,17 @@
 import React from "react";
-import { connect } from "react-redux";
+
+import Api from "../../../api";
 import { Dispatch } from "redux";
-import { AppAction } from "../../../actions";
+import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
+import { styles } from "./saved-routes.styles";
+import { NullableToken } from "../../../types";
+import { Route } from "../../../generated/client";
+import * as actions from "../../../actions/route";
 import strings from "../../../localization/strings";
-import { AccessToken, StoreState } from "../../../types";
+import { ReduxActions, ReduxState } from "../../../store";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { Container, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, WithStyles, CircularProgress } from '@material-ui/core';
-import Api from "../../../api";
-import * as actions from "../../../actions";
-import { Redirect } from "react-router-dom";
-import { Route } from "../../../generated/client";
-import { styles } from "./saved-routes.styles";
 
 /**
  * Interface describing component props
@@ -18,7 +19,7 @@ import { styles } from "./saved-routes.styles";
 interface Props extends WithStyles<typeof styles> {}
 
 interface Props {
-  accessToken?: AccessToken;
+  accessToken?: NullableToken;
   updateDisplayedRoute: (displayedRoute: Route) => void;
 }
 
@@ -270,9 +271,9 @@ class SavedRoutes extends React.Component<Props, State> {
  * Redux mapper for mapping store state to component props
  * @param state store state
  */
-export function mapStateToProps(state: StoreState) {
+export function mapStateToProps(state: ReduxState) {
   return {
-    accessToken: state.accessToken
+    accessToken: state.auth.accessToken
   };
 }
 
@@ -281,9 +282,9 @@ export function mapStateToProps(state: StoreState) {
  * 
  * @param dispatch dispatch method
  */
-export function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
+export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   return {
-    updateDisplayedRoute: (displayedRoute?: Route) => dispatch(actions.updateDisplayedRoute(displayedRoute))
+    updateDisplayedRoute: (displayedRoute?: Route) => dispatch(actions.setDisplayedRoute(displayedRoute))
   };
 }
 

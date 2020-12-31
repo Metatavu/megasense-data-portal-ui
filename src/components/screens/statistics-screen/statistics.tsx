@@ -1,23 +1,26 @@
 import React from "react";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
-import { AppAction } from "../../../actions";
-import strings from "../../../localization/strings";
-import { AccessToken, StoreState } from "../../../types";
-import AppLayout from "../../layouts/app-layout/app-layout";
-import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem} from '@material-ui/core';
-import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
-import { styles } from "./statistics.styles";
-import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
+
 import Api from "../../../api";
-import { LineChart, Line, CartesianGrid, XAxis, Tooltip, Legend, YAxis } from 'recharts';
+import { Dispatch } from "redux";
+import { History } from "history";
+import { connect } from "react-redux";
+import { styles } from "./statistics.styles";
+import { NullableToken } from "../../../types";
+import strings from "../../../localization/strings";
+import { ReduxActions, ReduxState } from "../../../store";
+import AppLayout from "../../layouts/app-layout/app-layout";
 import { ExposureInstance } from "../../../generated/client";
+import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
+import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
+import { LineChart, Line, CartesianGrid, XAxis, Tooltip, Legend, YAxis } from 'recharts';
+import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem} from '@material-ui/core';
 
 /**
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles> {
-  accessToken?: AccessToken;
+  accessToken?: NullableToken;
+  history: History<History.LocationState>;
 }
 
 /**
@@ -81,6 +84,12 @@ class SavedRoutes extends React.Component<Props, State> {
    * Component life cycle method
    */
   public componentDidMount = async () => {
+    const { accessToken, history } = this.props;
+
+    if (!accessToken) {
+      history.push("/");
+    }
+
     await this.getData();
     let exposureData: exposureData[] = [];
     for (let i = 0; i < this.state.statisticsData.length; i++) {
@@ -230,9 +239,9 @@ class SavedRoutes extends React.Component<Props, State> {
  * Redux mapper for mapping store state to component props
  * @param state store state
  */
-export function mapStateToProps(state: StoreState) {
+export function mapStateToProps(state: ReduxState) {
   return {
-    accessToken: state.accessToken
+    accessToken: state.auth.accessToken
   };
 }
 
@@ -241,7 +250,7 @@ export function mapStateToProps(state: StoreState) {
  * 
  * @param dispatch dispatch method
  */
-export function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
+export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   return {};
 }
 

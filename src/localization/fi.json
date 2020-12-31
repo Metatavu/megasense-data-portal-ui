@@ -1,4 +1,10 @@
 {
+
+  "auth": {
+    "login": "Kirjaudu sisään",
+    "logout": "Kirjaudu ulos"
+  },
+
   "yourTokenIs": "Avaimesi on: ",
   "frontPage": "Etusivu",
   "hello": "Hei,",
