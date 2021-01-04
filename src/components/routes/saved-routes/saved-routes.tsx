@@ -23,6 +23,9 @@ interface State {
   showAllUserRoutes: boolean,
 }
 
+/**
+ * Component for saved routes listing
+ */
 class SavedRoutes extends React.Component<Props, State> {
   /**
    * 

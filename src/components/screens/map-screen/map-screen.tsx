@@ -59,6 +59,9 @@ interface State {
   userSavedRoutes: Route[];
 }
 
+/**
+ * Map screen component
+ */
 class MapScreen extends React.Component<Props, State> {
   mapRef: React.RefObject<Map>;
 

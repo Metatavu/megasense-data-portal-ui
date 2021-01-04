@@ -25,6 +25,9 @@ interface State {
   showAllUserRoutes: boolean,
 }
 
+/**
+ * Component for Drawer menu
+ */
 class DrawerMenu extends React.Component<Props, State> {
   /**
    * 

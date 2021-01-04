@@ -36,7 +36,7 @@ interface State {
 }
 
 /**
- * Component for warehouses screen
+ * Component for saved routes screen
  */
 class SavedRoutes extends React.Component<Props, State> {
 
