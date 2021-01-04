@@ -19,9 +19,12 @@ export const styles = createStyles({
   mapComponent: {
     height: "100%"
   },
+
+  drawer: {
+    width: 320
+  },
   
   routingForm: {
-    width: 320,
     display: "flex",
     flexDirection: "column",
     backgroundColor: theme.palette.primary.main

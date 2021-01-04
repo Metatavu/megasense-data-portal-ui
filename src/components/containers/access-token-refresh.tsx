@@ -1,21 +1,21 @@
 import * as React from "react";
 
-import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { StoreState } from "../../types";
-import { login } from "../../actions";
+import { connect } from "react-redux";
+import { NullableToken } from "../../types";
+import { setKeycloak, login } from "../../actions/auth";
 
-import { KeycloakInstance } from "keycloak-js";
-import Keycloak from "keycloak-js";
-import { AccessToken } from "../../types";
+import { ReduxState, ReduxActions } from "../../store";
+import Keycloak, { KeycloakInstance } from "keycloak-js";
 
 /**
  * Component props
  */
 interface Props {
-  accessToken?: AccessToken;
-  login: typeof login;
   children?: React.ReactNode;
+  accessToken?: NullableToken;
+  setKeycloak: typeof setKeycloak;
+  onLogin: typeof login;
 }
 
 /**
@@ -24,12 +24,18 @@ interface Props {
 interface State { }
 
 /**
- * Component for keeping authentication token fresh
+ * Component providing access token and keeping it fresh
  */
-class AccessTokenRefresh extends React.Component<Props, State> {
+class AccessTokenProvider extends React.Component<Props, State> {
 
+  /**
+   * Keycloak instance
+   */
   private keycloak: KeycloakInstance;
-  private timer?: any;
+  /**
+   * Refresh token timer
+   */
+  private timer?: NodeJS.Timer;
 
   /**
    * Constructor
@@ -41,11 +47,9 @@ class AccessTokenRefresh extends React.Component<Props, State> {
 
     this.keycloak = Keycloak({
       url: process.env.REACT_APP_KEYCLOAK_URL,
-      realm: process.env.REACT_APP_KEYCLOAK_REALM || "",
-      clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID || ""
+      realm: process.env.REACT_APP_KEYCLOAK_REALM || "",
+      clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID || ""
     });
-
-    this.state = { };
   }
 
   /**
@@ -53,15 +57,14 @@ class AccessTokenRefresh extends React.Component<Props, State> {
    */
   public componentDidMount = async () => {
     const auth = await this.keycloakInit();
-
-    if (!auth) {
-      window.location.reload();
-    } else {
+    this.props.setKeycloak(this.keycloak);
+    if (auth) {
       const { token, tokenParsed } = this.keycloak;
 
       if (this.keycloak && tokenParsed && tokenParsed.sub && token) {
-        this.keycloak.loadUserProfile();
-        this.props.login(this.keycloak);
+        await this.keycloak.loadUserProfile();
+        const signedToken = this.buildToken(this.keycloak);
+        this.props.onLogin(signedToken ?? null);
       }
 
       this.refreshAccessToken();
@@ -69,6 +72,8 @@ class AccessTokenRefresh extends React.Component<Props, State> {
       this.timer = setInterval(() => {
         this.refreshAccessToken();
       }, 1000 * 60);
+    } else {
+      this.props.onLogin(null);
     }
   }
 
@@ -85,23 +90,20 @@ class AccessTokenRefresh extends React.Component<Props, State> {
    * Component render method
    */
   public render = () => {
-    return this.props.accessToken ?
-      this.props.children :
-      null;
+    const { accessToken, children } = this.props;
+
+    return accessToken !== undefined ? children : null;
   }
 
   /**
    * Refreshes access token
    */
-  private refreshAccessToken = async () => {
+  private refreshAccessToken = () => {
     try {
-      const refreshed = await this.keycloak.updateToken(70);
+      const refreshed = this.keycloak.updateToken(70);
       if (refreshed) {
-        const { token, tokenParsed } = this.keycloak;
-
-        if (tokenParsed && tokenParsed.sub && token) {
-          this.props.login(this.keycloak);
-        }
+        const nullableToken = this.buildToken(this.keycloak);
+        this.props.onLogin(nullableToken);
       }
     } catch (e) {
       this.setState({
@@ -114,11 +116,36 @@ class AccessTokenRefresh extends React.Component<Props, State> {
    * Initializes Keycloak client
    */
   private keycloakInit = () => {
-    return new Promise((resolve, reject) => {
-      this.keycloak.init({ onLoad: "login-required", checkLoginIframe: false })
-        .then(resolve)
-        .catch(reject);
+    return new Promise(resolve => {
+      this.keycloak.init({ onLoad:"check-sso", checkLoginIframe: false }).success(resolve);
     });
+  }
+
+  /**
+   * Builds access token using Keycloak instance
+   *
+   * @param keycloak Keycloak instance
+   * @returns access token or undefined if building fails
+   */
+  private buildToken = (keycloak: KeycloakInstance): NullableToken => {
+    const { token, tokenParsed, refreshToken, refreshTokenParsed, profile } = keycloak;
+    if (!tokenParsed || !tokenParsed.sub || !token) {
+      return null;
+    }
+
+    const created = new Date();
+
+    return {
+      created: created,
+      access_token: token,
+      expires_in: tokenParsed.exp,
+      refresh_token: refreshToken,
+      refresh_expires_in: refreshTokenParsed?.exp,
+      firstName: profile?.firstName,
+      lastName: profile?.lastName,
+      userId: tokenParsed.sub,
+      email: profile?.email
+    };
   }
 }
 
@@ -127,8 +154,8 @@ class AccessTokenRefresh extends React.Component<Props, State> {
  *
  * @param state store state
  */
-const mapStateToProps = (state: StoreState) => ({
-  accessToken: state.accessToken
+const mapStateToProps = (state: ReduxState) => ({
+  accessToken: state.auth.accessToken
 });
 
 /**
@@ -136,8 +163,9 @@ const mapStateToProps = (state: StoreState) => ({
  *
  * @param dispatch dispatch method
  */
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  login: (keycloak: KeycloakInstance) => dispatch(login(keycloak))
+const mapDispatchToProps = (dispatch: Dispatch<ReduxActions>) => ({
+  onLogin: (accessToken: NullableToken) => dispatch(login(accessToken)),
+  setKeycloak: (keycloak: KeycloakInstance) => dispatch(setKeycloak(keycloak))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccessTokenRefresh);
+export default connect(mapStateToProps, mapDispatchToProps)(AccessTokenProvider);

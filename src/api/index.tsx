@@ -1,5 +1,5 @@
 import { AirQualityApi, Configuration, ExposureInstancesApi, RoutesApi, TotalExposureApi, UsersApi } from "../generated/client";
-import { AccessToken } from "../types";
+import { NullableToken } from "../types";
 
 /**
  * Utility class for loading api with predefined configuration
@@ -10,7 +10,7 @@ export default class Api {
    * 
    * @param accessToken access token
    */
-  public static getRoutesApi (accessToken: AccessToken): RoutesApi {
+  public static getRoutesApi (accessToken?: NullableToken): RoutesApi {
     return new RoutesApi(this.getConfiguration(accessToken));
   }
 
@@ -19,7 +19,7 @@ export default class Api {
    * 
    * @param accessToken access token
    */
-  public static getExposureInstancesApi (accessToken: AccessToken): ExposureInstancesApi {
+  public static getExposureInstancesApi (accessToken?: NullableToken): ExposureInstancesApi {
     return new ExposureInstancesApi(this.getConfiguration(accessToken))
   }
 
@@ -28,7 +28,7 @@ export default class Api {
    * 
    * @param accessToken access token
    */
-  public static getTotalExposureApi (accessToken: AccessToken): TotalExposureApi {
+  public static getTotalExposureApi (accessToken?: NullableToken): TotalExposureApi {
     return new TotalExposureApi(this.getConfiguration(accessToken))
   }
 
@@ -37,7 +37,7 @@ export default class Api {
    * 
    * @param accessToken access token
    */
-  public static getAirQualityApi (accessToken: AccessToken): AirQualityApi {
+  public static getAirQualityApi (accessToken?: NullableToken): AirQualityApi {
     return new AirQualityApi(this.getConfiguration(accessToken));
   }
 
@@ -46,7 +46,7 @@ export default class Api {
    * 
    * @param accessToken access token
    */
-  public static getUsersApi (accessToken: AccessToken): UsersApi {
+  public static getUsersApi (accessToken?: NullableToken): UsersApi {
     return new UsersApi(this.getConfiguration(accessToken));
   }
 
@@ -55,10 +55,10 @@ export default class Api {
    *
    * @param token access token
    */
-  private static getConfiguration(accessToken: AccessToken) {
+  private static getConfiguration(accessToken?: NullableToken) {
     return new Configuration({
       basePath: process.env.REACT_APP_API_BASE_PATH,
-      accessToken: accessToken.token
+      accessToken: accessToken ? accessToken.access_token : undefined
     });
   }
 }

@@ -1,4 +1,10 @@
 {
+
+  "auth": {
+    "login": "Log in",
+    "logout": "Log out"
+  },
+
   "yourTokenIs": "Your token is: ",
   "frontPage": "Front page",
   "hello": "Hello,",

@@ -1,5 +1,4 @@
-import { Button, CircularProgress, Drawer, Grid, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
-import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab/Autocomplete";
+import { Button, CircularProgress, Drawer, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
 import { LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
 import * as Nominatim from "nominatim-browser";
 import * as PolyUtil from "polyline-encoded";
@@ -8,25 +7,29 @@ import { Map, Marker, Polyline, TileLayer, Viewport } from "react-leaflet";
 import HeatmapLayer from "react-leaflet-heatmap-layer";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import * as actions from "../../../actions";
-import { AppAction } from "../../../actions";
-import Api from "../../../api";
-import { AirQuality, Route } from "../../../generated/client";
 import strings from "../../../localization/strings";
-import { AccessToken, Location, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { styles } from "./map-screen.styles";
+import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from '@material-ui/lab/Autocomplete';
+import Api from "../../../api";
+import { AirQuality, Route } from "../../../generated/client";
+import SavedRoutes from "../../routes/saved-routes/saved-routes";
+import { ReduxActions, ReduxState } from "../../../store";
+import { NullableToken, Location } from "../../../types";
+import { setDisplayedRoute } from "../../../actions/route";
+
 import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
 import AccessibleIcon from "@material-ui/icons/Accessible";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
+
 
 /**
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles>{
-  accessToken?: AccessToken;
-  updateDisplayedRoute: (displayedRoute?: Route) => void;
   displayedRoute?: Route;
+  accessToken?: NullableToken;
+  setDisplayedRoute: typeof setDisplayedRoute;
 }
 
 /**
@@ -48,6 +51,7 @@ interface State {
   locationFromTextInput: string;
   locationToTextInput: string;
   loadingUserSettings: boolean;
+  userSavedRoutes: Route[];
 }
 
 class MapScreen extends React.Component<Props, State> {
@@ -69,7 +73,8 @@ class MapScreen extends React.Component<Props, State> {
       previousZoom: 12,
       locationFromTextInput: "",
       locationToTextInput: "",
-      loadingUserSettings: false
+      loadingUserSettings: false,
+      userSavedRoutes: []
     };
 
     this.mapRef = React.createRef();
@@ -86,17 +91,19 @@ class MapScreen extends React.Component<Props, State> {
     if (displayedRoute) {
       this.displaySavedRoute(displayedRoute);
     } else {
-      this.loadUserSettings(accessToken);
+      this.loadUserSettings();
     }
 
     const airQualityApi = Api.getAirQualityApi(accessToken);
     const airQuality = await airQualityApi.getAirQuality({ pollutant: "SULFUR_DIOXIDE", boundingBoxCorner1: "55,20", boundingBoxCorner2: "65,30" });
     this.setState({ airQuality });
+
+    this.getUserSavedRoutes();
   }
 
   public render = () => {
-    const { classes } = this.props;
-    const { loadingUserSettings } = this.state;
+    const { accessToken, classes } = this.props;
+    const { loadingUserSettings, userSavedRoutes } = this.state;
 
     if (loadingUserSettings) {
       return (
@@ -111,6 +118,7 @@ class MapScreen extends React.Component<Props, State> {
     return (
       <AppLayout>
         <Drawer
+          className={ classes.drawer }
           open={ true }
           variant="permanent"
           anchor="left"
@@ -128,6 +136,7 @@ class MapScreen extends React.Component<Props, State> {
             </IconButton>
           </Toolbar>
           { this.renderRoutingForm() }
+          <SavedRoutes savedRoutes={ userSavedRoutes } showSavedRoutes={ !!accessToken } />
         </Drawer>
         { this.renderMap() }
       </AppLayout>
@@ -141,8 +150,8 @@ class MapScreen extends React.Component<Props, State> {
    * @param routeToDisplay route to display
    */
   private displaySavedRoute = (routeToDisplay: Route) => {
-    const { updateDisplayedRoute } = this.props;
-    updateDisplayedRoute(undefined);
+    const { setDisplayedRoute } = this.props;
+    setDisplayedRoute(undefined);
     const route = PolyUtil.decode(routeToDisplay.routePoints);
     const firstItem = route[0];
     const lastItem = route[ route.length - 1 ];
@@ -168,7 +177,13 @@ class MapScreen extends React.Component<Props, State> {
   /**
    * Loads user settings
    */
-  private loadUserSettings = async (accessToken: AccessToken) => {
+  private loadUserSettings = async () => {
+    const { accessToken } = this.props;
+
+    if (!accessToken) {
+      return;
+    }
+
     this.setState({ loadingUserSettings: true });
     try {
       const userSettingsApi = Api.getUsersApi(accessToken);
@@ -187,6 +202,24 @@ class MapScreen extends React.Component<Props, State> {
       }
     } catch (error) {}
     this.setState({ loadingUserSettings: false });
+  }
+
+  /**
+   * Loads user saved routes
+   */
+  private getUserSavedRoutes = async () => {
+    const { accessToken } = this.props;
+    
+    if (!accessToken) {
+      return;
+    }
+
+    const routesApi = Api.getRoutesApi(accessToken);
+    const userRoutes = await routesApi.listRoutes();
+
+    this.setState({
+      userSavedRoutes: userRoutes
+    });
   }
 
   /**
@@ -327,7 +360,7 @@ class MapScreen extends React.Component<Props, State> {
       const routesApi = Api.getRoutesApi(accessToken);
       this.setState({ savingRoute: true });
 
-      await routesApi.createRoute({ route: { routePoints: polyline, locationFromName: locationFrom?.name, locationToName: locationTo?.name } });
+      await routesApi.createRoute({ route: { routePoints: polyline, locationFromName: locationFrom?.name, locationToName: locationTo?.name, savedAt: new Date() } });
 
       this.setState({ savingRoute: false });
     } catch (error) {
@@ -442,7 +475,7 @@ class MapScreen extends React.Component<Props, State> {
         locationTo.coordinates = locationTo.name;
       }
 
-      const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=10:10pm&date=08-29-2019&mode=WALK&option=STRICT_AQ&maxWalkDistance=10000&arriveBy=false&wheelchair=false&locale=en`);
+      const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=12:30pm&date=08-29-2020&maxWalkDistance=100000&sulfurDioxideThreshold=1&sulfurDioxidePenalty=200`);
       const jsonResponse = await routingResponse.json();
       const polyline = jsonResponse.plan.itineraries[0].legs[0].legGeometry.points;
       const route = PolyUtil.decode(polyline);
@@ -475,14 +508,20 @@ class MapScreen extends React.Component<Props, State> {
    * 
    * @param mouseEvent mouse event
    */
-  private addRoutePoint = (mouseEvent: LeafletMouseEvent) => {
+  private addRoutePoint = async (mouseEvent: LeafletMouseEvent) => {
     const position = mouseEvent.latlng.lat.toString() + "," + mouseEvent.latlng.lng.toString();
     const location = { name: position, coordinates: position };
     if (this.state.editingLocationFrom) {
       const locationFromOptions = [location];
-      this.setState({ locationFromOptions, locationFrom: location, editingLocationFrom: false, locationFromTextInput: position });
+      const nominatimResponse: Nominatim.NominatimResponse = await Nominatim.reverseGeocode({ lat: mouseEvent.latlng.lat.toString(), lon: mouseEvent.latlng.lng.toString() }, process.env.REACT_APP_NOMINATIM_URL)
+      if (nominatimResponse) {
+        this.setState({ locationFromOptions, locationFrom: location, editingLocationFrom: false, locationFromTextInput: nominatimResponse.display_name });
+      }
     } else {
-      this.setState({ locationTo: location, editingLocationFrom: true, locationToTextInput: position });
+      const nominatimResponse: Nominatim.NominatimResponse = await Nominatim.reverseGeocode({ lat: mouseEvent.latlng.lat.toString(), lon: mouseEvent.latlng.lng.toString() }, process.env.REACT_APP_NOMINATIM_URL)
+      if (nominatimResponse) {
+        this.setState({ locationTo: location, editingLocationFrom: true, locationToTextInput: nominatimResponse.display_name });
+      }
     }
   }
 
@@ -493,10 +532,10 @@ class MapScreen extends React.Component<Props, State> {
  * 
  * @param state store state
  */
-export function mapStateToProps(state: StoreState) {
+export function mapStateToProps(state: ReduxState) {
   return {
-    accessToken: state.accessToken,
-    displayedRoute: state.displayedRoute
+    accessToken: state.auth.accessToken,
+    displayedRoute: state.displayedRoute.displayedRoute
   };
 }
 
@@ -505,9 +544,9 @@ export function mapStateToProps(state: StoreState) {
  * 
  * @param dispatch dispatch method
  */
-export function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
+export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   return {
-    updateDisplayedRoute: (displayedRoute?: Route) => dispatch(actions.updateDisplayedRoute(displayedRoute))
+    setDisplayedRoute: (displayedRoute?: Route) => dispatch(setDisplayedRoute(displayedRoute))
   };
 }
 

@@ -1,18 +1,19 @@
-import { Container, Typography } from "@material-ui/core";
 import React from "react";
-import { connect } from "react-redux";
+
 import { Dispatch } from "redux";
-import { AppAction } from "../../../actions";
+import { connect } from "react-redux";
+import { NullableToken } from "../../../types";
 import strings from "../../../localization/strings";
-import { AccessToken, StoreState } from "../../../types";
+import { Container, Typography } from "@material-ui/core";
 import AppLayout from "../../layouts/app-layout/app-layout";
+import { ReduxActions, ReduxState } from "../../../store";
 
 /**
  * Interface describing component props
  */
 interface Props {
-  accessToken?: AccessToken;
-  keycloak?: Keycloak.KeycloakInstance
+  accessToken?: NullableToken;
+  keycloak?: Keycloak.KeycloakInstance;
 }
 
 /**
@@ -75,10 +76,10 @@ class Home extends React.Component<Props, State> {
  * 
  * @param state store state
  */
-export function mapStateToProps(state: StoreState) {
+export function mapStateToProps(state: ReduxState) {
   return {
-    accessToken: state.accessToken,
-    keycloak: state.keycloak
+    accessToken: state.auth.accessToken,
+    keycloak: state.auth.keycloak
   };
 }
 
@@ -87,7 +88,7 @@ export function mapStateToProps(state: StoreState) {
  * 
  * @param dispatch dispatch method
  */
-export function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
+export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   return {
   };
 }

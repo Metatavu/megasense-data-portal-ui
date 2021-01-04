@@ -1,23 +1,29 @@
-import { Box, Button, Divider, Drawer, Grid, IconButton, List, ListItem, Toolbar, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Button, Divider, Drawer, Fab, Grid, IconButton, List, ListItem, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { styles } from "./drawer-menu.styles"
 import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
 import AccessibleIcon from "@material-ui/icons/Accessible";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
 import strings from "../../../localization/strings"
+import { Route } from "../../../generated/client";
+
 /**
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles> {
   open: boolean,
   routing?: JSX.Element,
-  statisticsControls?: JSX.Element
+  statisticsControls?: JSX.Element,
+  savedRoutes?: Route[],
+  showSavedRoutes?: boolean,
 }
 
 /**
  * Interface describing component state
  */
-interface State {}
+interface State {
+  showAllUserRoutes: boolean,
+}
 
 class DrawerMenu extends React.Component<Props, State> {
   /**
@@ -28,6 +34,7 @@ class DrawerMenu extends React.Component<Props, State> {
   constructor (props: Props) {
     super(props);
     this.state = {
+      showAllUserRoutes: false,
     };
   }
 
@@ -35,30 +42,114 @@ class DrawerMenu extends React.Component<Props, State> {
     const { classes, routing, statisticsControls, open } = this.props;
     
     return (
-      <Drawer
-        variant="permanent"
-        anchor="left"
-        open={ open }
-        ModalProps={{
-          keepMounted: true
-        }}
-      >
-        <Toolbar />
-        <div className={ classes.drawerContainer }>
-          <Box mt={10}>
-            <List>
-              <ListItem>
-                { routing }
-              </ListItem>
-              <ListItem>
-                { statisticsControls }
-              </ListItem>
-              <Divider />
-            </List>
-          </Box>
-        </div>
-      </Drawer>
+      <div>
+        <Drawer
+          variant="permanent"
+          anchor="left"
+          open={ open }
+          ModalProps={{
+            keepMounted: true
+          }}
+        >
+          <div className={ classes.drawerContainer }>
+            <Box mt={ 10 }>
+              <Grid container justify="center" direction="row" spacing={ 1 }>
+                <Grid xs={ 2 }>
+                  <IconButton aria-label="delete">
+                    <DirectionsWalkIcon />
+                  </IconButton>
+                </Grid>
+                <Grid item xs={ 2 }>
+                  <IconButton>
+                    <AccessibleIcon />
+                  </IconButton>
+                </Grid>
+                <Grid item xs={ 2 }>
+                  <IconButton>
+                    <DirectionsBikeIcon />
+                  </IconButton>
+                </Grid>
+              </Grid>
+              <List>
+                <ListItem>
+                  { routing }
+                </ListItem>
+                <ListItem>
+                  { statisticsControls }
+                </ListItem>
+              </List>
+              <List>
+                { this.renderSavedRoutes() }
+              </List>
+              <Fab variant="extended" style={{ width: "100%" }} onClick={ this.onShowMoreClick }>
+                { this.state.showAllUserRoutes ? "Hide" : "Show more" }
+              </Fab>
+            </Box>
+          </div>
+        </Drawer>
+      </div>
     );
+  }
+
+  /**
+   * Returns rendered user saved routes
+   */
+  private renderSavedRoutes = () => {
+    const { savedRoutes, showSavedRoutes } = this.props;
+    const { showAllUserRoutes } = this.state;
+
+    if (!savedRoutes || !showSavedRoutes) {
+      return;
+    }
+
+    const userRoutes = savedRoutes.map(route => {
+      if (route.locationFromName && route.locationToName) {
+        return route;
+      }
+    }) as Route[];
+
+    const shortRoutes = userRoutes.splice(0, 2);
+    const routes = showAllUserRoutes ? userRoutes : shortRoutes;
+
+    return routes.map((route, index) => {
+      
+      if (!route) {
+        return null;
+      }
+      
+      const  savedTime = `Saved on: ${ route.savedAt?.getDay() }.${ route.savedAt?.getMonth() }.${ route.savedAt?.getFullYear() }`;
+      const from = `From: ${ route.locationFromName.slice(0, 40) }...`;
+      const to = `To: ${ route.locationToName.slice(0, 40) }...`;
+
+      return (
+        <div key={ index }>
+          <ListItem>
+            <div>
+              <h4>
+                { savedTime }
+              </h4>
+              <p>
+                { from }
+              </p>
+              <p>
+                { to }
+              </p>
+            </div>
+          </ListItem>
+          <Divider />
+        </div>
+      )
+    });
+  }
+
+  /**
+   * Show more saved routes action handler
+   */
+  private onShowMoreClick = () => {
+    const { showAllUserRoutes } = this.state;
+    this.setState({
+      showAllUserRoutes: !showAllUserRoutes
+    });
   }
 }
 
