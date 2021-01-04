@@ -149,10 +149,14 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Loads user settings
-   * 
-   * @param accessToken access token 
    */
-  private loadUserSettings = async (accessToken: AccessToken) => {
+  private loadUserSettings = async () => {
+    const { accessToken } = this.props;
+
+    if (!accessToken) {
+      return;
+    }
+
     this.setState({ loadingUserSettings: true });
     try {
       const userSettingsApi = Api.getUsersApi(accessToken);
