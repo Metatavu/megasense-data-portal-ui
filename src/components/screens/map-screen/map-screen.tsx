@@ -86,7 +86,7 @@ class MapScreen extends React.Component<Props, State> {
     if (displayedRoute) {
      this.displaySavedRoute(displayedRoute);
     } else {
-      this.loadUserSettings(accessToken);
+      this.loadUserSettings();
     }
 
     const airQualityApi = Api.getAirQualityApi(accessToken);
@@ -97,7 +97,8 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   public render = () => {
-    const { loadingUserSettings } = this.state;
+    const { accessToken } = this.props;
+    const { loadingUserSettings, userSavedRoutes } = this.state;
 
     if (loadingUserSettings) {
       return (
@@ -109,7 +110,7 @@ class MapScreen extends React.Component<Props, State> {
   
     return (
       <AppLayout>
-        <DrawerMenu open={ true } routing={ this.renderRoutingForm() } savedRoutes={ this.state.userSavedRoutes } showSavedRoutes={ this.props.accessToken ? true : false } />
+        <DrawerMenu open={ true } routing={ this.renderRoutingForm() } savedRoutes={ userSavedRoutes } showSavedRoutes={ !!accessToken } />
         { this.renderMap() }
       </AppLayout>
       

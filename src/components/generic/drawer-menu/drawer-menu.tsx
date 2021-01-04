@@ -82,9 +82,9 @@ class DrawerMenu extends React.Component<Props, State> {
                 </Button>
               </List>
               <List>
-                { this.props.showSavedRoutes && this.renderSavedRoutes() }
+                { this.renderSavedRoutes() }
               </List>
-              <Fab variant="extended" style={{ width: "100%" }} onClick={ () => this.setState({ showAllUserRoutes: !this.state.showAllUserRoutes }) }>
+              <Fab variant="extended" style={{ width: "100%" }} onClick={ this.onShowMoreClick }>
                 { this.state.showAllUserRoutes ? "Hide" : "Show more" }
               </Fab>
             </Box>
@@ -98,9 +98,9 @@ class DrawerMenu extends React.Component<Props, State> {
    * Returns rendered user saved routes
    */
   private renderSavedRoutes = () => {
-    const { savedRoutes } = this.props;
+    const { savedRoutes, showSavedRoutes } = this.props;
 
-    if (!savedRoutes) {
+    if (!savedRoutes || !showSavedRoutes) {
       return;
     }
 
@@ -139,6 +139,16 @@ class DrawerMenu extends React.Component<Props, State> {
         )
       })
     )
+  }
+
+  /**
+   * Show more saved routes action handler
+   */
+  private onShowMoreClick = () => {
+    const { showAllUserRoutes } = this.state;
+    this.setState({
+      showAllUserRoutes: !showAllUserRoutes
+    });
   }
 }
 
