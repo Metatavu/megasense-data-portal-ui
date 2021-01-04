@@ -98,7 +98,7 @@ class DrawerMenu extends React.Component<Props, State> {
    * Returns rendered user saved routes
    */
   private renderSavedRoutes = () => {
-    const { savedRoutes } = this.props;
+    const { savedRoutes, showAllUserRoutes } = this.props;
 
     if (!savedRoutes) {
       return;
