@@ -6,7 +6,7 @@ import MapScreen from "./screens/map-screen/map-screen";
 import SavedRoutes from "./screens/saved-routes-screen/saved-routes";
 import Statistics from "./screens/statistics-screen/statistics";
 import Settings from "./screens/settings-screen/settings-screen";
-import { ThemeProvider } from '@material-ui/core';
+import { CssBaseline, ThemeProvider } from '@material-ui/core';
 import  theme  from "../theme/theme"
 /**
  * Interface describing component properties
@@ -31,47 +31,48 @@ class App extends React.Component<Props, State> {
   render() {
     return (
       <ThemeProvider theme={ theme }>
-      <AccessTokenRefresh>
-        <BrowserRouter>
-          <Switch>
-            <Route
+        <CssBaseline />
+        <AccessTokenRefresh>
+          <BrowserRouter>
+            <Switch>
+              <Route
+                exact
+                path="/"
+                render={() => (
+                  <Home />
+                )}
+              />
+              <Route
+                exact
+                path="/map"
+                render={() => (
+                  <MapScreen />
+                )}
+              />
+              <Route
               exact
-              path="/"
+              path="/saved-routes"
               render={() => (
-                <Home />
-              )}
-            />
-            <Route
+                <SavedRoutes />
+                )}
+              />
+              <Route
               exact
-              path="/map"
+              path="/statistics"
               render={() => (
-                <MapScreen />
+                <Statistics />
               )}
-            />
-            <Route
-            exact
-            path="/saved-routes"
-            render={() => (
-              <SavedRoutes />
+              />
+              <Route
+              exact
+              path="/settings"
+              render={() => (
+                <Settings />
               )}
-            />
-            <Route
-            exact
-            path="/statistics"
-            render={() => (
-              <Statistics />
-            )}
-            />
-            <Route
-            exact
-            path="/settings"
-            render={() => (
-              <Settings />
-            )}
-            />
-          </Switch>
-        </BrowserRouter>
-      </AccessTokenRefresh>
+              />
+            </Switch>
+          </BrowserRouter>
+        </AccessTokenRefresh>
       </ThemeProvider>
     );
   }

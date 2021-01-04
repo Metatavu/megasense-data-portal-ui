@@ -1,28 +1,54 @@
-import { createStyles } from "@material-ui/core";
+import { createStyles, Toolbar } from '@material-ui/core';
+import theme from "../../../theme/theme";
 
 export const styles = createStyles({
-  routingForm: {
-    marginLeft: "auto",
-    marginRight: "auto",
-    display: "flex"
-  },
-  routingFormPart: {
+
+  loader: {
     display: "flex",
-    flexDirection: "column"
+    height: "100%",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    alignContent: "center"
   },
-  routingFormButton: {
-    margin: 10,
-    backgroundColor: "#F6AB6C",
-    paddingLeft: 30,
-    paddingRight: 30
+
+  toolbar: {
+    backgroundColor: theme.palette.primary.main
   },
-  routingFormLoader: {
-    margin: 10,
-    color: "#F6AB6C"
+
+  mapComponent: {
+    height: "100%"
   },
+  
+  routingForm: {
+    width: 320,
+    display: "flex",
+    flexDirection: "column",
+    backgroundColor: theme.palette.primary.main
+  },
+
+  inputFieldContainer: {
+    padding: theme.spacing(2),
+    display: "flex",
+    flexDirection: "column",
+    marginBottom: theme.spacing(2)
+  },
+
   routingFormInput: {
-    width: 400, 
-    backgroundColor: "#ffffff", 
-    margin: "auto"
-  }
+    marginTop: theme.spacing(2),
+    color: "#fff"
+  },
+
+
+  routingFormPart: {
+
+  },
+
+  routingFormButton: {
+
+  },
+
+  routingFormLoader: {
+
+  },
 });

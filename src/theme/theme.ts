@@ -5,7 +5,8 @@ export default createMuiTheme({
 
   palette: {
     primary: {
-      main: "#6FCF97"
+      main: "#277B90",
+      light: "#fff"
     },
     secondary: {
       main: "#52A8D9"
@@ -44,10 +45,15 @@ export default createMuiTheme({
   typography: {},
 
   overrides: {
+    MuiButton: {
+      root: {
+        textTransform: "lowercase"
+      },
+    },
     MuiTextField: {
       root: {
         variant: "outlined"
-      }
+      },
     },
     MuiCssBaseline: {
       "@global": {
@@ -64,6 +70,11 @@ export default createMuiTheme({
           borderRadius: 1
         }
       }
+    }
+  },
+  props: {
+    MuiButton: {
+      variant: "text"
     }
   }
 });

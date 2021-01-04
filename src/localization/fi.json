@@ -1,11 +1,14 @@
 {
+  "routeSearch": {
+
+  },
   "yourTokenIs": "Avaimesi on: ",
   "frontPage": "Etusivu",
   "hello": "Hei,",
   "map": "Kartta",
-  "from": "Paikasta",
-  "to": "Paikkaan",
-  "findRoute": "Löydä reitti",
+  "from": "Valitse aloituspiste...",
+  "to": "Valitse määränpää...",
+  "findRoute": "Hae reittiä",
   "saveRoute": "Tallenna reitti",
   "savedRoutes": "Tallennetut reitit",
   "savedRoutesFrom": "Mistä",

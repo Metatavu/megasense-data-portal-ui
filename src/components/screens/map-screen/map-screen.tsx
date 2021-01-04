@@ -1,22 +1,24 @@
-import { Button, CircularProgress, TextField, withStyles, WithStyles } from "@material-ui/core";
-import React, { ChangeEvent } from "react";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
-import { AppAction } from "../../../actions";
-import strings from "../../../localization/strings";
-import { Location, AccessToken, StoreState } from "../../../types";
-import AppLayout from "../../layouts/app-layout/app-layout";
-import { styles } from "./map-screen.styles";
-import { Map, TileLayer, Polyline, Viewport, Marker } from "react-leaflet";
-import * as PolyUtil from "polyline-encoded";
+import { Button, CircularProgress, Drawer, Grid, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
+import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab/Autocomplete";
 import { LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
 import * as Nominatim from "nominatim-browser";
-import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from '@material-ui/lab/Autocomplete';
-import Api from "../../../api";
+import * as PolyUtil from "polyline-encoded";
+import React, { ChangeEvent } from "react";
+import { Map, Marker, Polyline, TileLayer, Viewport } from "react-leaflet";
 import HeatmapLayer from "react-leaflet-heatmap-layer";
-import { AirQuality, Route } from "../../../generated/client";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
 import * as actions from "../../../actions";
-import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
+import { AppAction } from "../../../actions";
+import Api from "../../../api";
+import { AirQuality, Route } from "../../../generated/client";
+import strings from "../../../localization/strings";
+import { AccessToken, Location, StoreState } from "../../../types";
+import AppLayout from "../../layouts/app-layout/app-layout";
+import { styles } from "./map-screen.styles";
+import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
+import AccessibleIcon from "@material-ui/icons/Accessible";
+import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
 
 /**
  * Interface describing component props
@@ -82,7 +84,7 @@ class MapScreen extends React.Component<Props, State> {
     }
 
     if (displayedRoute) {
-     this.displaySavedRoute(displayedRoute);
+      this.displaySavedRoute(displayedRoute);
     } else {
       this.loadUserSettings(accessToken);
     }
@@ -93,19 +95,40 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   public render = () => {
+    const { classes } = this.props;
     const { loadingUserSettings } = this.state;
 
     if (loadingUserSettings) {
       return (
         <AppLayout>
-          <CircularProgress size={ 200 }/>
+          <div className={ classes.loader }>
+            <CircularProgress size={ 64 }/>
+          </div>
         </AppLayout>
       );
     }
   
     return (
       <AppLayout>
-        <DrawerMenu open={ true } routing= { this.renderRoutingForm() }/>
+        <Drawer
+          open={ true }
+          variant="permanent"
+          anchor="left"
+        >
+          <Toolbar />
+          <Toolbar className={ classes.toolbar }>
+            <IconButton>
+              <DirectionsWalkIcon htmlColor="#fff" />
+            </IconButton>
+            <IconButton>
+              <AccessibleIcon htmlColor="#fff" />
+            </IconButton>
+            <IconButton>
+              <DirectionsBikeIcon htmlColor="#fff" />
+            </IconButton>
+          </Toolbar>
+          { this.renderRoutingForm() }
+        </Drawer>
         { this.renderMap() }
       </AppLayout>
       
@@ -175,7 +198,7 @@ class MapScreen extends React.Component<Props, State> {
 
     return (
       <div className={ classes.routingForm }>
-        <div className={ classes.routingFormPart }>
+        <div className={ classes.inputFieldContainer }>
           <Autocomplete
             filterOptions={ (options) => options }
             onInputChange={ this.onLocationFromChange } 
@@ -183,14 +206,15 @@ class MapScreen extends React.Component<Props, State> {
             onChange={ this.onLocationFromSelected } 
             options={ locationFromOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
-            value={ locationFrom } 
-            className={ classes.routingFormInput }
+            value={ locationFrom }
             size="small" 
             renderInput={ (params) => 
               <TextField
+                className={ classes.routingFormInput }
                 placeholder={ strings.from } 
-                {...params} 
-                variant="outlined" 
+                {...params}
+                fullWidth
+                color="secondary"
               /> 
             } 
           />
@@ -207,13 +231,12 @@ class MapScreen extends React.Component<Props, State> {
             size="small" 
             renderInput={ (params) => 
               <TextField 
-                placeholder={ strings.to } 
-                {...params} 
-                variant="outlined" 
+              placeholder={ strings.to } 
+              {...params}
+              fullWidth
               /> 
             } 
           />
-
         </div>
         <div className={ classes.routingFormPart }>
           { !loadingRoute && 
@@ -244,15 +267,16 @@ class MapScreen extends React.Component<Props, State> {
    * Renders the map
    */
   private renderMap = (): JSX.Element => {
+    const { classes } = this.props;
     const { route, locationFrom, locationTo, airQuality } = this.state;
 
     return (
-      <Map 
+      <Map
+        className={ classes.mapComponent }
         ref={ this.mapRef }
         zoomControl={ false } 
         ondblclick={ this.addRoutePoint } 
         doubleClickZoom={ false } 
-        style={{ width: "100vw", height: window.innerHeight - 140 }} 
         onViewportChange={ this.onViewportChange }  
         viewport={ this.state.mapViewport }
         >

@@ -5,12 +5,12 @@ import { AppAction } from "../../../actions";
 import strings from "../../../localization/strings";
 import { AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
-import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem} from '@material-ui/core';
+import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem} from "@material-ui/core";
 import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
 import { styles } from "./statistics.styles";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import Api from "../../../api";
-import { LineChart, Line, CartesianGrid, XAxis, Tooltip, Legend, YAxis } from 'recharts';
+import { LineChart, Line, CartesianGrid, XAxis, Tooltip, Legend, YAxis } from "recharts";
 import { ExposureInstance } from "../../../generated/client";
 
 /**
@@ -136,8 +136,8 @@ class SavedRoutes extends React.Component<Props, State> {
                   fullWidth
                   label="Select time range"
                   inputProps={{
-                    name: 'time',
-                    id: 'outlined-age-native-simple',
+                    name: "time",
+                    id: "outlined-age-native-simple",
                   }}
                 >
                   <option aria-label="None" value="" />
@@ -156,8 +156,8 @@ class SavedRoutes extends React.Component<Props, State> {
                   fullWidth
                   label="Select pollution"
                   inputProps={{
-                    name: 'age',
-                    id: 'outlined-age-native-simple',
+                    name: "age",
+                    id: "outlined-age-native-simple",
                   }}
                 >
                   <option aria-label="None" value="" />
