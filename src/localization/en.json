@@ -5,14 +5,21 @@
     "logout": "Log out"
   },
 
+  "routes": {
+    "deleteRoute": "Delete route",
+    "savedRoutes": "Tallennetut reitit",
+    "findRoute": "Find route",
+    "saveRoute": "Save route",
+    "showMore": "Show all",
+    "showLess": "Show less"
+  },
+
   "yourTokenIs": "Your token is: ",
   "frontPage": "Front page",
   "hello": "Hello,",
   "map": "Map",
   "from": "From",
   "to": "To",
-  "findRoute": "Find route",
-  "saveRoute": "Save route",
   "savedRoutes": "Saved routes",
   "savedRoutesFrom": "From",
   "savedRoutesTo": "To",

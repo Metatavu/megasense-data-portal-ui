@@ -10,7 +10,7 @@ import { Dispatch } from "redux";
 import strings from "../../../localization/strings";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { styles } from "./map-screen.styles";
-import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from '@material-ui/lab/Autocomplete';
+import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab/Autocomplete";
 import Api from "../../../api";
 import { AirQuality, Route } from "../../../generated/client";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
@@ -21,6 +21,11 @@ import { setDisplayedRoute } from "../../../actions/route";
 import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
 import AccessibleIcon from "@material-ui/icons/Accessible";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
+import DestinationIcon from "@material-ui/icons/LocationOn";
+import MyLocationIcon from "@material-ui/icons/MyLocation";
+import SearchIcon from "@material-ui/icons/Search";
+import SaveIcon from "@material-ui/icons/Save";
+import theme from "../../../theme/theme";
 
 
 /**
@@ -118,10 +123,12 @@ class MapScreen extends React.Component<Props, State> {
     return (
       <AppLayout>
         <Drawer
-          className={ classes.drawer }
           open={ true }
           variant="permanent"
           anchor="left"
+          classes={{
+            paper: classes.drawer,
+          }}
         >
           <Toolbar />
           <Toolbar className={ classes.toolbar }>
@@ -242,13 +249,16 @@ class MapScreen extends React.Component<Props, State> {
             value={ locationFrom }
             size="small" 
             renderInput={ (params) => 
-              <TextField
-                className={ classes.routingFormInput }
-                placeholder={ strings.from } 
-                {...params}
-                fullWidth
-                color="secondary"
-              /> 
+              <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
+                <MyLocationIcon fontSize="small" htmlColor="#FFF" />
+                <TextField
+                  variant="standard"
+                  className={ classes.routingFormInput }
+                  placeholder={ strings.from }
+                  { ...params }
+                  fullWidth
+                />
+              </div>
             } 
           />
 
@@ -260,38 +270,53 @@ class MapScreen extends React.Component<Props, State> {
             options={ locationToOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
             value={ locationTo } 
-            className={ classes.routingFormInput }
-            size="small" 
+            size="small"
+            style={{ marginTop: theme.spacing(2) }}
             renderInput={ (params) => 
-              <TextField 
-              placeholder={ strings.to } 
-              {...params}
-              fullWidth
-              /> 
+              <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
+                <DestinationIcon fontSize="small" htmlColor="#FFF" />
+                <TextField
+                  variant="standard"
+                  className={ classes.routingFormInput }
+                  placeholder={ strings.to }
+                  { ...params }
+                  fullWidth
+                />
+              </div>
             } 
           />
         </div>
-        <div className={ classes.routingFormPart }>
-          { !loadingRoute && 
-            <Button onClick={ this.updateRoute } className={ classes.routingFormButton }>{ strings.findRoute }</Button>
-          }
+        <div className={ classes.routingControls }>
+          <Button
+            variant="outlined"
+            onClick={ this.updateRoute }
+            className={ classes.routingFormButton }
+            endIcon={
+              loadingRoute ?
+              <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
+              :
+              <SearchIcon htmlColor="#fff"
+              />
+            }
+          >
+            { strings.routes.findRoute }
+          </Button>
 
-          {
-            loadingRoute &&
-            <CircularProgress color="inherit" className={ classes.routingFormLoader } />
-          }
-
-          { !savingRoute && 
-            <Button onClick={ this.saveRoute } className={ classes.routingFormButton }>{ strings.saveRoute }</Button>
-          }
-
-          {
-            savingRoute &&
-            <CircularProgress color="inherit" className={ classes.routingFormLoader } />
-          }
-
+          <Button
+            variant="outlined"
+            onClick={ this.saveRoute }
+            className={ classes.routingFormButton }
+            endIcon={
+              savingRoute ?
+              <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
+              :
+              <SaveIcon htmlColor="#fff"
+              />
+            }
+          >
+            { strings.routes.saveRoute }
+          </Button>
         </div>
-
       </div>
     );
   }

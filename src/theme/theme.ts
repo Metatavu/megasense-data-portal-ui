@@ -9,7 +9,7 @@ export default createMuiTheme({
       light: "#fff"
     },
     secondary: {
-      main: "#52A8D9"
+      main: "#00a2ff"
     },
     background: {
       default: "#DCE2E9",
@@ -42,21 +42,25 @@ export default createMuiTheme({
     }
   },
 
-  typography: {},
+  typography: {
+    fontFamily: "'Noto Sans JP', sans-serif",
+    h1: {
+      fontSize: 24
+    },
+
+    h2: {
+      fontWeight: 300,
+      fontSize: 20
+    },
+  },
 
   overrides: {
-    MuiButton: {
-      root: {
-        textTransform: "lowercase"
-      },
-    },
-    MuiTextField: {
-      root: {
-        variant: "outlined"
-      },
-    },
     MuiCssBaseline: {
+      // Global css overrides
       "@global": {
+        "a": {
+          textDecoration: "none"
+        },
         "::-webkit-scrollbar-track": {
           backgroundColor: "#C2C9CF"
         },
@@ -65,16 +69,52 @@ export default createMuiTheme({
           width: 5
         },
         "::-webkit-scrollbar-thumb": {
-          backgroundColor: "#004C97",
+          backgroundColor: "#51575C",
           border: "none",
           borderRadius: 1
         }
+      }
+    },
+    MuiButton: {
+      root: {
+        textTransform: "initial",
+        borderRadius: 50
+      },
+      outlined: {
+        borderRadius: 50
+      },
+      containedSecondary: {
+        color: "#fff"
+      }
+    },
+    MuiTextField: {
+      root: {
+      },
+    },
+    MuiListItemAvatar: {
+      root: {
+
+      }
+    },
+    MuiAvatar: {
+      colorDefault: {
+        backgroundColor: "rgba(39,123,144,0.6)"
+      }
+    },
+    MuiListItemText: {
+      secondary: {
+        whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
+        overflow: "hidden"
       }
     }
   },
   props: {
     MuiButton: {
-      variant: "text"
+      variant: "outlined"
+    },
+    MuiTextField: {
+      variant: "outlined"
     }
   }
 });

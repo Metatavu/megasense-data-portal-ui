@@ -1,4 +1,4 @@
-import { createStyles, Toolbar } from '@material-ui/core';
+import { createStyles, Toolbar } from "@material-ui/core";
 import theme from "../../../theme/theme";
 
 export const styles = createStyles({
@@ -21,7 +21,7 @@ export const styles = createStyles({
   },
 
   drawer: {
-    width: 320
+    width: 420
   },
   
   routingForm: {
@@ -34,24 +34,38 @@ export const styles = createStyles({
     padding: theme.spacing(2),
     display: "flex",
     flexDirection: "column",
-    marginBottom: theme.spacing(2)
   },
 
-  routingFormInput: {
-    marginTop: theme.spacing(2),
-    color: "#fff"
-  },
-
-
-  routingFormPart: {
-
+  routingControls: {
+    padding: theme.spacing(2),
+    display: "flex",
+    flexDirection: "column"
   },
 
   routingFormButton: {
-
+    color:  theme.palette.primary.light,
+    marginBottom: theme.spacing(2),
+    borderColor: theme.palette.primary.light,
   },
 
   routingFormLoader: {
 
   },
+
+  autoCompleteInputWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+
+  routingFormInput: {
+    marginLeft: theme.spacing(2),
+    "& .MuiInputBase-root": {
+      color: "#fff"
+    },
+    "& .MuiIconButton-root": {
+      color: "rgba(255,255,255,0.8)"
+    }
+  },
+
 });

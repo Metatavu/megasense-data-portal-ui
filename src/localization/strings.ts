@@ -13,13 +13,23 @@ export interface IStrings extends LocalizedStringsMethods {
     logout: string;
   };
 
+  /**
+   * Translations for routes
+   */
+  routes: {
+    deleteRoute: string;
+    savedRoutes: string;
+    saveRoute: string;
+    findRoute: string;
+    showMore: string;
+    showLess: string;
+  };
+
   frontPage: string;
   hello: string;
   to: string;
   from: string;
   map: string;
-  findRoute: string;
-  saveRoute: string;
   savedRoutes: string;
   savedRoutesTo: string;
   savedRoutesFrom: string;
