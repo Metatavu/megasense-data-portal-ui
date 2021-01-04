@@ -104,11 +104,11 @@ class DrawerMenu extends React.Component<Props, State> {
       return;
     }
 
-    const userRoutes = savedRoutes.map(route => {
+    const userRoutes: Route[] = savedRoutes.map(route => {
       if (route.locationFromName && route.locationToName) {
         return route;
       }
-    }) as Route[];
+    });
 
     const shortRoutes = userRoutes.splice(0, 2);
 
