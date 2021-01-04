@@ -111,34 +111,36 @@ class DrawerMenu extends React.Component<Props, State> {
     });
 
     const shortRoutes = userRoutes.splice(0, 2);
+    const routes = showAllUserRoutes ? userRoutes : shortRoutes;
 
-    return (
-      (this.state.showAllUserRoutes ? userRoutes : shortRoutes).map((route, index) => {
+    return routes.map((route, index) => {
+      const  savedTime = `Saved on: ${ route.savedAt?.getDay() }.${ route.savedAt?.getMonth() }.${ route.savedAt?.getFullYear() }`;
+      const from = `From: ${ route.locationFromName.slice(0, 40) }...`;
+      const to = `To: ${ route.locationToName.slice(0, 40) }...`;
 
-        if (!route) {
-          return;
-        }
+      if (!route) {
+        return;
+      }
 
-        return (
-          <div>
-            <ListItem key={ index }>
-              <div>
-                <h4>
-                  { `Saved on: ${ route.savedAt?.getDay() }.${ route.savedAt?.getMonth() }.${ route.savedAt?.getFullYear() }` }
-                </h4>
-                <p>
-                  { `From: ${ route.locationFromName.slice(0, 40) }...` }
-                </p>
-                <p>
-                  { `To: ${ route.locationToName.slice(0, 40) }...` }
-                </p>
-              </div>
-            </ListItem>
-            <Divider />
-          </div>
-        )
-      })
-    )
+      return (
+        <div key={ index }>
+          <ListItem>
+            <div>
+              <h4>
+                { savedTime }
+              </h4>
+              <p>
+                { from }
+              </p>
+              <p>
+                { to }
+              </p>
+            </div>
+          </ListItem>
+          <Divider />
+        </div>
+      )
+    });
   }
 }
 
