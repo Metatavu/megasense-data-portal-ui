@@ -2,9 +2,7 @@ import { Button, CircularProgress, TextField, withStyles, WithStyles } from "@ma
 import React, { ChangeEvent } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { AppAction } from "../../../actions";
 import strings from "../../../localization/strings";
-import { Location, AccessToken, StoreState } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { styles } from "./map-screen.styles";
 import { Map, TileLayer, Polyline, Viewport, Marker } from "react-leaflet";
@@ -15,16 +13,18 @@ import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason }
 import Api from "../../../api";
 import HeatmapLayer from "react-leaflet-heatmap-layer";
 import { AirQuality, Route } from "../../../generated/client";
-import * as actions from "../../../actions";
 import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
+import { ReduxActions, ReduxState } from "../../../store";
+import { NullableToken, Location } from "../../../types";
+import { setDisplayedRoute } from "../../../actions/route";
 
 /**
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles>{
-  accessToken?: AccessToken;
-  updateDisplayedRoute: (displayedRoute?: Route) => void;
   displayedRoute?: Route;
+  accessToken?: NullableToken;
+  setDisplayedRoute: typeof setDisplayedRoute;
 }
 
 /**
@@ -123,8 +123,8 @@ class MapScreen extends React.Component<Props, State> {
    * @param routeToDisplay route to display
    */
   private displaySavedRoute = (routeToDisplay: Route) => {
-    const { updateDisplayedRoute } = this.props;
-    updateDisplayedRoute(undefined);
+    const { setDisplayedRoute } = this.props;
+    setDisplayedRoute(undefined);
     const route = PolyUtil.decode(routeToDisplay.routePoints);
     const firstItem = route[0];
     const lastItem = route[ route.length - 1 ];
@@ -504,10 +504,10 @@ class MapScreen extends React.Component<Props, State> {
  * 
  * @param state store state
  */
-export function mapStateToProps(state: StoreState) {
+export function mapStateToProps(state: ReduxState) {
   return {
-    accessToken: state.accessToken,
-    displayedRoute: state.displayedRoute
+    accessToken: state.auth.accessToken,
+    displayedRoute: state.displayedRoute.displayedRoute
   };
 }
 
@@ -516,9 +516,9 @@ export function mapStateToProps(state: StoreState) {
  * 
  * @param dispatch dispatch method
  */
-export function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
+export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   return {
-    updateDisplayedRoute: (displayedRoute?: Route) => dispatch(actions.updateDisplayedRoute(displayedRoute))
+    setDisplayedRoute: (displayedRoute?: Route) => dispatch(setDisplayedRoute(displayedRoute))
   };
 }
 

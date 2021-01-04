@@ -4,6 +4,15 @@ import LocalizedStrings, { LocalizedStringsMethods } from "localized-strings";
  * Interface describing localized strings
  */
 export interface IStrings extends LocalizedStringsMethods {
+
+  /**
+   * Translations for authentication
+   */
+  auth: {
+    login: string;
+    logout: string;
+  };
+
   frontPage: string;
   hello: string;
   to: string;

@@ -1,22 +1,25 @@
 import React, { ChangeEvent } from "react";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
-import { AppAction } from "../../../actions";
-import strings from "../../../localization/strings";
-import { AccessToken, StoreState } from "../../../types";
-import AppLayout from "../../layouts/app-layout/app-layout";
-import { globalStyles } from "../../../styles/globalStyles"
-import { Container, Box, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, WithStyles, Card, CardHeader, Grid, CardContent, CircularProgress } from '@material-ui/core';
-import * as Nominatim from "nominatim-browser";
+
 import Api from "../../../api";
+import { Dispatch } from "redux";
+import { History } from "history";
+import { connect } from "react-redux";
+import { NullableToken } from "../../../types";
+import * as Nominatim from "nominatim-browser";
+import strings from "../../../localization/strings";
 import { HomeAddress } from "../../../generated/client";
+import { ReduxActions, ReduxState } from "../../../store";
+import AppLayout from "../../layouts/app-layout/app-layout";
+import { globalStyles } from "../../../styles/globalStyles";
+import { Container, Box, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, WithStyles, Card, CardHeader, Grid, CardContent, CircularProgress } from '@material-ui/core';
 
 /**
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof globalStyles> {
-  accessToken?: AccessToken;
+  accessToken?: NullableToken;
   keycloak?: Keycloak.KeycloakInstance;
+  history: History<History.LocationState>;
 }
 
 /**
@@ -59,10 +62,10 @@ class Settings extends React.Component<Props, State> {
   }
 
   public componentDidMount = async () => {
-    const { accessToken } = this.props;
+    const { accessToken, history } = this.props;
 
     if (!accessToken) {
-      return;
+      history.push("/");
     }
 
     this.setState({ loadingUserSettings: true });
@@ -372,10 +375,10 @@ class Settings extends React.Component<Props, State> {
  * Redux mapper for mapping store state to component props
  * @param state store state
  */
-export function mapStateToProps(state: StoreState) {
+export function mapStateToProps(state: ReduxState) {
   return {
-    accessToken: state.accessToken,
-    keycloak: state.keycloak
+    accessToken: state.auth.accessToken,
+    keycloak: state.auth.keycloak
   };
 }
 
@@ -384,7 +387,7 @@ export function mapStateToProps(state: StoreState) {
  * 
  * @param dispatch dispatch method
  */
-export function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
+export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   return {};
 }
 
