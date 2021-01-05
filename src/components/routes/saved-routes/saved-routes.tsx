@@ -39,6 +39,9 @@ class SavedRoutes extends React.Component<Props, State> {
     };
   }
 
+  /**
+   * Component render method
+   */
   public render = () => {
     const { classes } = this.props;
     return (
