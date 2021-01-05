@@ -27,7 +27,6 @@ import SearchIcon from "@material-ui/icons/Search";
 import SaveIcon from "@material-ui/icons/Save";
 import theme from "../../../theme/theme";
 
-
 /**
  * Interface describing component props
  */
