@@ -28,7 +28,7 @@ interface State {
  */
 class SavedRoutes extends React.Component<Props, State> {
   /**
-   * 
+   * Component constructor
    * 
    * @param props
    */
