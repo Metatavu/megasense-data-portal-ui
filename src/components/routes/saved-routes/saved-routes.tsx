@@ -151,7 +151,7 @@ class SavedRoutes extends React.Component<Props, State> {
   }
 
   /**
-   * Initiates route deletion dialog
+   * Initiate route deletion dialog click handler
    *
    * @param routeId route Id string
    */
@@ -173,7 +173,7 @@ class SavedRoutes extends React.Component<Props, State> {
   }
 
   /**
-   * Hides route deletion dialog
+   * Delete confirm action handler
    */
   private onDeleteConfirm = () => {
     const { deleteUserSavedRoute } = this.props;
@@ -185,7 +185,7 @@ class SavedRoutes extends React.Component<Props, State> {
   }
 
   /**
-   * Hides route deletion dialog
+   * Delete cancel action handler
    */
   private onDeleteCancel = () => {
     this.setState({
