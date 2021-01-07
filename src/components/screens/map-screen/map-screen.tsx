@@ -1,22 +1,31 @@
-import { Button, CircularProgress, TextField, withStyles, WithStyles } from "@material-ui/core";
+import { Button, CircularProgress, Drawer, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
+import { LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
+import * as Nominatim from "nominatim-browser";
+import * as PolyUtil from "polyline-encoded";
 import React, { ChangeEvent } from "react";
+import { Map, Marker, Polyline, TileLayer, Viewport } from "react-leaflet";
+import HeatmapLayer from "react-leaflet-heatmap-layer";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import strings from "../../../localization/strings";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { styles } from "./map-screen.styles";
-import { Map, TileLayer, Polyline, Viewport, Marker } from "react-leaflet";
-import * as PolyUtil from "polyline-encoded";
-import { LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
-import * as Nominatim from "nominatim-browser";
-import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from '@material-ui/lab/Autocomplete';
+import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab/Autocomplete";
 import Api from "../../../api";
-import HeatmapLayer from "react-leaflet-heatmap-layer";
 import { AirQuality, Route } from "../../../generated/client";
-import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
+import SavedRoutes from "../../routes/saved-routes/saved-routes";
 import { ReduxActions, ReduxState } from "../../../store";
 import { NullableToken, Location } from "../../../types";
 import { setDisplayedRoute } from "../../../actions/route";
+
+import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
+import AccessibleIcon from "@material-ui/icons/Accessible";
+import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
+import DestinationIcon from "@material-ui/icons/LocationOn";
+import MyLocationIcon from "@material-ui/icons/MyLocation";
+import SearchIcon from "@material-ui/icons/Search";
+import SaveIcon from "@material-ui/icons/Save";
+import theme from "../../../theme/theme";
 
 /**
  * Interface describing component props
@@ -49,6 +58,9 @@ interface State {
   userSavedRoutes: Route[];
 }
 
+/**
+ * Map screen component
+ */
 class MapScreen extends React.Component<Props, State> {
   mapRef: React.RefObject<Map>;
 
@@ -84,7 +96,7 @@ class MapScreen extends React.Component<Props, State> {
     }
 
     if (displayedRoute) {
-     this.displaySavedRoute(displayedRoute);
+      this.displaySavedRoute(displayedRoute);
     } else {
       this.loadUserSettings();
     }
@@ -97,20 +109,44 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   public render = () => {
-    const { accessToken } = this.props;
+    const { accessToken, classes } = this.props;
     const { loadingUserSettings, userSavedRoutes } = this.state;
 
     if (loadingUserSettings) {
       return (
         <AppLayout>
-          <CircularProgress size={ 200 }/>
+          <div className={ classes.loader }>
+            <CircularProgress size={ 64 }/>
+          </div>
         </AppLayout>
       );
     }
   
     return (
       <AppLayout>
-        <DrawerMenu open={ true } routing={ this.renderRoutingForm() } savedRoutes={ userSavedRoutes } showSavedRoutes={ !!accessToken } />
+        <Drawer
+          open={ true }
+          variant="permanent"
+          anchor="left"
+          classes={{
+            paper: classes.drawer,
+          }}
+        >
+          <Toolbar />
+          <Toolbar className={ classes.toolbar }>
+            <IconButton>
+              <DirectionsWalkIcon htmlColor="#fff" />
+            </IconButton>
+            <IconButton>
+              <AccessibleIcon htmlColor="#fff" />
+            </IconButton>
+            <IconButton>
+              <DirectionsBikeIcon htmlColor="#fff" />
+            </IconButton>
+          </Toolbar>
+          { this.renderRoutingForm() }
+          <SavedRoutes savedRoutes={ userSavedRoutes } showSavedRoutes={ !!accessToken } />
+        </Drawer>
         { this.renderMap() }
       </AppLayout>
       
@@ -204,7 +240,7 @@ class MapScreen extends React.Component<Props, State> {
 
     return (
       <div className={ classes.routingForm }>
-        <div className={ classes.routingFormPart }>
+        <div className={ classes.inputFieldContainer }>
           <Autocomplete
             filterOptions={ (options) => options }
             onInputChange={ this.onLocationFromChange } 
@@ -212,15 +248,19 @@ class MapScreen extends React.Component<Props, State> {
             onChange={ this.onLocationFromSelected } 
             options={ locationFromOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
-            value={ locationFrom } 
-            className={ classes.routingFormInput }
+            value={ locationFrom }
             size="small" 
             renderInput={ (params) => 
-              <TextField
-                placeholder={ strings.from } 
-                {...params} 
-                variant="outlined" 
-              /> 
+              <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
+                <MyLocationIcon fontSize="small" htmlColor="#FFF" />
+                <TextField
+                  variant="standard"
+                  className={ classes.routingFormInput }
+                  placeholder={ strings.from }
+                  { ...params }
+                  fullWidth
+                />
+              </div>
             } 
           />
 
@@ -232,39 +272,53 @@ class MapScreen extends React.Component<Props, State> {
             options={ locationToOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
             value={ locationTo } 
-            className={ classes.routingFormInput }
-            size="small" 
+            size="small"
+            style={{ marginTop: theme.spacing(2) }}
             renderInput={ (params) => 
-              <TextField 
-                placeholder={ strings.to } 
-                {...params} 
-                variant="outlined" 
-              /> 
+              <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
+                <DestinationIcon fontSize="small" htmlColor="#FFF" />
+                <TextField
+                  variant="standard"
+                  className={ classes.routingFormInput }
+                  placeholder={ strings.to }
+                  { ...params }
+                  fullWidth
+                />
+              </div>
             } 
           />
-
         </div>
-        <div className={ classes.routingFormPart }>
-          { !loadingRoute && 
-            <Button onClick={ this.updateRoute } className={ classes.routingFormButton }>{ strings.findRoute }</Button>
-          }
+        <div className={ classes.routingControls }>
+          <Button
+            variant="outlined"
+            onClick={ this.updateRoute }
+            className={ classes.routingFormButton }
+            endIcon={
+              loadingRoute ?
+              <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
+              :
+              <SearchIcon htmlColor="#fff"
+              />
+            }
+          >
+            { strings.routes.findRoute }
+          </Button>
 
-          {
-            loadingRoute &&
-            <CircularProgress color="inherit" className={ classes.routingFormLoader } />
-          }
-
-          { !savingRoute && 
-            <Button onClick={ this.saveRoute } className={ classes.routingFormButton }>{ strings.saveRoute }</Button>
-          }
-
-          {
-            savingRoute &&
-            <CircularProgress color="inherit" className={ classes.routingFormLoader } />
-          }
-
+          <Button
+            variant="outlined"
+            onClick={ this.saveRoute }
+            className={ classes.routingFormButton }
+            endIcon={
+              savingRoute ?
+              <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
+              :
+              <SaveIcon htmlColor="#fff"
+              />
+            }
+          >
+            { strings.routes.saveRoute }
+          </Button>
         </div>
-
       </div>
     );
   }
@@ -273,15 +327,16 @@ class MapScreen extends React.Component<Props, State> {
    * Renders the map
    */
   private renderMap = (): JSX.Element => {
+    const { classes } = this.props;
     const { route, locationFrom, locationTo, airQuality } = this.state;
 
     return (
-      <Map 
+      <Map
+        className={ classes.mapComponent }
         ref={ this.mapRef }
         zoomControl={ false } 
         ondblclick={ this.addRoutePoint } 
         doubleClickZoom={ false } 
-        style={{ width: "100vw", height: window.innerHeight - 140 }} 
         onViewportChange={ this.onViewportChange }  
         viewport={ this.state.mapViewport }
         >

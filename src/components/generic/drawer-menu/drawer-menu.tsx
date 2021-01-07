@@ -1,9 +1,9 @@
 import { Box, Button, Divider, Drawer, Fab, Grid, IconButton, List, ListItem, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { styles } from "./drawer-menu.styles"
-import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
-import AccessibleIcon from '@material-ui/icons/Accessible';
-import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
+import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
+import AccessibleIcon from "@material-ui/icons/Accessible";
+import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
 import strings from "../../../localization/strings"
 import { Route } from "../../../generated/client";
 
@@ -25,6 +25,9 @@ interface State {
   showAllUserRoutes: boolean,
 }
 
+/**
+ * Component for Drawer menu
+ */
 class DrawerMenu extends React.Component<Props, State> {
   /**
    * 
@@ -52,7 +55,7 @@ class DrawerMenu extends React.Component<Props, State> {
           }}
         >
           <div className={ classes.drawerContainer }>
-            <Box mt={10}>
+            <Box mt={ 10 }>
               <Grid container justify="center" direction="row" spacing={ 1 }>
                 <Grid xs={ 2 }>
                   <IconButton aria-label="delete">
@@ -77,10 +80,6 @@ class DrawerMenu extends React.Component<Props, State> {
                 <ListItem>
                   { statisticsControls }
                 </ListItem>
-                <Divider />
-                <Button variant="text">
-                  { strings.collapseMenuText }
-                </Button>
               </List>
               <List>
                 { this.renderSavedRoutes() }

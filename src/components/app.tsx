@@ -1,15 +1,15 @@
-import React from 'react';
+import React from "react";
 
-import { createStore } from 'redux';
+import { createStore } from "redux";
 import  theme  from "../theme/theme";
-import { Provider } from 'react-redux';
-import { ThemeProvider } from '@material-ui/core';
+import { Provider } from "react-redux";
+import { CssBaseline, ThemeProvider } from "@material-ui/core";
 import Home from "./screens/home-screen/home-screen";
 import MapScreen from "./screens/map-screen/map-screen";
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Statistics from "./screens/statistics-screen/statistics";
 import Settings from "./screens/settings-screen/settings-screen";
-import { ReduxActions, ReduxState, rootReducer } from '../store';
+import { ReduxActions, ReduxState, rootReducer } from "../store";
 import AccessTokenRefresh from "./containers/access-token-refresh";
 import SavedRoutes from "./screens/saved-routes-screen/saved-routes";
 
@@ -41,6 +41,7 @@ class App extends React.Component<Props, State> {
   render() {
     return (
       <ThemeProvider theme={ theme }>
+        <CssBaseline />
         <Provider store={ store }>
           <AccessTokenRefresh>
             <BrowserRouter>

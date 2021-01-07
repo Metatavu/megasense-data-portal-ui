@@ -1,6 +1,6 @@
 import React from "react";
 
-import { AppBar, Box, Button, Toolbar, withStyles, WithStyles } from "@material-ui/core";
+import { AppBar, Box, Button, Toolbar, Typography, withStyles, WithStyles } from "@material-ui/core";
 import { ReduxActions, ReduxState } from "../../../store";
 import strings from "../../../localization/strings";
 import { NullableToken } from "../../../types";
@@ -8,6 +8,10 @@ import { styles } from "./header.styles";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
+import LogoIcon from "../../../resources/svg/logo-icon";
+import StatsIcon from "@material-ui/icons/ShowChart";
+import MapIcon from "@material-ui/icons/Map";
+import SettingsIcon from "@material-ui/icons/Settings";
 
 /**
  * Interface describing component props
@@ -37,16 +41,17 @@ class MobileTopBar extends React.Component<Props, State> {
       <>
         <AppBar position="fixed" className={ classes.appBar }>
           <Toolbar>
+            <LogoIcon color="primary" />
             <Box ml={ 2 } mr={ 2 }>
-              <Link to="/">
-                <Button variant="outlined">
-                  { strings.frontPage }
-                </Button>
-              </Link>
+              <Typography variant="h1" color="primary">Green paths</Typography>
             </Box>
-            <Box mr={ 2 }>
+            <Box ml={ 2 } mr={ 2 }>
               <Link to="/map">
-                <Button variant="outlined">
+                <Button
+                  startIcon={ <MapIcon /> }
+                  color="primary"
+                  variant="contained"
+                >
                   { strings.map }
                 </Button>
               </Link>
@@ -73,7 +78,8 @@ class MobileTopBar extends React.Component<Props, State> {
     return (
       <Box style={{ marginLeft: "auto" }}>
         <Button
-          variant="outlined"
+          color="primary"
+          variant="text"
           onClick={ () => {
             if (accessToken) {
               if (keycloak) {
@@ -105,7 +111,10 @@ class MobileTopBar extends React.Component<Props, State> {
     return (
       <Box mr={ 2 }>
         <Link to="/statistics">
-          <Button variant="outlined">
+          <Button
+            startIcon={ <StatsIcon /> }
+            variant="outlined"
+          >
             { strings.statistics }
           </Button>
         </Link>
@@ -126,7 +135,10 @@ class MobileTopBar extends React.Component<Props, State> {
     return (
       <Box>
         <Link to="/settings">
-          <Button variant="outlined">
+          <Button
+            variant="outlined"
+            startIcon={ <SettingsIcon /> }
+          >
             { strings.settings }
           </Button>
         </Link>

@@ -1,18 +1,25 @@
 {
-
+  
   "auth": {
     "login": "Kirjaudu sisään",
     "logout": "Kirjaudu ulos"
+  },
+  
+  "routes": {
+    "deleteRoute": "Poista reitti",
+    "savedRoutes": "Tallennetut reitit",
+    "findRoute": "Hae reitti",
+    "saveRoute": "Tallenna reitti",
+    "showMore": "Näytä kaikki",
+    "showLess": "Näytä vähemmän"
   },
 
   "yourTokenIs": "Avaimesi on: ",
   "frontPage": "Etusivu",
   "hello": "Hei,",
   "map": "Kartta",
-  "from": "Paikasta",
-  "to": "Paikkaan",
-  "findRoute": "Löydä reitti",
-  "saveRoute": "Tallenna reitti",
+  "from": "Valitse aloituspiste...",
+  "to": "Valitse määränpää...",
   "savedRoutes": "Tallennetut reitit",
   "savedRoutesFrom": "Mistä",
   "savedRoutesTo": "Minne",

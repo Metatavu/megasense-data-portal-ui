@@ -1,28 +1,71 @@
-import { createStyles } from "@material-ui/core";
+import { createStyles, Toolbar } from "@material-ui/core";
+import theme from "../../../theme/theme";
 
 export const styles = createStyles({
-  routingForm: {
-    marginLeft: "auto",
-    marginRight: "auto",
-    display: "flex"
+
+  loader: {
+    display: "flex",
+    height: "100%",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    alignContent: "center"
   },
-  routingFormPart: {
+
+  toolbar: {
+    backgroundColor: theme.palette.primary.main
+  },
+
+  mapComponent: {
+    height: "100%"
+  },
+
+  drawer: {
+    width: 420
+  },
+  
+  routingForm: {
+    display: "flex",
+    flexDirection: "column",
+    backgroundColor: theme.palette.primary.main
+  },
+
+  inputFieldContainer: {
+    padding: theme.spacing(2),
+    display: "flex",
+    flexDirection: "column",
+  },
+
+  routingControls: {
+    padding: theme.spacing(2),
     display: "flex",
     flexDirection: "column"
   },
+
   routingFormButton: {
-    margin: 10,
-    backgroundColor: "#F6AB6C",
-    paddingLeft: 30,
-    paddingRight: 30
+    color:  theme.palette.primary.light,
+    marginBottom: theme.spacing(2),
+    borderColor: theme.palette.primary.light,
   },
+
   routingFormLoader: {
-    margin: 10,
-    color: "#F6AB6C"
+
   },
+
+  autoCompleteInputWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+
   routingFormInput: {
-    width: 400, 
-    backgroundColor: "#ffffff", 
-    margin: "auto"
-  }
+    marginLeft: theme.spacing(2),
+    "& .MuiInputBase-root": {
+      color: "#fff"
+    },
+    "& .MuiIconButton-root": {
+      color: "rgba(255,255,255,0.8)"
+    }
+  },
+
 });

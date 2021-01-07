@@ -145,8 +145,8 @@ class SavedRoutes extends React.Component<Props, State> {
                   fullWidth
                   label="Select time range"
                   inputProps={{
-                    name: 'time',
-                    id: 'outlined-age-native-simple',
+                    name: "time",
+                    id: "outlined-age-native-simple",
                   }}
                 >
                   <option aria-label="None" value="" />
@@ -165,8 +165,8 @@ class SavedRoutes extends React.Component<Props, State> {
                   fullWidth
                   label="Select pollution"
                   inputProps={{
-                    name: 'age',
-                    id: 'outlined-age-native-simple',
+                    name: "age",
+                    id: "outlined-age-native-simple",
                   }}
                 >
                   <option aria-label="None" value="" />
