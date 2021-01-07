@@ -126,21 +126,23 @@ class SavedRoutes extends React.Component<Props, State> {
     if (routeDeleteInitiated) {
       return (
         <Dialog open={ routeDeleteInitiated }>
-          <h1>Delete route</h1>
+          <h1>
+            { strings.routes.deleteDialog }
+          </h1>
           <div>
             <Button
               variant="outlined"
               style={{ margin: "20px", width: "60px" }}
               onClick={ () => { this.onDeleteConfirm() } }
             >
-              delete
+              { strings.routes.deleteButton }
             </Button>
             <Button
               variant="outlined"
               style={{ margin: "20px", width: "-webkit-fill-available" }}
               onClick={ () => { this.onDeleteCancel() } }
             >
-              cancel
+              { strings.routes.cancelButton }
             </Button>
           </div>
         </Dialog>

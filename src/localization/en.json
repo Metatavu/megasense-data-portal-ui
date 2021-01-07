@@ -11,7 +11,10 @@
     "findRoute": "Find route",
     "saveRoute": "Save route",
     "showMore": "Show all",
-    "showLess": "Show less"
+    "showLess": "Show less",
+    "deleteDialog": "Please confirm deletion",
+    "deleteButton": "Delete",
+    "cancelButton": "Cancel"
   },
 
   "yourTokenIs": "Your token is: ",
