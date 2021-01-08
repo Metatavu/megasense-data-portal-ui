@@ -1,6 +1,6 @@
 ## Megasense data portal UI
 
-##### Clean air route building web application. Product developed as a part of a Megasense consortium.
+##### Clean air routing web application. Product developed as a part of a Megasense consortium.
 
 Provides clean air route building capabilities. Features user tailored post-routing user statistics. Application is currently **in development**. 
 
