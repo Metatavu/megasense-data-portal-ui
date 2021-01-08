@@ -21,9 +21,3 @@ export type LOGOUT = typeof LOGOUT;
  */
 export const SET_LOCALE = "SET_LOCALE";
 export type SET_LOCALE = typeof SET_LOCALE;
-
-/**
- * Set displayed route update
- */
-export const SET_DISPLAYED_ROUTE = "SET_DISPLAYED_ROUTE";
-export type SET_DISPLAYED_ROUTE = typeof SET_DISPLAYED_ROUTE;

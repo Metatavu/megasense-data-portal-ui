@@ -26,7 +26,7 @@ interface Props extends WithStyles<typeof styles> {
 /**
  * Exposure data for statistics table
  */
-interface exposureData {
+interface ExposureData {
   id?: string;
   harmfulMicroparticles?: number;
   nitrogenDioxide?: number;
@@ -91,7 +91,7 @@ class SavedRoutes extends React.Component<Props, State> {
     }
 
     await this.getData();
-    let exposureData: exposureData[] = [];
+    let exposureData: ExposureData[] = [];
     for (let i = 0; i < this.state.statisticsData.length; i++) {
       const data = this.state.statisticsData[i];
       exposureData.push ({

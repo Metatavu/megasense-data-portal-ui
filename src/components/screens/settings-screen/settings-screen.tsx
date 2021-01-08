@@ -392,6 +392,7 @@ class Settings extends React.Component<Props, State> {
    * Toggles the delete user dialog
    */
   private toggleDeleteUserDialog = () => {
+    const { deleteDialogVisible } = this.state;
     this.setState({
       deleteDialogVisible: !deleteDialogVisible
     })

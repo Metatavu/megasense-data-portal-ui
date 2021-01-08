@@ -11,6 +11,7 @@ import Settings from "./screens/settings-screen/settings-screen";
 import { ReduxActions, ReduxState, rootReducer } from "../store";
 import AccessTokenRefresh from "./containers/access-token-refresh";
 import SavedRoutes from "./screens/saved-routes-screen/saved-routes";
+import * as Client from "../generated/client";
 
 /**
  * Initialize Redux store
@@ -26,7 +27,8 @@ interface Props {
 /**
  * Interface describing component state
  */
-interface State { 
+interface State {
+  displayedRoute?: Client.Route;
 }
 
 /**
@@ -58,14 +60,14 @@ class App extends React.Component<Props, State> {
                   exact
                   path="/map"
                   render={() => (
-                    <MapScreen />
+                    <MapScreen displayedRoute={ this.state.displayedRoute } resetDisplayedRoute={ this.resetDisplayedRoute } />
                   )}
                 />
                 <Route
                   exact
                   path="/saved-routes"
                   render={() => (
-                    <SavedRoutes />
+                    <SavedRoutes updateDisplayedRoute={ this.updateDisplayedRoute } />
                   )}
                 />
                 <Route
@@ -88,6 +90,24 @@ class App extends React.Component<Props, State> {
         </Provider>
       </ThemeProvider>
     );
+  }
+
+  /**
+   * Updates currently displayed route
+   */
+  private updateDisplayedRoute = (displayedRoute: Client.Route) => {
+    this.setState({
+      displayedRoute: displayedRoute
+    });
+  }
+
+  /**
+   * Resets currently displayed route
+   */
+  private resetDisplayedRoute = () => {
+    this.setState({
+      displayedRoute: undefined
+    });
   }
 }
 
