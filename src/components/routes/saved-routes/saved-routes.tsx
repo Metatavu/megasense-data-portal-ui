@@ -109,7 +109,11 @@ class SavedRoutes extends React.Component<Props, State> {
             secondary={ `${ from } - ${ to }` }
           />
           <ListItemSecondaryAction>
-            <IconButton size="small" title={ strings.routes.deleteRoute } onClick={ () => this.onDeleteRouteClick(route.id ? route.id : "") }>
+            <IconButton 
+              size="small" 
+              title={ strings.routes.deleteRoute } 
+              onClick={ () => this.onDeleteRouteClick(route.id ? route.id : "") }
+            >
               <DeleteIcon />
             </IconButton>
           </ListItemSecondaryAction>
@@ -180,7 +184,8 @@ class SavedRoutes extends React.Component<Props, State> {
     const { deletedRouteId } = this.state;
     deleteUserSavedRoute(deletedRouteId);
     this.setState({
-      routeDeleteInitiated: false
+      routeDeleteInitiated: false,
+      deletedRouteId: undefined
     })
   }
 
@@ -190,7 +195,7 @@ class SavedRoutes extends React.Component<Props, State> {
   private onDeleteCancel = () => {
     this.setState({
       routeDeleteInitiated: false,
-      deletedRouteId: ""
+      deletedRouteId: undefined
     })
   }
 }

@@ -145,7 +145,11 @@ class MapScreen extends React.Component<Props, State> {
             </IconButton>
           </Toolbar>
           { this.renderRoutingForm() }
-          <SavedRoutes savedRoutes={ userSavedRoutes } showSavedRoutes={ !!accessToken } deleteUserSavedRoute={ this.deleteUserSavedRoute } />
+          <SavedRoutes 
+            savedRoutes={ userSavedRoutes } 
+            showSavedRoutes={ !!accessToken } 
+            onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute } 
+          />
         </Drawer>
         { this.renderMap() }
       </AppLayout>
