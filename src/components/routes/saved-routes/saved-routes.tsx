@@ -1,4 +1,4 @@
-import { Avatar, Button, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Toolbar, Typography, withStyles, WithStyles } from "@material-ui/core";
+import { Avatar, Button, Dialog, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Toolbar, Typography, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { Route } from "../../../generated/client";
 import LogoIcon from "../../../resources/svg/logo-icon";
@@ -6,14 +6,14 @@ import { styles } from "./saved-routes.styles";
 import strings from "../../../localization/strings";
 
 import DeleteIcon from "@material-ui/icons/DeleteForeverOutlined";
-import theme from "../../../theme/theme";
 
 /**
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles> {
-  savedRoutes?: Route[],
-  showSavedRoutes?: boolean,
+  savedRoutes?: Route[];
+  showSavedRoutes?: boolean;
+  onDeleteUserSavedRoute: (routeId: string) => void;
 }
 
 /**
@@ -21,6 +21,8 @@ interface Props extends WithStyles<typeof styles> {
  */
 interface State {
   showAllUserRoutes: boolean,
+  routeDeleteInitiated: boolean,
+  deletedRouteId?: string
 }
 
 /**
@@ -36,6 +38,7 @@ class SavedRoutes extends React.Component<Props, State> {
     super(props);
     this.state = {
       showAllUserRoutes: false,
+      routeDeleteInitiated: false
     };
   }
 
@@ -57,6 +60,7 @@ class SavedRoutes extends React.Component<Props, State> {
             { this.state.showAllUserRoutes ? strings.routes.showLess : strings.routes.showMore }
           </Button>
         </div>
+        { this.renderDeleteDialog() }
       </>
     );
   }
@@ -65,7 +69,7 @@ class SavedRoutes extends React.Component<Props, State> {
    * Returns rendered user saved routes
    */
   private renderListItems = () => {
-    const { savedRoutes, showSavedRoutes, classes } = this.props;
+    const { savedRoutes, showSavedRoutes } = this.props;
     const { showAllUserRoutes } = this.state;
 
     if (!savedRoutes || !showSavedRoutes) {
@@ -103,12 +107,63 @@ class SavedRoutes extends React.Component<Props, State> {
             secondary={ `${ from } - ${ to }` }
           />
           <ListItemSecondaryAction>
-            <IconButton size="small" title={ strings.routes.deleteRoute }>
+            <IconButton 
+              size="small" 
+              title={ strings.routes.deleteRoute } 
+              onClick={ () => this.onDeleteRouteClick(route.id ? route.id : "") }
+            >
               <DeleteIcon />
             </IconButton>
           </ListItemSecondaryAction>
         </ListItem>
       )
+    });
+  }
+
+  /**
+   * Renders delete confirmation dialog
+   */
+  private renderDeleteDialog = () => {
+    const { routeDeleteInitiated } = this.state;
+
+    if (!routeDeleteInitiated) {
+      return null;
+    }
+
+    return (
+      <Dialog open={ routeDeleteInitiated }>
+        <h1>
+          { strings.routes.deleteDialog }
+        </h1>
+        <div>
+          <Button
+            variant="outlined"
+            style={{ margin: "20px", width: "60px" }}
+            onClick={ () => { this.onDeleteConfirm() } }
+          >
+            { strings.routes.deleteButton }
+          </Button>
+          <Button
+            variant="outlined"
+            style={{ margin: "20px", width: "-webkit-fill-available" }}
+            onClick={ () => { this.onDeleteCancel() } }
+          >
+            { strings.routes.cancelButton }
+          </Button>
+        </div>
+      </Dialog>
+    )
+  }
+
+  /**
+   * Initiate route deletion dialog click handler
+   *
+   * @param routeId route Id string
+   */
+  private onDeleteRouteClick = (routeId: string) => {
+    this.setState({
+      routeDeleteInitiated: true,
+      deletedRouteId: routeId
     });
   }
 
@@ -120,6 +175,29 @@ class SavedRoutes extends React.Component<Props, State> {
     this.setState({
       showAllUserRoutes: !showAllUserRoutes
     });
+  }
+
+  /**
+   * Delete confirm action handler
+   */
+  private onDeleteConfirm = () => {
+    const { onDeleteUserSavedRoute } = this.props;
+    const { deletedRouteId } = this.state;
+    onDeleteUserSavedRoute(deletedRouteId!);
+    this.setState({
+      routeDeleteInitiated: false,
+      deletedRouteId: undefined
+    })
+  }
+
+  /**
+   * Delete cancel action handler
+   */
+  private onDeleteCancel = () => {
+    this.setState({
+      routeDeleteInitiated: false,
+      deletedRouteId: undefined
+    })
   }
 }
 

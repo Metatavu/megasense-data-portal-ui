@@ -11,7 +11,10 @@
     "findRoute": "Hae reitti",
     "saveRoute": "Tallenna reitti",
     "showMore": "Näytä kaikki",
-    "showLess": "Näytä vähemmän"
+    "showLess": "Näytä vähemmän",
+    "deleteDialog": "Vahvista poisto",
+    "deleteButton": "Poista",
+    "cancelButton": "Peruuta"
   },
 
   "yourTokenIs": "Avaimesi on: ",

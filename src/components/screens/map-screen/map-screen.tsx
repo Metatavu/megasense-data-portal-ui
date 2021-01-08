@@ -145,7 +145,11 @@ class MapScreen extends React.Component<Props, State> {
             </IconButton>
           </Toolbar>
           { this.renderRoutingForm() }
-          <SavedRoutes savedRoutes={ userSavedRoutes } showSavedRoutes={ !!accessToken } />
+          <SavedRoutes 
+            savedRoutes={ userSavedRoutes } 
+            showSavedRoutes={ !!accessToken } 
+            onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute } 
+          />
         </Drawer>
         { this.renderMap() }
       </AppLayout>
@@ -228,6 +232,27 @@ class MapScreen extends React.Component<Props, State> {
 
     this.setState({
       userSavedRoutes: userRoutes
+    });
+  }
+
+  /**
+   * Deletes user saved route
+   *
+   * @param routeId route Id string
+   */
+  private onDeleteUserSavedRoute = async (routeId: string) => {
+    const { accessToken } = this.props;
+    const { userSavedRoutes } = this.state;
+    
+    if (!accessToken) {
+      return;
+    }
+
+    const routesApi = Api.getRoutesApi(accessToken);
+    await routesApi.deleteRoute({ routeId: routeId });
+
+    this.setState({
+      userSavedRoutes: userSavedRoutes.filter(userSavedRoute => userSavedRoute.id !== routeId)
     });
   }
 

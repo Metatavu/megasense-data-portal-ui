@@ -23,6 +23,9 @@ export interface IStrings extends LocalizedStringsMethods {
     findRoute: string;
     showMore: string;
     showLess: string;
+    deleteDialog: string;
+    deleteButton: string;
+    cancelButton: string;
   };
 
   frontPage: string;
