@@ -6,6 +6,7 @@ import { NullableToken } from "../types";
  */
 export default class Api {
   /**
+  
    * Gets initialized routes API
    * 
    * @param accessToken access token

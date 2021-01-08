@@ -44,7 +44,7 @@ class Home extends React.Component<Props, State> {
     const { accessToken, keycloak } = this.props;
 
     if (!accessToken || !keycloak) {
-      return
+      return;
     }
 
     const userDisplayName = (keycloak.idTokenParsed as any).name;
@@ -56,7 +56,7 @@ class Home extends React.Component<Props, State> {
   /**
    * Component render method
    */
-  render() {
+  public render() {
     const { userDisplayName } = this.state;
     return (
       <AppLayout>

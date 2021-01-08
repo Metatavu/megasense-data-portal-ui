@@ -1,7 +1,6 @@
 import React from "react";
-
 import { createStore } from "redux";
-import  theme  from "../theme/theme";
+import theme from "../theme/theme";
 import { Provider } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@material-ui/core";
 import Home from "./screens/home-screen/home-screen";
@@ -21,12 +20,14 @@ const store = createStore<ReduxState, ReduxActions, any, any>(rootReducer);
 /**
  * Interface describing component properties
  */
-interface Props { }
+interface Props { 
+}
 
 /**
  * Interface describing component state
  */
-interface State { }
+interface State { 
+}
 
 /**
  * App component
@@ -38,7 +39,7 @@ class App extends React.Component<Props, State> {
     this.state = {};
   }
 
-  render() {
+  public render() {
     return (
       <ThemeProvider theme={ theme }>
         <CssBaseline />

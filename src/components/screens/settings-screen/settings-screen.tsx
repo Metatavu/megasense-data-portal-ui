@@ -68,25 +68,33 @@ class Settings extends React.Component<Props, State> {
       history.push("/");
     }
 
-    this.setState({ loadingUserSettings: true });
+    this.setState({ 
+      loadingUserSettings: true 
+    });
     try {
       const userSettingsApi = Api.getUsersApi(accessToken);
       const userSettings = await userSettingsApi.getUserSettings();
       const { homeAddress } = userSettings;
 
       if (homeAddress) {
-        this.setState({ homeAddress });
+        this.setState({ 
+          homeAddress: homeAddress 
+        });
       }
       
-      this.setState({ userSettingsExist: true });
+      this.setState({ 
+        userSettingsExist: true 
+      });
     } catch (error) {}
-    this.setState({ loadingUserSettings: false });
+    this.setState({ 
+      loadingUserSettings: false 
+    });
   }
 
   /**
    * Component render method
    */
-  render() {
+  public render() {
     const { classes } = this.props;
     const { homeAddress, loadingUserSettings, savingUserSettings } = this.state;
     const { streetAddress, postalCode, city, country } = homeAddress;
@@ -262,7 +270,9 @@ class Settings extends React.Component<Props, State> {
    * Closes the "location not found"-dialog
    */
   private closeLocationNotFoundDialog = () => {
-    this.setState({ locationNotFoundDialogVisible: false });
+    this.setState({ 
+      locationNotFoundDialogVisible: false 
+    });
   }
 
   /**
@@ -272,9 +282,11 @@ class Settings extends React.Component<Props, State> {
    * 
    */
   private onStreetAddressChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const homeAddress = this.state.homeAddress;
+    const { homeAddress } = this.state;
     homeAddress.streetAddress = event.target.value;
-    this.setState({ homeAddress });
+    this.setState({ 
+      homeAddress: homeAddress 
+    });
   }
 
   /**
@@ -284,7 +296,7 @@ class Settings extends React.Component<Props, State> {
    * 
    */
   private onPostalCodeChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const homeAddress = this.state.homeAddress;
+    const { homeAddress } = this.state;
     homeAddress.postalCode = event.target.value;
     this.setState({ homeAddress });
   }
@@ -296,7 +308,7 @@ class Settings extends React.Component<Props, State> {
    * 
    */
   private onCityChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const homeAddress = this.state.homeAddress;
+    const { homeAddress } = this.state;
     homeAddress.city = event.target.value;
     this.setState({ homeAddress });
   }
@@ -308,7 +320,7 @@ class Settings extends React.Component<Props, State> {
    * 
    */
   private onCountryChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const homeAddress = this.state.homeAddress;
+    const { homeAddress } = this.state;
     homeAddress.country = event.target.value;
     this.setState({ homeAddress });
   }
@@ -325,15 +337,22 @@ class Settings extends React.Component<Props, State> {
       return;
     }
 
-    this.setState({ savingUserSettings: true });
+    this.setState({ 
+      savingUserSettings: true 
+    });
 
     const userSettingsApi = Api.getUsersApi(accessToken);
     if (streetAddress === "" && postalCode === "" && city === "" && country === "") {
       try {
+        const userSettings = {};
         if (userSettingsExist) {
-          await userSettingsApi.updateUserSettings({ userSettings: {} });
+          await userSettingsApi.updateUserSettings({ 
+            userSettings: userSettings
+          });
         } else {
-          await userSettingsApi.createUserSettings({ userSettings: {} });
+          await userSettingsApi.createUserSettings({ 
+            userSettings: userSettings
+          });
         }
       } catch (error) {
         console.log(error);
@@ -347,10 +366,18 @@ class Settings extends React.Component<Props, State> {
       }
   
       try {
+        const userSettings = {
+          homeAddress: homeAddress
+        };
+
         if (userSettingsExist) {
-          await userSettingsApi.updateUserSettings({ userSettings: { homeAddress } });
+          await userSettingsApi.updateUserSettings({
+            userSettings: userSettings
+          });
         } else {
-          await userSettingsApi.createUserSettings({ userSettings: { homeAddress } });
+          await userSettingsApi.createUserSettings({
+            userSettings: userSettings
+          });
         }
       } catch (error) {
         console.log(error);
@@ -366,7 +393,7 @@ class Settings extends React.Component<Props, State> {
    */
   private toggleDeleteUserDialog = () => {
     this.setState({
-      deleteDialogVisible: this.state.deleteDialogVisible ? false : true,
+      deleteDialogVisible: !deleteDialogVisible
     })
   }
 }

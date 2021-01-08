@@ -11,18 +11,18 @@ import { Route } from "../../../generated/client";
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles> {
-  open: boolean,
-  routing?: JSX.Element,
-  statisticsControls?: JSX.Element,
-  savedRoutes?: Route[],
-  showSavedRoutes?: boolean,
+  open: boolean;
+  routing?: JSX.Element;
+  statisticsControls?: JSX.Element;
+  savedRoutes?: Route[];
+  showSavedRoutes?: boolean;
 }
 
 /**
  * Interface describing component state
  */
 interface State {
-  showAllUserRoutes: boolean,
+  showAllUserRoutes: boolean;
 }
 
 /**
@@ -37,7 +37,7 @@ class DrawerMenu extends React.Component<Props, State> {
   constructor (props: Props) {
     super(props);
     this.state = {
-      showAllUserRoutes: false,
+      showAllUserRoutes: false
     };
   }
 
@@ -115,12 +115,7 @@ class DrawerMenu extends React.Component<Props, State> {
     const routes = showAllUserRoutes ? userRoutes : shortRoutes;
 
     return routes.map((route, index) => {
-      
-      if (!route) {
-        return null;
-      }
-      
-      const  savedTime = `Saved on: ${ route.savedAt?.getDay() }.${ route.savedAt?.getMonth() }.${ route.savedAt?.getFullYear() }`;
+      const savedTime = `Saved on: ${ route.savedAt?.getDay() }.${ route.savedAt?.getMonth() }.${ route.savedAt?.getFullYear() }`;
       const from = `From: ${ route.locationFromName.slice(0, 40) }...`;
       const to = `To: ${ route.locationToName.slice(0, 40) }...`;
 

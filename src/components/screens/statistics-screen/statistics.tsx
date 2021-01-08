@@ -51,7 +51,7 @@ interface State {
   DisplayResetButton: boolean;
   DisplaySinglePollutionData: boolean;
   statisticsData: ExposureInstance[];
-  exposureData: exposureData[];
+  exposureData: ExposureData[];
 }
 
 /**
@@ -95,7 +95,7 @@ class SavedRoutes extends React.Component<Props, State> {
     for (let i = 0; i < this.state.statisticsData.length; i++) {
       const data = this.state.statisticsData[i];
       exposureData.push ({
-        "id": data.id,
+        id: data.id,
         harmfulMicroparticles: data.harmfulMicroparticles,
         nitrogenDioxide: data.nitrogenDioxide,
         nitrogenMonoxide: data.nitrogenMonoxide,

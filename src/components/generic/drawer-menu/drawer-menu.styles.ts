@@ -23,4 +23,4 @@ export const styles = createStyles({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
-  })
+})

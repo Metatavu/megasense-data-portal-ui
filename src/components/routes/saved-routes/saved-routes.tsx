@@ -20,7 +20,7 @@ interface Props extends WithStyles<typeof styles> {
  * Interface describing component state
  */
 interface State {
-  showAllUserRoutes: boolean,
+  showAllUserRoutes: boolean;
   routeDeleteInitiated: boolean,
   deletedRouteId?: string
 }
@@ -29,6 +29,7 @@ interface State {
  * Component for saved routes listing
  */
 class SavedRoutes extends React.Component<Props, State> {
+
   /**
    * Component constructor
    * 

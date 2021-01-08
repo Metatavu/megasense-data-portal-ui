@@ -5,7 +5,7 @@ import Header from "../../generic/header/header";
 import { Toolbar } from "@material-ui/core";
 
 interface Props extends WithStyles<typeof styles> {
-  routing?: JSX.Element
+  routing?: JSX.Element;
 }
 
 interface State {
@@ -40,7 +40,9 @@ class AppLayout extends React.Component<Props, State> {
 
   private toggleSideMenu = () => {
     const sideMenuOpen = !this.state.sideMenuOpen;
-    this.setState({ sideMenuOpen });
+    this.setState({ 
+      sideMenuOpen: sideMenuOpen 
+    });
   }
 }
 
