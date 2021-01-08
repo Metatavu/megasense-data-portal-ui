@@ -12,6 +12,7 @@ import Settings from "./screens/settings-screen/settings-screen";
 import { ReduxActions, ReduxState, rootReducer } from "../store";
 import AccessTokenRefresh from "./containers/access-token-refresh";
 import SavedRoutes from "./screens/saved-routes-screen/saved-routes";
+import AboutScreen from "./screens/about-screen/about-screen";
 
 /**
  * Initialize Redux store
@@ -79,6 +80,13 @@ class App extends React.Component<Props, State> {
                   path="/settings"
                   render={({ history }) => (
                     <Settings history={ history } />
+                  )}
+                />
+                <Route
+                  exact
+                  path="/about"
+                  render={() => (
+                    <AboutScreen />
                   )}
                 />
               </Switch>
