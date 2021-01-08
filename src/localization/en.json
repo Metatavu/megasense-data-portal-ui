@@ -67,6 +67,7 @@
   "postalCode": "Postal code",
   "confirmButtonText": "Confirmed",
   "locationNotFoundDialogText": "Location not found",
+  "about": "About",
   "aboutScreen": {
     "title": "Megasense data portal UI",
     "subTitle": "Clean air routing web application. Product developed as a part of a Megasense consortium.",

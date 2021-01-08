@@ -67,9 +67,10 @@
   "postalCode": "Postinumero",
   "confirmButtonText": "Selvä",
   "locationNotFoundDialogText": "Paikkaa ei löydetty",
+  "about": "Tietoa projektista",
   "aboutScreen": {
-    "title": "Megasense data portal UI",
-    "subTitle": "Clean air routing web application. Product developed as a part of a Megasense consortium.",
-    "descriptionText": "Provides clean air route building capabilities. Features user tailored post-routing user statistics. Application is currently in development."
+    "title": "Megasense dataportaali",
+    "subTitle": "Puhtaan ilman reitityssovellus. Sovellus on kehitetty osana Megasense-konsortiota.",
+    "descriptionText": "Sovellus tarjoaa mahdollisuuden reitittää käyttäjiä puhtaan ilman reittiä pitkin. Sovellus on vielä kehitysvaiheessa."
   }
 }

@@ -77,11 +77,12 @@ export interface IStrings extends LocalizedStringsMethods {
   postalCode: string;
   confirmButtonText: string;
   locationNotFoundDialogText: string;
+  about: string;
   aboutScreen: {
     title: string;
     subTitle: string;
     descriptionText: string;
-  }
+  };
 }
 
 const strings: IStrings = new LocalizedStrings({

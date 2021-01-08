@@ -4,14 +4,16 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { NullableToken } from "../../../types";
 import strings from "../../../localization/strings";
-import { Container, Typography } from "@material-ui/core";
+import { Container, Typography, WithStyles, withStyles } from "@material-ui/core";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { ReduxActions, ReduxState } from "../../../store";
+import styles from "../../../styles/screens/about-screen"
+
 
 /**
  * Interface describing component props
  */
-interface Props {
+interface Props extends WithStyles<typeof styles> {
   accessToken?: NullableToken;
 }
 
@@ -41,11 +43,18 @@ class AboutScreen extends React.Component<Props, State> {
    * Component render method
    */
   public render() {
+    const { classes } = this.props;
     return (
       <AppLayout>
         <Container>
-        <Typography variant="h3">
-          { strings.hello } { "about" }
+        <Typography className={ classes.title } variant="h3">
+          { strings.aboutScreen.title }
+        </Typography>
+        <Typography className={ classes.subTitle } variant="subtitle2">
+          { strings.aboutScreen.subTitle }
+        </Typography>
+        <Typography className={ classes.descriptionText } variant="body2">
+          { strings.aboutScreen.descriptionText }
         </Typography>
         </Container>
       </AppLayout>
@@ -75,4 +84,6 @@ export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AboutScreen);
+const Styled = withStyles(styles)(AboutScreen);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Styled);
