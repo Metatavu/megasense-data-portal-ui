@@ -6,15 +6,14 @@ import { styles } from "./saved-routes.styles";
 import strings from "../../../localization/strings";
 
 import DeleteIcon from "@material-ui/icons/DeleteForeverOutlined";
-import theme from "../../../theme/theme";
 
 /**
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles> {
-  savedRoutes?: Route[],
-  showSavedRoutes?: boolean,
-  deleteUserSavedRoute: (routeId: string) => void;
+  savedRoutes?: Route[];
+  showSavedRoutes?: boolean;
+  onDeleteUserSavedRoute: (routeId: string) => void;
 }
 
 /**
@@ -23,7 +22,7 @@ interface Props extends WithStyles<typeof styles> {
 interface State {
   showAllUserRoutes: boolean,
   routeDeleteInitiated: boolean,
-  deletedRouteId: string
+  deletedRouteId?: string
 }
 
 /**
@@ -39,8 +38,7 @@ class SavedRoutes extends React.Component<Props, State> {
     super(props);
     this.state = {
       showAllUserRoutes: false,
-      routeDeleteInitiated: false,
-      deletedRouteId: ""
+      routeDeleteInitiated: false
     };
   }
 
@@ -123,31 +121,34 @@ class SavedRoutes extends React.Component<Props, State> {
    */
   private renderDeleteDialog = () => {
     const { routeDeleteInitiated } = this.state;
-    if (routeDeleteInitiated) {
-      return (
-        <Dialog open={ routeDeleteInitiated }>
-          <h1>
-            { strings.routes.deleteDialog }
-          </h1>
-          <div>
-            <Button
-              variant="outlined"
-              style={{ margin: "20px", width: "60px" }}
-              onClick={ () => { this.onDeleteConfirm() } }
-            >
-              { strings.routes.deleteButton }
-            </Button>
-            <Button
-              variant="outlined"
-              style={{ margin: "20px", width: "-webkit-fill-available" }}
-              onClick={ () => { this.onDeleteCancel() } }
-            >
-              { strings.routes.cancelButton }
-            </Button>
-          </div>
-        </Dialog>
-      )
+
+    if (!routeDeleteInitiated) {
+      return null;
     }
+
+    return (
+      <Dialog open={ routeDeleteInitiated }>
+        <h1>
+          { strings.routes.deleteDialog }
+        </h1>
+        <div>
+          <Button
+            variant="outlined"
+            style={{ margin: "20px", width: "60px" }}
+            onClick={ () => { this.onDeleteConfirm() } }
+          >
+            { strings.routes.deleteButton }
+          </Button>
+          <Button
+            variant="outlined"
+            style={{ margin: "20px", width: "-webkit-fill-available" }}
+            onClick={ () => { this.onDeleteCancel() } }
+          >
+            { strings.routes.cancelButton }
+          </Button>
+        </div>
+      </Dialog>
+    )
   }
 
   /**
@@ -176,9 +177,9 @@ class SavedRoutes extends React.Component<Props, State> {
    * Delete confirm action handler
    */
   private onDeleteConfirm = () => {
-    const { deleteUserSavedRoute } = this.props;
+    const { onDeleteUserSavedRoute } = this.props;
     const { deletedRouteId } = this.state;
-    deleteUserSavedRoute(deletedRouteId);
+    onDeleteUserSavedRoute(deletedRouteId!);
     this.setState({
       routeDeleteInitiated: false
     })
