@@ -16,6 +16,8 @@ import { AirQuality, Route } from "../../../generated/client";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
 import { ReduxActions, ReduxState } from "../../../store";
 import { NullableToken, Location } from "../../../types";
+import { setDisplayedRoute } from "../../../actions/route";
+
 import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
 import AccessibleIcon from "@material-ui/icons/Accessible";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
@@ -29,9 +31,9 @@ import theme from "../../../theme/theme";
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles>{
-  accessToken?: NullableToken;
   displayedRoute?: Route;
-  resetDisplayedRoute: () => void;
+  accessToken?: NullableToken;
+  setDisplayedRoute: typeof setDisplayedRoute;
 }
 
 /**
@@ -87,7 +89,7 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   public componentDidMount = async () => {
-    const { accessToken, displayedRoute } = this.props;
+    const { displayedRoute, accessToken } = this.props;
 
     if (!accessToken) {
       return;
@@ -161,8 +163,8 @@ class MapScreen extends React.Component<Props, State> {
    * @param routeToDisplay route to display
    */
   private displaySavedRoute = (routeToDisplay: Route) => {
-    const { resetDisplayedRoute } = this.props;
-    resetDisplayedRoute();
+    const { setDisplayedRoute } = this.props;
+    setDisplayedRoute(undefined);
     const route = PolyUtil.decode(routeToDisplay.routePoints);
     const firstItem = route[0];
     const lastItem = route[ route.length - 1 ];
@@ -584,7 +586,8 @@ class MapScreen extends React.Component<Props, State> {
  */
 export function mapStateToProps(state: ReduxState) {
   return {
-    accessToken: state.auth.accessToken
+    accessToken: state.auth.accessToken,
+    displayedRoute: state.displayedRoute.displayedRoute
   };
 }
 
@@ -593,6 +596,10 @@ export function mapStateToProps(state: ReduxState) {
  * 
  * @param dispatch dispatch method
  */
-export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {}
+export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
+  return {
+    setDisplayedRoute: (displayedRoute?: Route) => dispatch(setDisplayedRoute(displayedRoute))
+  };
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(MapScreen));

@@ -7,6 +7,7 @@ import { Redirect } from "react-router-dom";
 import { styles } from "./saved-routes.styles";
 import { NullableToken } from "../../../types";
 import { Route } from "../../../generated/client";
+import * as actions from "../../../actions/route";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import AppLayout from "../../layouts/app-layout/app-layout";
@@ -281,6 +282,10 @@ export function mapStateToProps(state: ReduxState) {
  * 
  * @param dispatch dispatch method
  */
-export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {}
+export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
+  return {
+    updateDisplayedRoute: (displayedRoute?: Route) => dispatch(actions.setDisplayedRoute(displayedRoute))
+  };
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SavedRoutes));
