@@ -46,15 +46,15 @@ class AboutScreen extends React.Component<Props, State> {
     return (
       <AppLayout>
         <Container>
-        <Typography className={ classes.title } variant="h3">
-          { strings.aboutScreen.title }
-        </Typography>
-        <Typography className={ classes.subTitle } variant="subtitle2">
-          { strings.aboutScreen.subTitle }
-        </Typography>
-        <Typography className={ classes.descriptionText } variant="body2">
-          { strings.aboutScreen.descriptionText }
-        </Typography>
+          <Typography className={ classes.title } variant="h3">
+            { strings.aboutScreen.title }
+          </Typography>
+          <Typography className={ classes.subTitle } variant="subtitle2">
+            { strings.aboutScreen.subTitle }
+          </Typography>
+          <Typography className={ classes.descriptionText } variant="body2">
+            { strings.aboutScreen.descriptionText }
+          </Typography>
         </Container>
       </AppLayout>
     );
