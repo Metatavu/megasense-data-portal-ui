@@ -66,5 +66,11 @@
   "user": "Käyttäjä",
   "postalCode": "Postinumero",
   "confirmButtonText": "Selvä",
-  "locationNotFoundDialogText": "Paikkaa ei löydetty"
+  "locationNotFoundDialogText": "Paikkaa ei löydetty",
+  "about": "Tietoa projektista",
+  "aboutScreen": {
+    "title": "Megasense dataportaali",
+    "subTitle": "Puhtaan ilman reitityssovellus. Sovellus on kehitetty osana Megasense-konsortiota.",
+    "descriptionText": "Sovellus tarjoaa mahdollisuuden reitittää käyttäjiä puhtaan ilman reittiä pitkin. Sovellus on vielä kehitysvaiheessa."
+  }
 }

@@ -42,23 +42,26 @@ class MobileTopBar extends React.Component<Props, State> {
       <>
         <AppBar position="fixed" className={ classes.appBar }>
           <Toolbar>
-            <LogoIcon color="primary" />
-            <Box ml={ 2 } mr={ 2 }>
-              <Typography variant="h1" color="primary">Green paths</Typography>
+            <Box display="flex" flexGrow={ 1 }>
+              <LogoIcon color="primary" />
+              <Box ml={ 2 } mr={ 2 }>
+                <Typography variant="h1" color="primary">Green paths</Typography>
+              </Box>
+              <Box ml={ 2 } mr={ 2 }>
+                <Link to="/map">
+                  <Button
+                    startIcon={ <MapIcon /> }
+                    color="primary"
+                    variant="contained"
+                  >
+                    { strings.map }
+                  </Button>
+                </Link>
+              </Box>
+              { this.renderStatistics() }
+              { this.renderSettings() }
             </Box>
-            <Box ml={ 2 } mr={ 2 }>
-              <Link to="/map">
-                <Button
-                  startIcon={ <MapIcon /> }
-                  color="primary"
-                  variant="contained"
-                >
-                  { strings.map }
-                </Button>
-              </Link>
-            </Box>
-            { this.renderStatistics() }
-            { this.renderSettings() }
+            { this.renderAbout() }
             { this.renderAuthAction() }
           </Toolbar>
         </AppBar>
@@ -147,6 +150,23 @@ class MobileTopBar extends React.Component<Props, State> {
     );
   }
 
+  /**
+   * Renders about link.
+   */
+  private renderAbout = () => {
+    return (
+      <Box>
+        <Link to="/about">
+          <Button
+            color="primary"
+            variant="text"
+          >
+            { strings.about }
+          </Button>
+        </Link>
+      </Box>
+    );
+  }
 }
 /**
  * Redux mapper for mapping store state to component props
