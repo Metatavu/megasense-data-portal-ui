@@ -20,6 +20,7 @@ interface Props extends WithStyles<typeof styles> {}
 
 interface Props {
   accessToken?: NullableToken;
+  keycloak?: Keycloak.KeycloakInstance;
   updateDisplayedRoute: (displayedRoute: Route) => void;
 }
 
@@ -65,7 +66,7 @@ class SavedRoutes extends React.Component<Props, State> {
    */
   render() {
     const { routes, redirect } = this.state;
-    const { classes } = this.props;
+    const { accessToken, keycloak, classes } = this.props;
     const routeCards = routes.map(this.renderRouteCard);
  
     if (redirect) {
@@ -75,7 +76,7 @@ class SavedRoutes extends React.Component<Props, State> {
     }
 
     return (
-      <AppLayout>
+      <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
         <Container>
           <Typography className={ classes.title } variant="h3" component="h1">
             { strings.savedRoutes }
@@ -273,7 +274,8 @@ class SavedRoutes extends React.Component<Props, State> {
  */
 export function mapStateToProps(state: ReduxState) {
   return {
-    accessToken: state.auth.accessToken
+    accessToken: state.auth.accessToken,
+    keycloak: state.auth.keycloak
   };
 }
 

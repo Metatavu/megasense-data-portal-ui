@@ -1,13 +1,9 @@
 import React from "react";
-
 import { AppBar, Box, Button, Toolbar, Typography, withStyles, WithStyles } from "@material-ui/core";
-import { ReduxActions, ReduxState } from "../../../store";
 import strings from "../../../localization/strings";
 import { NullableToken } from "../../../types";
 import { styles } from "./header.styles";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
 import LogoIcon from "../../../resources/svg/logo-icon";
 import StatsIcon from "@material-ui/icons/ShowChart";
 import MapIcon from "@material-ui/icons/Map";
@@ -168,26 +164,5 @@ class MobileTopBar extends React.Component<Props, State> {
     );
   }
 }
-/**
- * Redux mapper for mapping store state to component props
- * 
- * @param state store state
- */
-export function mapStateToProps(state: ReduxState) {
-  return {
-    accessToken: state.auth.accessToken,
-    keycloak: state.auth.keycloak
-  };
-}
 
-/**
- * Redux mapper for mapping component dispatches 
- * 
- * @param dispatch dispatch method
- */
-export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
-  return {
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(MobileTopBar));
+export default withStyles(styles)(MobileTopBar);
