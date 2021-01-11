@@ -59,7 +59,6 @@ class AboutScreen extends React.Component<Props, State> {
       </AppLayout>
     );
   }
-
 }
 
 /**
