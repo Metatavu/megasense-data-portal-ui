@@ -9,7 +9,6 @@ import AppLayout from "../../layouts/app-layout/app-layout";
 import { ReduxActions, ReduxState } from "../../../store";
 import styles from "../../../styles/screens/about-screen"
 
-
 /**
  * Interface describing component props
  */
