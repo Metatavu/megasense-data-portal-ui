@@ -166,7 +166,6 @@ class MobileTopBar extends React.Component<Props, State> {
       </Box>
     );
   }
-
 }
 /**
  * Redux mapper for mapping store state to component props
