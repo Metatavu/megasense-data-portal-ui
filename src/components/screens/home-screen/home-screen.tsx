@@ -57,9 +57,10 @@ class Home extends React.Component<Props, State> {
    * Component render method
    */
   public render() {
+    const { accessToken, keycloak } = this.props;
     const { userDisplayName } = this.state;
     return (
-      <AppLayout>
+      <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
         <Container>
         <Typography variant="h3">
           { strings.hello } { userDisplayName }

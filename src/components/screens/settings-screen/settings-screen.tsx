@@ -95,12 +95,12 @@ class Settings extends React.Component<Props, State> {
    * Component render method
    */
   public render() {
-    const { classes } = this.props;
+    const { accessToken, keycloak, classes } = this.props;
     const { homeAddress, loadingUserSettings, savingUserSettings } = this.state;
     const { streetAddress, postalCode, city, country } = homeAddress;
 
     return (
-      <AppLayout>
+      <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
         <Container>
           <Grid container spacing = { 3 }>
           <Grid item xs={ 12 }>

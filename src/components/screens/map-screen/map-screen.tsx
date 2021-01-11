@@ -31,8 +31,9 @@ import theme from "../../../theme/theme";
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles>{
-  displayedRoute?: Route;
   accessToken?: NullableToken;
+  keycloak?: Keycloak.KeycloakInstance;
+  displayedRoute?: Route;
   setDisplayedRoute: typeof setDisplayedRoute;
 }
 
@@ -109,7 +110,7 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   public render = () => {
-    const { accessToken, classes } = this.props;
+    const { accessToken, keycloak, classes } = this.props;
     const { loadingUserSettings, userSavedRoutes } = this.state;
 
     if (loadingUserSettings) {
@@ -123,7 +124,7 @@ class MapScreen extends React.Component<Props, State> {
     }
   
     return (
-      <AppLayout>
+      <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
         <Drawer
           open={ true }
           variant="permanent"
@@ -587,6 +588,7 @@ class MapScreen extends React.Component<Props, State> {
 export function mapStateToProps(state: ReduxState) {
   return {
     accessToken: state.auth.accessToken,
+    keycloak: state.auth.keycloak,
     displayedRoute: state.displayedRoute.displayedRoute
   };
 }

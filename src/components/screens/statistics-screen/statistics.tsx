@@ -20,6 +20,7 @@ import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, Tex
  */
 interface Props extends WithStyles<typeof styles> {
   accessToken?: NullableToken;
+  keycloak?: Keycloak.KeycloakInstance;
   history: History<History.LocationState>;
 }
 
@@ -116,7 +117,7 @@ class SavedRoutes extends React.Component<Props, State> {
    * Component render method
    */
   public render = () => {
-    const { classes } = this.props
+    const { accessToken, keycloak, classes } = this.props
     /**
      * Components to display in the drawer
      */
@@ -183,7 +184,7 @@ class SavedRoutes extends React.Component<Props, State> {
     );
 
     return (
-      <AppLayout>
+      <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
         <DrawerMenu open={ true } statisticsControls={ statisticsComponent } />
         <Container>
           <Grid container spacing={3}>
@@ -241,7 +242,8 @@ class SavedRoutes extends React.Component<Props, State> {
  */
 export function mapStateToProps(state: ReduxState) {
   return {
-    accessToken: state.auth.accessToken
+    accessToken: state.auth.accessToken,
+    keycloak: state.auth.keycloak
   };
 }
 
