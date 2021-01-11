@@ -41,7 +41,7 @@ class MobileTopBar extends React.Component<Props, State> {
       <>
         <AppBar position="fixed" className={ classes.appBar }>
           <Toolbar>
-            <Box display='flex' flexGrow={1}>
+            <Box display="flex" flexGrow={ 1 }>
               <LogoIcon color="primary" />
               <Box ml={ 2 } mr={ 2 }>
                 <Typography variant="h1" color="primary">Green paths</Typography>
