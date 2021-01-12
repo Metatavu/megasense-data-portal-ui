@@ -3,10 +3,10 @@ import { createStore } from "redux";
 import theme from "../theme/theme";
 import { Provider } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@material-ui/core";
-import Home from "./screens/home-screen/home-screen";
+import HomeScreen from "./screens/home-screen/home-screen";
 import MapScreen from "./screens/map-screen/map-screen";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Statistics from "./screens/statistics-screen/statistics";
+import StatisticsScreen from "./screens/statistics-screen/statistics-screen";
 import Settings from "./screens/settings-screen/settings-screen";
 import { ReduxActions, ReduxState, rootReducer } from "../store";
 import AccessTokenRefresh from "./containers/access-token-refresh";
@@ -52,7 +52,7 @@ class App extends React.Component<Props, State> {
                   exact
                   path="/"
                   render={() => (
-                    <Home />
+                    <HomeScreen />
                   )}
                 />
                 <Route
@@ -73,7 +73,7 @@ class App extends React.Component<Props, State> {
                   exact
                   path="/statistics"
                   render={({ history }) => (
-                    <Statistics history={ history } />
+                    <StatisticsScreen history={ history } />
                   )}
                 />
                 <Route

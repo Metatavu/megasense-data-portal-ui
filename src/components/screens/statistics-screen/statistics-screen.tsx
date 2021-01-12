@@ -4,16 +4,15 @@ import Api from "../../../api";
 import { Dispatch } from "redux";
 import { History } from "history";
 import { connect } from "react-redux";
-import { styles } from "./statistics.styles";
+import { styles } from "./statistics-screen.styles";
 import { NullableToken } from "../../../types";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { ExposureInstance } from "../../../generated/client";
-import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
-import { LineChart, Line, CartesianGrid, XAxis, Tooltip, Legend, YAxis } from 'recharts';
-import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem} from '@material-ui/core';
+import { LineChart, Line, CartesianGrid, XAxis, Tooltip, Legend, YAxis } from "recharts";
+import { FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem, Drawer} from "@material-ui/core";
 
 /**
  * Interface describing component props
@@ -126,7 +125,7 @@ class SavedRoutes extends React.Component<Props, State> {
         <Box mt={ 10 }>
           <List>
             <ListItem>
-              <FormControl className={classes.formControl}>
+              <FormControl className={ classes.formControl }>
                 <TextField
                   id="date"
                   label="Select time"
@@ -140,7 +139,7 @@ class SavedRoutes extends React.Component<Props, State> {
             </ListItem>
             <ListItem>
               <FormControl variant="outlined" className={ classes.formControl }>
-                <InputLabel htmlFor="outlined-age-native-simple">Select pollution</InputLabel>
+                <InputLabel htmlFor="outlined-age-native-simple">{ strings.statistics.selectPollution }</InputLabel>
                 <Select
                   native
                   fullWidth
@@ -151,10 +150,10 @@ class SavedRoutes extends React.Component<Props, State> {
                   }}
                 >
                   <option aria-label="None" value="" />
-                  <option>Daily</option>
-                  <option>Weekly</option>
-                  <option>Monthly</option>
-                  <option>Annual</option>
+                  <option>{ strings.statistics.daily }</option>
+                  <option>{ strings.statistics.weekly }</option>
+                  <option>{ strings.statistics.monthly }</option>
+                  <option>{ strings.statistics.annual }</option>
                 </Select>
               </FormControl>
             </ListItem>
@@ -171,10 +170,10 @@ class SavedRoutes extends React.Component<Props, State> {
                   }}
                 >
                   <option aria-label="None" value="" />
-                  <option>Carbon monoxide</option>
-                  <option>Ozone</option>
-                  <option>Nitrogen Dioxine</option>
-                  <option>Sulfur Dioxine</option>
+                  <option>{ strings.statistics.carbonMonoxide }</option>
+                  <option>{ strings.statistics.ozone }</option>
+                  <option>{ strings.statistics.nitrogenDioxine }</option>
+                  <option>{ strings.statistics.sulfurDioxine }</option>
                 </Select>
               </FormControl>
             </ListItem>
@@ -185,10 +184,19 @@ class SavedRoutes extends React.Component<Props, State> {
 
     return (
       <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
-        <DrawerMenu open={ true } statisticsControls={ statisticsComponent } />
-        <Container>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
+        <Drawer
+          open={ true }
+          variant="persistent"
+          anchor="left"
+          classes={{
+            paper: classes.drawer,
+          }}
+        >
+          { statisticsComponent }
+        </Drawer>
+        <Box>
+          <Grid container spacing={ 3 }>
+            <Grid item xs={ 12 }>
               <Card>
                 <Typography variant="h3">
                   { strings.statistics }
@@ -196,11 +204,11 @@ class SavedRoutes extends React.Component<Props, State> {
               </Card>
             </Grid>
           </Grid>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
+          <Grid container spacing={ 3 }>
+            <Grid item xs={ 12 }>
               <Card>
                 <LineChart 
-                  width={730} height={250} 
+                  width={ 730 } height={ 250 } 
                   data={ this.state.exposureData }
                   margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -217,7 +225,7 @@ class SavedRoutes extends React.Component<Props, State> {
               </Card>
             </Grid>
           </Grid>
-        </Container>
+        </Box>
       </AppLayout>
     );
   }

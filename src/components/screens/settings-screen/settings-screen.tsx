@@ -108,15 +108,12 @@ class Settings extends React.Component<Props, State> {
               <CardHeader>
               </CardHeader>
               <Typography variant="h3" component="h3">
-                { strings.settings }
+                { strings.settings.title }
               </Typography>
             </Card>
           </Grid>
           <Grid item xs={ 12 } sm={ 6 }>
             <Card>
-              <CardHeader>
-                Something here
-              </CardHeader>
               <CardContent>
                 <Box pt={ 3 } pb={ 3 }>
                   <Button onClick={ this.downloadData } variant="contained" >
@@ -139,30 +136,52 @@ class Settings extends React.Component<Props, State> {
           <Grid xs={ 6 }>
             <Card>
               <CardHeader>
-                { strings.homeAddress }
+                { strings.settings.homeAddress }
               </CardHeader>
               
               { !loadingUserSettings &&
                 <CardContent>
                   
                   <Box mt={ 5 } mb={ 5 }>
-                    <TextField placeholder={ strings.streetAddress } value={ streetAddress } onChange={ this.onStreetAddressChange } />
+                    <TextField
+                      placeholder={ strings.streetAddress }
+                      value={ streetAddress }
+                      onChange={ this.onStreetAddressChange }
+                    />
                   </Box>
 
                   <Box mt={ 5 } mb={ 5 }>
-                    <TextField placeholder={ strings.postalCode } value={ postalCode } onChange={ this.onPostalCodeChange } />
+                    <TextField
+                      placeholder={ strings.postalCode }
+                      value={ postalCode }
+                      onChange={ this.onPostalCodeChange }
+                    />
                   </Box>
 
                   <Box mt={ 5 } mb={ 5 }>
-                    <TextField placeholder={ strings.city } value={ city } onChange={ this.onCityChange } />
+                    <TextField
+                      placeholder={ strings.city }
+                      value={ city }
+                      onChange={ this.onCityChange }
+                    />
                   </Box>
 
                   <Box mt={ 5 } mb={ 5 }>
-                    <TextField placeholder={ strings.country } value={ country } onChange={ this.onCountryChange } />
+                    <TextField 
+                      placeholder={ strings.country }
+                      value={ country }
+                      onChange={ this.onCountryChange }
+                    />
                   </Box>
 
                   { !savingUserSettings &&
-                    <Button onClick={ this.saveHomeAddress } variant="contained" className={ classes.successButton }>{ strings.applyChanges }</Button>
+                    <Button 
+                      onClick={ this.saveHomeAddress }
+                      variant="contained"
+                      className={ classes.successButton }
+                    >
+                      { strings.settings.applyChanges }
+                    </Button>
                   }
 
                   {

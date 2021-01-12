@@ -14,6 +14,16 @@ export interface IStrings extends LocalizedStringsMethods {
   };
 
   /**
+   * Translations for header
+   */
+  header: {
+    statistics: string;
+    map: string;
+    settings: string;
+    about: string;
+  }
+
+  /**
    * Translations for routes
    */
   routes: {
@@ -28,18 +38,49 @@ export interface IStrings extends LocalizedStringsMethods {
     cancelButton: string;
   };
 
+  /**
+   * Translations for statistics screen
+   */
+  statistics: {
+    selectPollution: string;
+    daily: string;
+    weekly: string;
+    monthly: string;
+    annual: string;
+    carbonMonoxide: string;
+    ozone: string;
+    nitrogenDioxine: string;
+    sulfurDioxine: string;
+  }
+  
+  /**
+   * Translations for settings screen
+   */
+  settings: {
+    title: string;
+    applyChanges: string;
+    homeAddress: string;
+  },
+
+  /**
+   * Translations for about screen
+   */
+  aboutScreen: {
+    title: string;
+    subTitle: string;
+    descriptionText: string;
+  };
+
   frontPage: string;
   hello: string;
   to: string;
   from: string;
-  map: string;
   savedRoutes: string;
   savedRoutesTo: string;
   savedRoutesFrom: string;
   savedRoutesSavedText: string;
   deleteConfirm: string;
   yes: string,
-  statistics: string;
   pollutantPM25: string;
   pollutantPM10: string;
   pollutantOzone: string;
@@ -54,17 +95,14 @@ export interface IStrings extends LocalizedStringsMethods {
   annualExposure: string
   displayTables: string;
   selectTime: string;
-  settings: string;
   airQualityMode: string;
   movementOptions: string;
   walking: string;
   wheelerchair: string;
-  homeAddress: string;
   streetAddress: string;
   city: string;
   zipCode: string;
   country: string;
-  applyChanges: string;
   downloadData: string;
   changeUserData: string;
   deleteAccount: string;
@@ -77,12 +115,6 @@ export interface IStrings extends LocalizedStringsMethods {
   postalCode: string;
   confirmButtonText: string;
   locationNotFoundDialogText: string;
-  about: string;
-  aboutScreen: {
-    title: string;
-    subTitle: string;
-    descriptionText: string;
-  };
 }
 
 const strings: IStrings = new LocalizedStrings({

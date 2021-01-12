@@ -50,7 +50,7 @@ class MobileTopBar extends React.Component<Props, State> {
                     color="primary"
                     variant="contained"
                   >
-                    { strings.map }
+                    { strings.header.map }
                   </Button>
                 </Link>
               </Box>
@@ -115,7 +115,7 @@ class MobileTopBar extends React.Component<Props, State> {
             startIcon={ <StatsIcon /> }
             variant="outlined"
           >
-            { strings.statistics }
+            { strings.header.statistics }
           </Button>
         </Link>
       </Box>
@@ -139,7 +139,7 @@ class MobileTopBar extends React.Component<Props, State> {
             variant="outlined"
             startIcon={ <SettingsIcon /> }
           >
-            { strings.settings }
+            { strings.header.settings }
           </Button>
         </Link>
       </Box>
@@ -157,7 +157,7 @@ class MobileTopBar extends React.Component<Props, State> {
             color="primary"
             variant="text"
           >
-            { strings.about }
+            { strings.header.about }
           </Button>
         </Link>
       </Box>

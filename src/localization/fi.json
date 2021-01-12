@@ -1,8 +1,14 @@
 {
-  
   "auth": {
     "login": "Kirjaudu sisään",
     "logout": "Kirjaudu ulos"
+  },
+
+  "header": {
+    "statistics": "Statistiikka",
+    "map": "Kartta",
+    "settings": "Asetukset",
+    "about": "Tietoa projektista"
   },
   
   "routes": {
@@ -17,10 +23,33 @@
     "cancelButton": "Peruuta"
   },
 
+  "statistics": {
+    "selectPollution": "Valitse saaste:",
+    "daily": "Päiväkohtainen",
+    "weekly": "Viikottainen",
+    "monthly": "Kuukausittainen",
+    "annual": "Kausi",
+    "carbonMonoxide": "Häkä",
+    "ozone": "Otsoni",
+    "nitrogenDioxide": "Typpioksidi",
+    "sulfurDioxide": "Rikkioksidi"
+  },
+
+  "settings": {
+    "title": "Asetukset",
+    "applyChanges": "Tallenna muutokset",
+    "homeAddress": "Kotiosoite"
+  },
+
+  "aboutScreen": {
+    "title": "Megasense dataportaali",
+    "subTitle": "Puhtaan ilman reitityssovellus. Sovellus on kehitetty osana Megasense-konsortiota.",
+    "descriptionText": "Sovellus tarjoaa mahdollisuuden reitittää käyttäjiä puhtaan ilman reittiä pitkin. Sovellus on vielä kehitysvaiheessa."
+  },
+
   "yourTokenIs": "Avaimesi on: ",
   "frontPage": "Etusivu",
   "hello": "Hei,",
-  "map": "Kartta",
   "from": "Valitse aloituspiste...",
   "to": "Valitse määränpää...",
   "savedRoutes": "Tallennetut reitit",
@@ -29,7 +58,6 @@
   "savedRoutesSavedText": "Tallennettu",
   "deleteConfirm": "Oletko varma että haluat poistaa tämän?",
   "yes": "Kyllä",
-  "statistics": "Statistiikka",
   "pollutantPM25": "PM25",
   "pollutantPM10": "PM10",
   "pollutantOzone": "Otsooni",
@@ -44,17 +72,14 @@
   "annualExposure": "Vuosittainen altistuminen",
   "displayTables": "Valitse aika, jotta voit nähdä taulukot",
   "selectTime": "Valitse aika",
-  "settings": "Asetukset",
   "airQualityMode": "Ilmanlaadun tila",
   "movementOptions": "Liikkumisasetukset",
   "walking": "Kävely",
   "wheelerchair": "Pyörätuoli",
-  "homeAddress": "Kotiosoite",
   "streetAddress": "Katuosoite",
   "city": "Kaupunki",
   "zipCode": "Postinumero",
   "country": "Maa",
-  "applyChanges": "Tallenna muutokset",
   "downloadData": "Lataa datasi",
   "changeUserData": "Muokkaa käyttäjätietoja",
   "deleteAccount": "Poista tilisi",
@@ -66,11 +91,5 @@
   "user": "Käyttäjä",
   "postalCode": "Postinumero",
   "confirmButtonText": "Selvä",
-  "locationNotFoundDialogText": "Paikkaa ei löydetty",
-  "about": "Tietoa projektista",
-  "aboutScreen": {
-    "title": "Megasense dataportaali",
-    "subTitle": "Puhtaan ilman reitityssovellus. Sovellus on kehitetty osana Megasense-konsortiota.",
-    "descriptionText": "Sovellus tarjoaa mahdollisuuden reitittää käyttäjiä puhtaan ilman reittiä pitkin. Sovellus on vielä kehitysvaiheessa."
-  }
+  "locationNotFoundDialogText": "Paikkaa ei löydetty"
 }
