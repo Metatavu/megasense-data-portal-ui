@@ -109,10 +109,12 @@ class DrawerMenu extends React.Component<Props, State> {
       if (route.locationFromName && route.locationToName) {
         return route;
       }
-    }) as Route[];
+    });
 
-    const shortRoutes = userRoutes.splice(0, 2);
-    const routes = showAllUserRoutes ? userRoutes : shortRoutes;
+    const existingRoutes = userRoutes.filter( (route: Route | undefined): route is Route => !!route );
+
+    const shortRoutes = existingRoutes.splice(0, 2);
+    const routes = showAllUserRoutes ? existingRoutes : shortRoutes;
 
     return routes.map((route, index) => {
       const savedTime = `Saved on: ${ route.savedAt?.getDay() }.${ route.savedAt?.getMonth() }.${ route.savedAt?.getFullYear() }`;
