@@ -18,6 +18,7 @@
     "keycloak-js": "^11.0.2",
     "leaflet": "^1.7.1",
     "localized-strings": "^0.2.4",
+    "moment": "^2.29.1",
     "nominatim-browser": "^2.1.0",
     "polyline-encoded": "0.0.9",
     "react": "^16.13.1",
