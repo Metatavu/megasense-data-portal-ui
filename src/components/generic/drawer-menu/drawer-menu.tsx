@@ -1,10 +1,9 @@
-import { Box, Button, Divider, Drawer, Fab, Grid, IconButton, List, ListItem, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Divider, Drawer, Fab, Grid, IconButton, List, ListItem, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { styles } from "./drawer-menu.styles"
 import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
 import AccessibleIcon from "@material-ui/icons/Accessible";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
-import strings from "../../../localization/strings"
 import { Route } from "../../../generated/client";
 
 /**
