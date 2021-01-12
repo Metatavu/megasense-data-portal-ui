@@ -69,7 +69,7 @@ class Header extends React.Component<Props, State> {
    * Method for rendering user auth action
    */
   private renderAuthAction = () => {
-    const { accessToken, keycloak } = this.props;
+    const { accessToken } = this.props;
 
     const label = accessToken ?
       strings.auth.logout :

@@ -1,4 +1,4 @@
-import { Avatar, Button, Dialog, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Toolbar, Typography, withStyles, WithStyles } from "@material-ui/core";
+import { Avatar, Button, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Toolbar, Typography, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { Route } from "../../../generated/client";
 import LogoIcon from "../../../resources/svg/logo-icon";
@@ -62,7 +62,7 @@ class SavedRoutes extends React.Component<Props, State> {
             { this.state.showAllUserRoutes ? strings.routes.showLess : strings.routes.showMore }
           </Button>
         </div>
-        <DeleteDialogue routeDeleteInitiated={ routeDeleteInitiated } routeToDelete={ routeToDelete! } onDeleteConfirm={ this.onDeleteConfirm } onDeleteCancel={ this.onDeleteCancel } />
+        <DeleteDialogue routeDeleteInitiated={ routeDeleteInitiated } routeToDelete={ routeToDelete } onDeleteConfirm={ this.onDeleteConfirm } onDeleteCancel={ this.onDeleteCancel } />
       </>
     );
   }

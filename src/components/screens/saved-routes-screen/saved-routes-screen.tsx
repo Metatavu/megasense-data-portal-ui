@@ -3,7 +3,6 @@ import React from "react";
 import Api from "../../../api";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
 import { styles } from "./saved-routes.styles";
 import { NullableToken } from "../../../types";
 import { Route } from "../../../generated/client";
@@ -11,7 +10,7 @@ import * as actions from "../../../actions/route";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import AppLayout from "../../layouts/app-layout/app-layout";
-import { Container, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, WithStyles, CircularProgress } from '@material-ui/core';
+import { Container, Card, CardContent, CardActions, withStyles, Button, Typography, WithStyles, CircularProgress } from '@material-ui/core';
 import DeleteDialogue from "../../generic/dialogues/delete-dialogue";
 import moment from 'moment';
 
