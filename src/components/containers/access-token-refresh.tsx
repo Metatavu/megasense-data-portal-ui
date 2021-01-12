@@ -16,6 +16,7 @@ interface Props {
   accessToken?: NullableToken;
   setKeycloak: typeof setKeycloak;
   onLogin: typeof login;
+  getActiveUserName: (name: string) => void;
 }
 
 /**
@@ -65,6 +66,10 @@ class AccessTokenProvider extends React.Component<Props, State> {
         await this.keycloak.loadUserProfile();
         const signedToken = this.buildToken(this.keycloak);
         this.props.onLogin(signedToken ?? null);
+        const userDisplayName: string = (this.keycloak.idTokenParsed as any).name;
+        if (userDisplayName) {
+          this.props.getActiveUserName(userDisplayName);
+        }
       }
 
       this.refreshAccessToken();
