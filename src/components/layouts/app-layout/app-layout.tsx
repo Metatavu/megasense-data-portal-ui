@@ -39,6 +39,9 @@ class AppLayout extends React.Component<Props, State> {
     );
   }
 
+  /**
+   * Method for rendering header
+   */
   private renderHeader = () => {
     const { accessToken, keycloak, routing } = this.props;
     return (
