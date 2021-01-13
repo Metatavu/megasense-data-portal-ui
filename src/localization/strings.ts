@@ -16,6 +16,22 @@ export interface IStrings extends LocalizedStringsMethods {
   };
 
   /**
+   * Translations for error dialog
+   */
+  errorDialog: {
+    title: string;
+    reloadPage: string;
+    unsavedContents: string;
+    reportIssue: string;
+    technicalDetails: string;
+    time: string;
+    url: string;
+    errorMessage: string;
+    close: string;
+    reload: string;
+  };
+
+  /**
    * Translations for routes
    */
   routes: {

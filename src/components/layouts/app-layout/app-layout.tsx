@@ -4,12 +4,17 @@ import { styles } from "./app-layout.styles";
 import Header from "../../generic/header/header";
 import { Toolbar } from "@material-ui/core";
 import { NullableToken } from "../../../types";
+import ErrorDialog from "../../generic/error-dialog";
+import { Redirect } from "react-router-dom";
 
 interface Props extends WithStyles<typeof styles> {
   routing?: JSX.Element;
   accessToken?: NullableToken;
   keycloak?: Keycloak.KeycloakInstance;
   hideHeader?: boolean;
+  error?: string | Error | Response;
+  clearError?: () => void;
+  redirectTo?: string
 }
 
 interface State {
@@ -43,9 +48,9 @@ class AppLayout extends React.Component<Props, State> {
    * Method for rendering header
    */
   private renderHeader = () => {
-    const { accessToken, keycloak, routing } = this.props;
+    const { accessToken, keycloak, routing, classes, children } = this.props;
     return (
-      <>
+      <div className={ classes.root}>
         <Header
           accessToken={ accessToken }
           keycloak={ keycloak }
@@ -53,8 +58,24 @@ class AppLayout extends React.Component<Props, State> {
           toggleSideMenu={ this.toggleSideMenu }
         />
         <Toolbar />
-     </>
+        <div className={ classes.content }>
+          { children }
+        </div>
+        { this.routeRedirect() }
+        { this.renderErrorDialog() }
+      </div>
     );
+  }
+
+  /**
+   * Renders error dialog
+   */
+  private renderErrorDialog = () => {
+    if (this.props.error && this.props.clearError) {
+      return <ErrorDialog error={ this.props.error } onClose={ this.props.clearError } />;
+    }
+
+    return null;
   }
 
   private toggleSideMenu = () => {
@@ -62,6 +83,20 @@ class AppLayout extends React.Component<Props, State> {
     this.setState({ 
       sideMenuOpen: sideMenuOpen 
     });
+  }
+
+  /**
+   * Handles recieved route redirection
+   */
+  private routeRedirect = () => {
+    const { redirectTo } = this.props;
+    if (!redirectTo) {
+      return null;
+    }
+    
+    return (
+      <Redirect to={ redirectTo } push={ true }/>
+    );
   }
 }
 

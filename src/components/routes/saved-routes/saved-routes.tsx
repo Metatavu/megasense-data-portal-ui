@@ -1,10 +1,11 @@
-import { Avatar, Button, Dialog, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Toolbar, Typography, withStyles, WithStyles } from "@material-ui/core";
+import { Avatar, Button, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Toolbar, Typography, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { Route } from "../../../generated/client";
 import LogoIcon from "../../../resources/svg/logo-icon";
 import { styles } from "./saved-routes.styles";
 import strings from "../../../localization/strings";
 import DeleteIcon from "@material-ui/icons/DeleteForeverOutlined";
+import ConfirmDialog from "../../generic/confirm-dialog";
 
 /**
  * Interface describing component props
@@ -21,7 +22,7 @@ interface Props extends WithStyles<typeof styles> {
 interface State {
   showAllUserRoutes: boolean;
   routeDeleteInitiated: boolean,
-  deletedRouteId?: string
+  routeToDelete?: Route
 }
 
 /**
@@ -47,6 +48,7 @@ class SavedRoutes extends React.Component<Props, State> {
    */
   public render = () => {
     const { classes } = this.props;
+    const { routeDeleteInitiated } = this.state;
     return (
       <>
         <Toolbar>
@@ -60,7 +62,13 @@ class SavedRoutes extends React.Component<Props, State> {
             { this.state.showAllUserRoutes ? strings.routes.showLess : strings.routes.showMore }
           </Button>
         </div>
-        { this.renderDeleteDialog() }
+        <ConfirmDialog 
+          title={ strings.deleteConfirm } 
+          positiveButtonText={ strings.yes } 
+          cancelButtonText={ strings.cancel } 
+          dialogVisible={ routeDeleteInitiated } 
+          onDialogConfirm={ this.onDeleteConfirm } 
+          onDialogCancel={ this.onDeleteCancel } />
       </>
     );
   }
@@ -76,24 +84,18 @@ class SavedRoutes extends React.Component<Props, State> {
       return;
     }
 
-    const userRoutes = savedRoutes.map(route => {
+    const existingRoutes = savedRoutes.map(route => {
       if (route.locationFromName && route.locationToName) {
         return route;
       }
-    }) as Route[];
+    }).filter( (route: Route | undefined): route is Route => !!route );
 
-    const shortRoutes = userRoutes.splice(0, 2);
-    const routes = showAllUserRoutes ? userRoutes : shortRoutes;
+    const routes = showAllUserRoutes ? existingRoutes : existingRoutes.splice(0, 2);
 
     return routes.map((route, index) => {
       
-      if (!route) {
-        return null;
-      }
-      
-      const  savedTime = `Saved on: ${ route.savedAt?.getDay() }.${ route.savedAt?.getMonth() }.${ route.savedAt?.getFullYear() }`;
-      const from = route.locationFromName.slice(0, 40);
-      const to = route.locationToName.slice(0, 40);
+      const from = this.truncateName(route.locationFromName, 40);
+      const to = this.truncateName(route.locationToName, 40);
 
       return (
         <ListItem button key={ index }>
@@ -110,7 +112,7 @@ class SavedRoutes extends React.Component<Props, State> {
             <IconButton 
               size="small" 
               title={ strings.routes.deleteRoute } 
-              onClick={ () => this.onDeleteRouteClick(route.id ? route.id : "") }
+              onClick={ () => this.onDeleteRouteClick(route) }
             >
               <DeleteIcon />
             </IconButton>
@@ -121,38 +123,16 @@ class SavedRoutes extends React.Component<Props, State> {
   }
 
   /**
-   * Renders delete confirmation dialog
+   * Formats and truncates a name string
+   * 
+   * @param name name string
+   * @param delimiter delimiter number
    */
-  private renderDeleteDialog = () => {
-    const { routeDeleteInitiated } = this.state;
-
-    if (!routeDeleteInitiated) {
-      return null;
+  private truncateName = (name: string, delimiter: number ) => {
+    if (name.length <= delimiter) {
+      return name;
     }
-
-    return (
-      <Dialog open={ routeDeleteInitiated }>
-        <h1>
-          { strings.routes.deleteDialog }
-        </h1>
-        <div>
-          <Button
-            variant="outlined"
-            style={{ margin: "20px", width: "60px" }}
-            onClick={ () => { this.onDeleteConfirm() } }
-          >
-            { strings.routes.deleteButton }
-          </Button>
-          <Button
-            variant="outlined"
-            style={{ margin: "20px", width: "-webkit-fill-available" }}
-            onClick={ () => { this.onDeleteCancel() } }
-          >
-            { strings.routes.cancelButton }
-          </Button>
-        </div>
-      </Dialog>
-    )
+    return `${ name.slice(0, delimiter) }...`;
   }
 
   /**
@@ -160,10 +140,10 @@ class SavedRoutes extends React.Component<Props, State> {
    *
    * @param routeId route Id string
    */
-  private onDeleteRouteClick = (routeId: string) => {
+  private onDeleteRouteClick = (route: Route) => {
     this.setState({
       routeDeleteInitiated: true,
-      deletedRouteId: routeId
+      routeToDelete: route 
     });
   }
 
@@ -182,11 +162,11 @@ class SavedRoutes extends React.Component<Props, State> {
    */
   private onDeleteConfirm = () => {
     const { onDeleteUserSavedRoute } = this.props;
-    const { deletedRouteId } = this.state;
-    onDeleteUserSavedRoute(deletedRouteId!);
+    const { routeToDelete } = this.state;
+    onDeleteUserSavedRoute(routeToDelete?.id!);
     this.setState({
       routeDeleteInitiated: false,
-      deletedRouteId: undefined
+      routeToDelete: undefined
     })
   }
 
@@ -196,7 +176,7 @@ class SavedRoutes extends React.Component<Props, State> {
   private onDeleteCancel = () => {
     this.setState({
       routeDeleteInitiated: false,
-      deletedRouteId: undefined
+      routeToDelete: undefined
     })
   }
 }
