@@ -7,7 +7,7 @@ import strings from "../../../localization/strings";
 import { Container, Typography, WithStyles, withStyles } from "@material-ui/core";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { ReduxActions, ReduxState } from "../../../store";
-import styles from "../../../styles/screens/about-screen";
+import styles from "./about-screen.styles";
 
 /**
  * Interface describing component props

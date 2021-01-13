@@ -5,7 +5,7 @@ import LogoIcon from "../../../resources/svg/logo-icon";
 import { styles } from "./saved-routes.styles";
 import strings from "../../../localization/strings";
 import DeleteIcon from "@material-ui/icons/DeleteForeverOutlined";
-import ConfirmDialog from "../../generic/confirm-dialog";
+import ConfirmDialog from "../../generic/dialogs/confirm-dialog";
 
 /**
  * Interface describing component props

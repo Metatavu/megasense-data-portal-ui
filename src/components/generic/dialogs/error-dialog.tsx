@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import strings from "../../localization/strings";
+import strings from "../../../localization/strings";
 import * as moment from "moment";
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@material-ui/core";
 
@@ -47,9 +47,17 @@ export default class ErrorDialog extends React.Component<Props, State> {
    * Component render method
    */
   public render() {
+
+    const { onClose } = this.props;
+
     return (
-      <Dialog open={ true } onClose={ this.props.onClose }>
-        <DialogTitle id="error-dialog-title">{ strings.errorDialog.title }</DialogTitle>
+      <Dialog
+        open={ true }
+        onClose={ onClose }
+      >
+        <DialogTitle id="error-dialog-title">
+          { strings.errorDialog.title }
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="error-dialog-description">
             <p> { strings.errorDialog.reloadPage } </p>
@@ -67,10 +75,19 @@ export default class ErrorDialog extends React.Component<Props, State> {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={ this.onReloadClick } color="primary">
+          <Button 
+            color="primary"
+            onClick={ this.onReloadClick }
+          >
             { strings.errorDialog.reload }
           </Button>
-          <Button disableElevation variant="contained" onClick={ this.props.onClose } color="secondary" autoFocus>
+          <Button
+            color="secondary"
+            variant="contained"
+            disableElevation
+            autoFocus
+            onClick={ onClose }
+          >
             { strings.errorDialog.close }
           </Button>
         </DialogActions>

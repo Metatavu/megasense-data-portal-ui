@@ -11,7 +11,7 @@ import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { Container, Card, CardContent, CardActions, withStyles, Button, Typography, WithStyles, CircularProgress } from "@material-ui/core";
-import ConfirmDialog from "../../generic/confirm-dialog";
+import ConfirmDialog from "../../generic/dialogs/confirm-dialog";
 import moment from "moment";
 
 /**
