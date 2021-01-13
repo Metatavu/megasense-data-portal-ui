@@ -73,7 +73,7 @@ class Home extends React.Component<Props, State> {
             <Typography className={ classes.title } variant="h3">
               { strings.hello } { userDisplayName }
             </Typography>
-         </Grid>
+          </Grid>
         </AppLayout>
       );
     }
