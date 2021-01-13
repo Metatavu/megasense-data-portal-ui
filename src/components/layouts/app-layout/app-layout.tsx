@@ -9,6 +9,7 @@ interface Props extends WithStyles<typeof styles> {
   routing?: JSX.Element;
   accessToken?: NullableToken;
   keycloak?: Keycloak.KeycloakInstance;
+  hideHeader?: boolean;
 }
 
 interface State {
@@ -24,22 +25,32 @@ class AppLayout extends React.Component<Props, State> {
   }
 
   public render = () => {
-    const { accessToken, keycloak, classes, children } = this.props;
+    const { classes, children, hideHeader } = this.props;
     
     return (
       <div className={ classes.root }>
-        <Header
-          accessToken={ accessToken }
-          keycloak={ keycloak }
-          routing={ this.props.routing }
-          toggleSideMenu={ this.toggleSideMenu }
-        />
-        {/* Empty toolbar to add correct spacing to prevent the content to go below the App header */}
-        <Toolbar />
+        { !hideHeader &&
+          this.renderHeader()
+        }
         <div className={ classes.content }>
           { children }
         </div>
       </div>
+    );
+  }
+
+  private renderHeader = () => {
+    const { accessToken, keycloak, routing } = this.props;
+    return (
+      <>
+        <Header
+          accessToken={ accessToken }
+          keycloak={ keycloak }
+          routing={ routing }
+          toggleSideMenu={ this.toggleSideMenu }
+        />
+        <Toolbar />
+     </>
     );
   }
 

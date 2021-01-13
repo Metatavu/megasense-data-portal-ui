@@ -51,8 +51,8 @@ class App extends React.Component<Props, State> {
                 <Route
                   exact
                   path="/"
-                  render={() => (
-                    <Home />
+                  render={({ history }) => (
+                    <Home history={ history } />
                   )}
                 />
                 <Route
