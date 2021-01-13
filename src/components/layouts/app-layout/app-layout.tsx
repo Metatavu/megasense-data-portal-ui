@@ -75,13 +75,13 @@ class AppLayout extends React.Component<Props, State> {
    */
   private routeRedirect = () => {
     const { redirectTo } = this.props;
-    if (redirectTo) {
-      return (
-        <Redirect to={ redirectTo } push={ true }/>
-      );
+    if (!redirectTo) {
+      return null;
     }
-
-    return null;
+    
+    return (
+      <Redirect to={ redirectTo } push={ true }/>
+    );
   }
 }
 
