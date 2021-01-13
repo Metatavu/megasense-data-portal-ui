@@ -14,7 +14,6 @@ import { ReduxActions, ReduxState } from "../../../store";
 interface Props {
   accessToken?: NullableToken;
   keycloak?: Keycloak.KeycloakInstance;
-  activeUserName?: string;
 }
 
 /**
@@ -52,8 +51,7 @@ class HomeScreen extends React.Component<Props, State> {
    */
   public render() {
     const { accessToken, keycloak } = this.props;
-    const { activeUserName } = this.props;
-    const userName = activeUserName ? activeUserName : strings.user.toLowerCase();
+    const userName = accessToken?.userName || strings.user.toLowerCase();
 
     return (
       <AppLayout accessToken={ accessToken } keycloak={ keycloak }>

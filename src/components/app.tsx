@@ -46,14 +46,14 @@ class App extends React.Component<Props, State> {
       <ThemeProvider theme={ theme }>
         <CssBaseline />
         <Provider store={ store }>
-          <AccessTokenRefresh getActiveUserName={ this.getActiveUserName }>
+          <AccessTokenRefresh>
             <BrowserRouter>
               <Switch>
                 <Route
                   exact
                   path="/"
                   render={() => (
-                    <HomeScreen activeUserName={ this.state.activeUserName } />
+                    <HomeScreen/>
                   )}
                 />
                 <Route
@@ -97,17 +97,6 @@ class App extends React.Component<Props, State> {
         </Provider>
       </ThemeProvider>
     );
-  }
-
-  /**
-   * Sets current active user name
-   * 
-   * @param name current user name string
-   */
-  private getActiveUserName = (name: string) => {
-    this.setState({
-      activeUserName: name
-    });
   }
 }
 
