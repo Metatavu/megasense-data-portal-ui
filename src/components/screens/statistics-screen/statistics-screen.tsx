@@ -103,7 +103,7 @@ class StatisticsScreen extends React.Component<Props, State> {
         nitrogenDioxide: data.nitrogenDioxide,
         nitrogenMonoxide: data.nitrogenMonoxide,
         ozone: data.ozone,
-        routeId: data.routeId ? data.routeId : "",
+        routeId: data.routeId || "",
         startedAt: moment(data.startedAt).format("DD.MM.YYYY"),
         endedAt: moment(data.endedAt).format("DD.MM.YYYY"),
         sulfurDioxide: data.sulfurDioxide

@@ -92,10 +92,11 @@ class SavedRoutesScreen extends React.Component<Props, State> {
   private renderRouteCards = () => {
     const { classes } = this.props;
     const { routes, loadingRoutes } = this.state;
-    const routeCards = routes.map(this.renderRouteCard);
     if (!loadingRoutes) {
       return (
-        routeCards
+        <>
+          { routes.map(this.renderRouteCard) }
+        </>
       );
     }
 
