@@ -118,9 +118,9 @@ class Home extends React.Component<Props, State> {
   /**
    * Navigate to given route path
    * 
-   * @param path path as string
+   * @param path path string
    */
-  private navigateTo = (path : string) => () => {
+  private navigateTo = (path: string) = () => {
     const { history } = this.props;
     history.push(path);
   }
