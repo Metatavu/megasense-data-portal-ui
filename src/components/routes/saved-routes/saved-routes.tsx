@@ -78,13 +78,11 @@ class SavedRoutes extends React.Component<Props, State> {
       return;
     }
 
-    const userRoutes = savedRoutes.map(route => {
+    const existingRoutes = savedRoutes.map(route => {
       if (route.locationFromName && route.locationToName) {
         return route;
       }
-    }) as Route[];
-
-    const existingRoutes = userRoutes.filter( (route: Route | undefined): route is Route => !!route );
+    }).filter( (route: Route | undefined): route is Route => !!route );
 
     const shortRoutes = existingRoutes.splice(0, 2);
     const routes = showAllUserRoutes ? existingRoutes : shortRoutes;
@@ -129,7 +127,7 @@ class SavedRoutes extends React.Component<Props, State> {
     if (name.length <= delimiter) {
       return name;
     }
-    return name.slice(0, delimiter) + "...";
+    return `${ name.slice(0, delimiter) }...`;
   }
 
   /**

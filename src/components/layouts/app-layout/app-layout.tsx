@@ -80,6 +80,8 @@ class AppLayout extends React.Component<Props, State> {
         <Redirect to={ redirectTo } push={ true }/>
       );
     }
+
+    return null;
   }
 }
 
