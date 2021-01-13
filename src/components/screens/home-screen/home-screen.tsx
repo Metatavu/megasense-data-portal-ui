@@ -5,7 +5,7 @@ import { History } from "history";
 import { connect } from "react-redux";
 import { NullableToken } from "../../../types";
 import strings from "../../../localization/strings";
-import { Typography, WithStyles, withStyles, Button, Grid, } from "@material-ui/core";
+import { Typography, WithStyles, withStyles, Button, Grid } from "@material-ui/core";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { ReduxActions, ReduxState } from "../../../store";
 import styles from "../../../styles/screens/home";
