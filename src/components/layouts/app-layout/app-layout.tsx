@@ -4,7 +4,7 @@ import { styles } from "./app-layout.styles";
 import Header from "../../generic/header/header";
 import { Toolbar } from "@material-ui/core";
 import { NullableToken } from "../../../types";
-import ErrorDialogue from "../../generic/dialogues/error-dialogue";
+import ErrorDialogue from "../../generic/error-dialog";
 import { Redirect } from "react-router-dom";
 
 interface Props extends WithStyles<typeof styles> {

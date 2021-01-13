@@ -11,7 +11,7 @@ import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { Container, Card, CardContent, CardActions, withStyles, Button, Typography, WithStyles, CircularProgress } from '@material-ui/core';
-import DeleteDialogue from "../../generic/dialogues/delete-dialogue";
+import DeleteDialogue from "../../generic/confirm-dialog";
 import moment from 'moment';
 
 /**
@@ -66,7 +66,7 @@ class SavedRoutesScreen extends React.Component<Props, State> {
    * Component render method
    */
   public render() {
-    const { redirect, deleteDialogVisible, routeToDelete, error } = this.state;
+    const { redirect, deleteDialogVisible, error } = this.state;
     const { accessToken, keycloak, classes } = this.props;
 
     return (
@@ -78,8 +78,7 @@ class SavedRoutesScreen extends React.Component<Props, State> {
           {
             this.renderRouteCards()
           }
-
-        <DeleteDialogue routeDeleteInitiated={ deleteDialogVisible } routeToDelete={ routeToDelete } onDeleteConfirm={ this.deleteRoute } onDeleteCancel={ this.closeDeleteDialog } />
+          <DeleteDialogue title={ strings.deleteConfirm } positiveButtonText={ strings.yes } cancelButtonText={ strings.cancel } dialogVisible={ deleteDialogVisible } onDialogConfirm={ this.deleteRoute } onDialogCancel={ this.closeDeleteDialog } />
         </Container>
       </AppLayout>
     );
