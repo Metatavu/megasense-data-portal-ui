@@ -62,7 +62,13 @@ class SavedRoutes extends React.Component<Props, State> {
             { this.state.showAllUserRoutes ? strings.routes.showLess : strings.routes.showMore }
           </Button>
         </div>
-        <ConfirmDialog title={ strings.deleteConfirm } positiveButtonText={ strings.yes } cancelButtonText={ strings.cancel } dialogVisible={ routeDeleteInitiated } onDialogConfirm={ this.onDeleteConfirm } onDialogCancel={ this.onDeleteCancel } />
+        <ConfirmDialog 
+          title={ strings.deleteConfirm } 
+          positiveButtonText={ strings.yes } 
+          cancelButtonText={ strings.cancel } 
+          dialogVisible={ routeDeleteInitiated } 
+          onDialogConfirm={ this.onDeleteConfirm } 
+          onDialogCancel={ this.onDeleteCancel } />
       </>
     );
   }
@@ -84,8 +90,7 @@ class SavedRoutes extends React.Component<Props, State> {
       }
     }).filter( (route: Route | undefined): route is Route => !!route );
 
-    const shortRoutes = existingRoutes.splice(0, 2);
-    const routes = showAllUserRoutes ? existingRoutes : shortRoutes;
+    const routes = showAllUserRoutes ? existingRoutes : existingRoutes.splice(0, 2);
 
     return routes.map((route, index) => {
       
