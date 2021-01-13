@@ -11,6 +11,8 @@ export interface IStrings extends LocalizedStringsMethods {
   auth: {
     login: string;
     logout: string;
+    register: string;
+    guestUser: string;
   };
 
   /**
