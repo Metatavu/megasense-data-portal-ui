@@ -14,6 +14,7 @@ export interface AccessToken {
   expires_in?: number;
   refresh_token?: string;
   refresh_expires_in?: number;
+  userName?: string;
   firstName?: string;
   lastName?: string;
   userId?: string;

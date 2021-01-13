@@ -1,10 +1,9 @@
-import { Box, Button, Divider, Drawer, Fab, Grid, IconButton, List, ListItem, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Divider, Drawer, Fab, Grid, IconButton, List, ListItem, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
 import { styles } from "./drawer-menu.styles"
 import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
 import AccessibleIcon from "@material-ui/icons/Accessible";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
-import strings from "../../../localization/strings"
 import { Route } from "../../../generated/client";
 
 /**
@@ -105,16 +104,15 @@ class DrawerMenu extends React.Component<Props, State> {
       return;
     }
 
-    const userRoutes = savedRoutes.map(route => {
+    const existingRoutes = savedRoutes.map(route => {
       if (route.locationFromName && route.locationToName) {
         return route;
       }
-    }) as Route[];
+    }).filter( (route: Route | undefined): route is Route => !!route );
 
-    const shortRoutes = userRoutes.splice(0, 2);
-    const routes = showAllUserRoutes ? userRoutes : shortRoutes;
+    const routesToDisplay = showAllUserRoutes ? existingRoutes : existingRoutes.splice(0, 2);
 
-    return routes.map((route, index) => {
+    return routesToDisplay.map((route, index) => {
       const savedTime = `Saved on: ${ route.savedAt?.getDay() }.${ route.savedAt?.getMonth() }.${ route.savedAt?.getFullYear() }`;
       const from = `From: ${ route.locationFromName.slice(0, 40) }...`;
       const to = `To: ${ route.locationToName.slice(0, 40) }...`;

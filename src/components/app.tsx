@@ -3,15 +3,18 @@ import { createStore } from "redux";
 import theme from "../theme/theme";
 import { Provider } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@material-ui/core";
-import Home from "./screens/home-screen/home-screen";
+import HomeScreen from "./screens/home-screen/home-screen";
 import MapScreen from "./screens/map-screen/map-screen";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Statistics from "./screens/statistics-screen/statistics";
+import StatisticsScreen from "./screens/statistics-screen/statistics-screen";
 import Settings from "./screens/settings-screen/settings-screen";
 import { ReduxActions, ReduxState, rootReducer } from "../store";
 import AccessTokenRefresh from "./containers/access-token-refresh";
-import SavedRoutes from "./screens/saved-routes-screen/saved-routes";
+import SavedRoutesScreen from "./screens/saved-routes-screen/saved-routes-screen";
 import AboutScreen from "./screens/about-screen/about-screen";
+import 'moment/locale/fi';
+import moment from "moment";
+import strings from "../localization/strings";
 
 /**
  * Initialize Redux store
@@ -27,7 +30,7 @@ interface Props {
 /**
  * Interface describing component state
  */
-interface State { 
+interface State {
 }
 
 /**
@@ -39,8 +42,9 @@ class App extends React.Component<Props, State> {
     super(props);
     this.state = {};
   }
-
+  
   public render() {
+    moment.locale(strings.getLanguage());
     return (
       <ThemeProvider theme={ theme }>
         <CssBaseline />
@@ -52,7 +56,7 @@ class App extends React.Component<Props, State> {
                   exact
                   path="/"
                   render={() => (
-                    <Home />
+                    <HomeScreen/>
                   )}
                 />
                 <Route
@@ -66,14 +70,14 @@ class App extends React.Component<Props, State> {
                   exact
                   path="/saved-routes"
                   render={() => (
-                    <SavedRoutes />
+                    <SavedRoutesScreen />
                   )}
                 />
                 <Route
                   exact
                   path="/statistics"
                   render={({ history }) => (
-                    <Statistics history={ history } />
+                    <StatisticsScreen history={ history } />
                   )}
                 />
                 <Route

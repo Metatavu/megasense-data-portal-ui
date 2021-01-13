@@ -20,13 +20,12 @@ interface Props {
  * Interface describing component state
  */
 interface State {
-  userDisplayName: string;
 }
 
 /**
- * Component for warehouses screen
+ * Component for home screen
  */
-class Home extends React.Component<Props, State> {
+class HomeScreen extends React.Component<Props, State> {
 
   /**
    * Component constructor
@@ -36,7 +35,6 @@ class Home extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      userDisplayName: strings.user.toLowerCase()
     };
   }
 
@@ -46,11 +44,6 @@ class Home extends React.Component<Props, State> {
     if (!accessToken || !keycloak) {
       return;
     }
-
-    const userDisplayName = (keycloak.idTokenParsed as any).name;
-    if (userDisplayName) {
-      this.setState({ userDisplayName });
-    }
   }
 
   /**
@@ -58,12 +51,13 @@ class Home extends React.Component<Props, State> {
    */
   public render() {
     const { accessToken, keycloak } = this.props;
-    const { userDisplayName } = this.state;
+    const userName = accessToken?.userName || strings.user.toLowerCase();
+
     return (
       <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
         <Container>
         <Typography variant="h3">
-          { strings.hello } { userDisplayName }
+          { strings.hello } { userName }
         </Typography>
         </Container>
       </AppLayout>
@@ -94,4 +88,4 @@ export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
