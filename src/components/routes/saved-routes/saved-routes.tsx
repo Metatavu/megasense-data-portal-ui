@@ -5,7 +5,7 @@ import LogoIcon from "../../../resources/svg/logo-icon";
 import { styles } from "./saved-routes.styles";
 import strings from "../../../localization/strings";
 import DeleteIcon from "@material-ui/icons/DeleteForeverOutlined";
-import DeleteDialogue from "../../generic/confirm-dialog";
+import ConfirmDialog from "../../generic/confirm-dialog";
 
 /**
  * Interface describing component props
@@ -62,7 +62,7 @@ class SavedRoutes extends React.Component<Props, State> {
             { this.state.showAllUserRoutes ? strings.routes.showLess : strings.routes.showMore }
           </Button>
         </div>
-        <DeleteDialogue title={ strings.deleteConfirm } positiveButtonText={ strings.yes } cancelButtonText={ strings.cancel } dialogVisible={ routeDeleteInitiated } onDialogConfirm={ this.onDeleteConfirm } onDialogCancel={ this.onDeleteCancel } />
+        <ConfirmDialog title={ strings.deleteConfirm } positiveButtonText={ strings.yes } cancelButtonText={ strings.cancel } dialogVisible={ routeDeleteInitiated } onDialogConfirm={ this.onDeleteConfirm } onDialogCancel={ this.onDeleteCancel } />
       </>
     );
   }

@@ -21,9 +21,9 @@ interface Props extends WithStyles<typeof styles> {
 interface State {}
 
 /**
- * Component for generic confirm dialogue
+ * Component for generic confirm dialog
  */
-class ConfirmDialogue extends React.Component<Props, State> {
+class ConfirmDialog extends React.Component<Props, State> {
 
   /**
    * Component constructor
@@ -71,4 +71,4 @@ class ConfirmDialogue extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(ConfirmDialogue);
+export default withStyles(styles)(ConfirmDialog);
