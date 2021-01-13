@@ -112,7 +112,7 @@ class Home extends React.Component<Props, State> {
             <Button 
               variant="text"
               className={ classes.logInButton }
-              onClick={ this.navigateTo("/map") }
+              onClick={ () => this.navigateTo("/map") }
             >
               { strings.auth.guestUser }
             </Button>
@@ -137,7 +137,7 @@ class Home extends React.Component<Props, State> {
    * 
    * @param path path string
    */
-  private navigateTo = (path: string) => () => {
+  private navigateTo = (path: string) => {
     const { history } = this.props;
     history.push(path);
   }
