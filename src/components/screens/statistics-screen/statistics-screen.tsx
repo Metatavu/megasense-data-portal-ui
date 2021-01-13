@@ -12,7 +12,8 @@ import AppLayout from "../../layouts/app-layout/app-layout";
 import { ExposureInstance } from "../../../generated/client";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import { LineChart, Line, CartesianGrid, XAxis, Tooltip, Legend, YAxis } from "recharts";
-import { FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem, Drawer} from "@material-ui/core";
+import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem, Drawer} from "@material-ui/core";
+import moment from "moment";
 
 /**
  * Interface describing component props
@@ -32,7 +33,7 @@ interface ExposureData {
   nitrogenDioxide?: number;
   nitrogenMonoxide?: number;
   ozone?: number;
-  routeId: any;
+  routeId: string;
   startedAt?: string;
   endedAt?: string;
   sulfurDioxide?: number;
@@ -90,6 +91,7 @@ class StatisticsScreen extends React.Component<Props, State> {
       history.push("/");
     }
 
+    
     await this.getData();
     let exposureData: ExposureData[] = [];
     for (let i = 0; i < this.state.statisticsData.length; i++) {
@@ -100,9 +102,9 @@ class StatisticsScreen extends React.Component<Props, State> {
         nitrogenDioxide: data.nitrogenDioxide,
         nitrogenMonoxide: data.nitrogenMonoxide,
         ozone: data.ozone,
-        routeId: data.routeId,
-        startedAt: data.startedAt?.getDate() + "." + data.startedAt?.getMonth() + "." + data.startedAt?.getFullYear(),
-        endedAt: data.endedAt?.getDate() + "." + data.endedAt?.getMonth() + "." + data.endedAt?.getFullYear(),
+        routeId: data.routeId || "",
+        startedAt: moment(data.startedAt).format("L"),
+        endedAt: moment(data.endedAt).format("L"),
         sulfurDioxide: data.sulfurDioxide
       });
     }
@@ -117,10 +119,76 @@ class StatisticsScreen extends React.Component<Props, State> {
    */
   public render = () => {
     const { accessToken, keycloak, classes } = this.props
-    /**
-     * Components to display in the drawer
-     */
-    const statisticsComponent = (
+
+    return (
+      <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
+        <Drawer
+          open={ true }
+          variant="permanent"
+          anchor="left"
+          classes={{
+            paper: classes.drawer,
+          }}
+        >
+          { this.getStatisticsSidebarComponent() }
+        </Drawer>
+        <Container>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Card>
+                <Typography variant="h3">
+                  { strings.statistics }
+                </Typography>
+              </Card>
+            </Grid>
+          </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Card>
+                <LineChart 
+                  width={730} height={250} 
+                  data={ this.state.exposureData }
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="startedAt" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="harmfulMicroparticles" stroke="red" />
+                  <Line type="monotone" dataKey="nitrogenDioxide" stroke="black" />
+                  <Line type="monotone" dataKey="nitrogenMonoxide" stroke="blue" />
+                  <Line type="monotone" dataKey="ozone" stroke="green" />
+                  <Line type="monotone" dataKey="sulfurDioxide" stroke="orange" />
+                </LineChart>
+              </Card>
+            </Grid>
+          </Grid>
+        </Container>
+      </AppLayout>
+    );
+  }
+  
+  /**
+   * Get data from API
+   */
+  private getData = async() => {
+    if (!this.props.accessToken) {
+        return;
+    }
+    const exposureInstanceApi = Api.getExposureInstancesApi(this.props.accessToken);
+    this.setState({
+      statisticsData: await exposureInstanceApi.listExposureInstances({})
+    })
+  }
+
+  /**
+   * Get statistics sidebar component
+   * 
+   * @returns statistics sidebar component
+   */
+  private getStatisticsSidebarComponent = () => {
+    const { classes } = this.props
+    return(
       <Box mt={ 10 }>
         <List>
           <ListItem>
@@ -178,71 +246,7 @@ class StatisticsScreen extends React.Component<Props, State> {
           </ListItem>
         </List>
       </Box>
-    );
-
-    return (
-      <AppLayout
-        accessToken={ accessToken }
-        keycloak={ keycloak }
-      >
-        <Drawer
-          open={ true }
-          variant="persistent"
-          anchor="left"
-          classes={{
-            paper: classes.drawer,
-          }}
-        >
-          { statisticsComponent }
-        </Drawer>
-        <Box>
-          <Grid container spacing={ 3 }>
-            <Grid item xs={ 12 }>
-              <Card>
-                <Typography variant="h3">
-                  { strings.statistics.title }
-                </Typography>
-              </Card>
-            </Grid>
-          </Grid>
-          <Grid container spacing={ 3 }>
-            <Grid item xs={ 12 }>
-              <Card>
-                <LineChart 
-                  width={ 730 } height={ 250 } 
-                  data={ this.state.exposureData }
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="startedAt" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="harmfulMicroparticles" stroke="red" />
-                  <Line type="monotone" dataKey="nitrogenDioxide" stroke="black" />
-                  <Line type="monotone" dataKey="nitrogenMonoxide" stroke="blue" />
-                  <Line type="monotone" dataKey="ozone" stroke="green" />
-                  <Line type="monotone" dataKey="sulfurDioxide" stroke="orange" />
-                </LineChart>
-              </Card>
-            </Grid>
-          </Grid>
-        </Box>
-      </AppLayout>
-    );
-  }
-  
-  /**
-   * Get data from API
-   */
-  private getData = async() => {
-    if (!this.props.accessToken) {
-        return;
-    }
-    const exposureInstanceApi = Api.getExposureInstancesApi(this.props.accessToken);
-    this.setState({
-      statisticsData: await exposureInstanceApi.listExposureInstances({})
-    })
+    )
   }
 }
 

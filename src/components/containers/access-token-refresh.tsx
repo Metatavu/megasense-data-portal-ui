@@ -133,6 +133,7 @@ class AccessTokenProvider extends React.Component<Props, State> {
       return null;
     }
 
+    const userDisplayName: string = (this.keycloak.idTokenParsed as any).name;
     const created = new Date();
 
     return {
@@ -141,6 +142,7 @@ class AccessTokenProvider extends React.Component<Props, State> {
       expires_in: tokenParsed.exp,
       refresh_token: refreshToken,
       refresh_expires_in: refreshTokenParsed?.exp,
+      userName: userDisplayName,
       firstName: profile?.firstName,
       lastName: profile?.lastName,
       userId: tokenParsed.sub,

@@ -4,11 +4,16 @@ import { styles } from "./app-layout.styles";
 import Header from "../../generic/header/header";
 import { Toolbar } from "@material-ui/core";
 import { NullableToken } from "../../../types";
+import ErrorDialog from "../../generic/error-dialog";
+import { Redirect } from "react-router-dom";
 
 interface Props extends WithStyles<typeof styles> {
   routing?: JSX.Element;
   accessToken?: NullableToken;
   keycloak?: Keycloak.KeycloakInstance;
+  error?: string | Error | Response;
+  clearError?: () => void;
+  redirectTo?: string
 }
 
 interface State {
@@ -47,23 +52,46 @@ class AppLayout extends React.Component<Props, State> {
           routing={ this.props.routing }
           toggleSideMenu={ this.toggleSideMenu }
         />
-        {/* Empty toolbar to add correct spacing to prevent the content to go below the App header */}
         <Toolbar />
         <div className={ classes.content }>
           { children }
         </div>
+        { this.routeRedirect() }
+        { this.renderErrorDialog() }
       </div>
     );
   }
 
   /**
-   * Side menu toggle
+   * Renders error dialog
    */
+  private renderErrorDialog = () => {
+    if (this.props.error && this.props.clearError) {
+      return <ErrorDialog error={ this.props.error } onClose={ this.props.clearError } />;
+    }
+
+    return null;
+  }
+
   private toggleSideMenu = () => {
     const sideMenuOpen = !this.state.sideMenuOpen;
     this.setState({ 
       sideMenuOpen: sideMenuOpen 
     });
+  }
+
+  /**
+   * Handles recieved route redirection
+   */
+  private routeRedirect = () => {
+    const { redirectTo } = this.props;
+    if (!redirectTo) {
+      return null;
+    }
+    
+    return (
+      <Redirect to={ redirectTo } push={ true }/>
+    );
   }
 }
 

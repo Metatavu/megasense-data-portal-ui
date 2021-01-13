@@ -26,9 +26,9 @@ interface State {
 }
 
 /**
- * Component for mobile top bar
+ * Component for header
  */
-class MobileTopBar extends React.Component<Props, State> {
+class Header extends React.Component<Props, State> {
 
   constructor (props: Props) {
     super(props);
@@ -72,7 +72,7 @@ class MobileTopBar extends React.Component<Props, State> {
    * Method for rendering user auth action
    */
   private renderAuthAction = () => {
-    const { accessToken, keycloak } = this.props;
+    const { accessToken } = this.props;
 
     const label = accessToken ?
       strings.auth.logout :
@@ -84,15 +84,7 @@ class MobileTopBar extends React.Component<Props, State> {
           color="primary"
           variant="text"
           onClick={ () => {
-            if (accessToken) {
-              if (keycloak) {
-                keycloak.logout();
-              }
-            } else {
-              if (keycloak) {
-                keycloak.login({idpHint: "oidc"});
-              }
-            }
+            this.onLoginClick()
           }}
         >
           { label }
@@ -166,6 +158,22 @@ class MobileTopBar extends React.Component<Props, State> {
       </Box>
     );
   }
+
+  /**
+   * Handles Login / Logout button click
+   */
+  private onLoginClick = () => {
+    const { accessToken, keycloak } = this.props;
+    if (accessToken) {
+      if (keycloak) {
+        keycloak.logout();
+      }
+    } else {
+      if (keycloak) {
+        keycloak.login({idpHint: "oidc"});
+      }
+    }
+  }
 }
 
-export default withStyles(styles)(MobileTopBar);
+export default withStyles(styles)(Header);

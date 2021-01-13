@@ -175,8 +175,6 @@ class MapScreen extends React.Component<Props, State> {
    * @param routeToDisplay route to display
    */
   private displaySavedRoute = (routeToDisplay: Route) => {
-    const { setDisplayedRoute } = this.props;
-    setDisplayedRoute(undefined);
     const route = PolyUtil.decode(routeToDisplay.routePoints);
     const firstItem = route[0];
     const lastItem = route[ route.length - 1 ];

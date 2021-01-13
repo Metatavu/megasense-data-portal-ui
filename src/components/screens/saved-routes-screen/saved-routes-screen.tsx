@@ -3,7 +3,6 @@ import React from "react";
 import Api from "../../../api";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
 import { styles } from "./saved-routes.styles";
 import { NullableToken } from "../../../types";
 import { Route } from "../../../generated/client";
@@ -11,7 +10,9 @@ import * as actions from "../../../actions/route";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import AppLayout from "../../layouts/app-layout/app-layout";
-import { Container, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, WithStyles, CircularProgress } from "@material-ui/core";
+import { Container, Card, CardContent, CardActions, withStyles, Button, Typography, WithStyles, CircularProgress } from "@material-ui/core";
+import ConfirmDialog from "../../generic/confirm-dialog";
+import moment from "moment";
 
 /**
  * Interface describing component props
@@ -33,13 +34,14 @@ interface State {
   routeToDelete?: Route;
   deletingRoute: boolean;
   loadingRoutes: boolean;
-  redirect: boolean;
+  redirect?: string;
+  error?: string | Error | Response;
 }
 
 /**
  * Component for saved routes screen
  */
-class SavedRoutes extends React.Component<Props, State> {
+class SavedRoutesScreen extends React.Component<Props, State> {
 
   /**
    * Component constructor
@@ -52,8 +54,7 @@ class SavedRoutes extends React.Component<Props, State> {
       deleteDialogVisible: false,
       routes: [],
       deletingRoute: false,
-      loadingRoutes: false,
-      redirect: false
+      loadingRoutes: false
     };
   }
 
@@ -67,61 +68,55 @@ class SavedRoutes extends React.Component<Props, State> {
   /**
    * Component render method
    */
-  render() {
-    const { routes, redirect } = this.state;
+  public render() {
+    const { redirect, deleteDialogVisible, error } = this.state;
     const { accessToken, keycloak, classes } = this.props;
-    const routeCards = routes.map(this.renderRouteCard);
-
-    if (redirect) {
-      return (
-        <Redirect to="/map" push={ true }/>
-      );
-    }
 
     return (
-      <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
+      <AppLayout 
+        accessToken={ accessToken } 
+        keycloak={ keycloak } 
+        error={ error } 
+        clearError={ this.clearError } 
+        redirectTo={ redirect }>
         <Container>
           <Typography className={ classes.title } variant="h3" component="h1">
             { strings.savedRoutes }
           </Typography>
           {
-            this.state.loadingRoutes &&
-            <CircularProgress className={ classes.primaryLoader } />
+            this.renderRouteCards()
           }
-
-          {
-            !this.state.loadingRoutes && routeCards 
-          }
-
-          { 
-            this.renderDeleteDialog() 
-          }
+          <ConfirmDialog 
+            title={ strings.deleteConfirm } 
+            positiveButtonText={ strings.common.yes } 
+            cancelButtonText={ strings.common.cancel } 
+            dialogVisible={ deleteDialogVisible } 
+            onDialogConfirm={ this.deleteRoute } 
+            onDialogCancel={ this.closeDeleteDialog } />
         </Container>
       </AppLayout>
     );
   }
 
   /**
-   * Updates the list for routes
+   * Renders route cards
+   * 
+   * @returns a rendered route cards
    */
-  private updateRoutesList = async () => {
-    const { accessToken } = this.props;
-
-    if (!accessToken) {
-      return;
+  private renderRouteCards = () => {
+    const { classes } = this.props;
+    const { routes, loadingRoutes } = this.state;
+    if (!loadingRoutes) {
+      return (
+        <>
+          { routes.map(this.renderRouteCard) }
+        </>
+      );
     }
 
-    this.setState({ loadingRoutes: true });
-
-    try {
-      const routesApi = Api.getRoutesApi(accessToken);
-      const routes = await routesApi.listRoutes();
-      this.setState({ routes });
-    } catch (error) {
-      console.log(error);
-    }
-
-    this.setState({ loadingRoutes: false });
+    return(
+      <CircularProgress className={ classes.primaryLoader } />
+    );
   }
 
   /**
@@ -143,7 +138,7 @@ class SavedRoutes extends React.Component<Props, State> {
             { strings.savedRoutesTo }: { route.locationToName }
             </Typography>
           <Typography variant="caption" component="p">
-            { strings.savedRoutesSavedText }: { this.dateToYMD(route.savedAt!) }
+            { strings.savedRoutesSavedText }: { this.dateToDMY(route.savedAt!) }
             </Typography>
         </CardContent>
         <CardActions>
@@ -159,70 +154,18 @@ class SavedRoutes extends React.Component<Props, State> {
    */
   private displayRoute = (route: Route) => {
     this.props.updateDisplayedRoute(route);
-    this.setState({ redirect: true });
+    this.setState({ redirect: "/map" });
   } 
 
   /**
-   * Renders the dialog to delete routes
-   */
-  private renderDeleteDialog = (): JSX.Element => {
-    const { classes } = this.props;
-    const { routeToDelete, deleteDialogVisible } = this.state;
-
-    return (
-      <Dialog
-        open={ deleteDialogVisible }
-        onClose={ this.closeDeleteDialog }
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          { strings.deleteConfirm }
-        </DialogTitle>
-
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            { strings.savedRoutesFrom }: { routeToDelete?.locationFromName }
-          </DialogContentText>
-
-          <DialogContentText id="alert-dialog-description">
-            { strings.savedRoutesTo }: { routeToDelete?.locationToName }
-          </DialogContentText>
-
-          <DialogContentText id="alert-dialog-description">
-            { strings.savedRoutesSavedText }:  { routeToDelete ? this.dateToYMD(routeToDelete.savedAt!) : "" }
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions>
-          {
-            !this.state.deletingRoute &&
-            <Button variant="contained" className={ classes.errorButton } onClick={ this.deleteRoute }>
-              { strings.common.yes }
-            </Button>
-          }
-          {
-            this.state.deletingRoute &&
-            <CircularProgress className={ classes.errorLoader } />
-          }
-
-          <Button variant="contained" className={ classes.warningButton } onClick={ this.closeDeleteDialog } color="primary" autoFocus>
-            { strings.common.cancel }
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-
-  /**
-   * Converts Date to a string in YY-MM-DD format
+   * Converts Date to a localized string in DD-MMMM-YYYY format
    * 
    * @param date A date to convert
    * 
-   * @returns A string in YY-MM-DD format
+   * @returns A localized string in DD-MMMM-YYYY format
    */
-  private dateToYMD = (date: Date): string => {
-    return date.toISOString().split("T")[0];
+  private dateToDMY = (date: Date): string => {
+    return moment(date).format("LL");
   }
 
   /**
@@ -244,10 +187,37 @@ class SavedRoutes extends React.Component<Props, State> {
       await this.updateRoutesList();
       this.setState({ deleteDialogVisible: false });
     } catch (error) {
-      console.log(error);
+      this.setState({
+        error: error
+      });
     }
 
     this.setState({ deletingRoute: false });
+  }
+
+  /**
+   * Updates the list for routes
+   */
+  private updateRoutesList = async () => {
+    const { accessToken } = this.props;
+
+    if (!accessToken) {
+      return;
+    }
+
+    this.setState({ loadingRoutes: true });
+
+    try {
+      const routesApi = Api.getRoutesApi(accessToken);
+      const routes = await routesApi.listRoutes();
+      this.setState({ routes });
+    } catch (error) {
+      this.setState({
+        error: error
+      });
+    }
+
+    this.setState({ loadingRoutes: false });
   }
 
   /**
@@ -270,6 +240,15 @@ class SavedRoutes extends React.Component<Props, State> {
     this.setState({
       deleteDialogVisible: true,
       routeToDelete
+    });
+  }
+
+  /**
+   * Clears error
+   */
+  private clearError = () => {
+    this.setState({ 
+      error: undefined 
     });
   }
 }
@@ -296,4 +275,4 @@ export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SavedRoutes));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SavedRoutesScreen));
