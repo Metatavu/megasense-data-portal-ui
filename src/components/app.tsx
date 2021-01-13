@@ -13,6 +13,8 @@ import AccessTokenRefresh from "./containers/access-token-refresh";
 import SavedRoutesScreen from "./screens/saved-routes-screen/saved-routes-screen";
 import AboutScreen from "./screens/about-screen/about-screen";
 import 'moment/locale/fi';
+import moment from "moment";
+import strings from "../localization/strings";
 
 /**
  * Initialize Redux store
@@ -40,8 +42,9 @@ class App extends React.Component<Props, State> {
     super(props);
     this.state = {};
   }
-
+  
   public render() {
+    moment.locale(strings.getLanguage());
     return (
       <ThemeProvider theme={ theme }>
         <CssBaseline />

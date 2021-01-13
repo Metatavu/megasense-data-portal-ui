@@ -159,9 +159,7 @@ class SavedRoutesScreen extends React.Component<Props, State> {
    * @returns A localized string in DD-MMMM-YYYY format
    */
   private dateToDMY = (date: Date): string => {
-    const time = moment(date);
-    time.locale(strings.getLanguage());
-    return time.format("LL");
+    return moment(date).format("LL");
   }
 
   /**

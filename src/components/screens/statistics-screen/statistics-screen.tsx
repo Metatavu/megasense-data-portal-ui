@@ -87,7 +87,6 @@ class StatisticsScreen extends React.Component<Props, State> {
    */
   public componentDidMount = async () => {
     const { accessToken, history } = this.props;
-    moment.locale(strings.getLanguage());
 
     if (!accessToken) {
       history.push("/");
