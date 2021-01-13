@@ -70,7 +70,12 @@ class SavedRoutesScreen extends React.Component<Props, State> {
     const { accessToken, keycloak, classes } = this.props;
 
     return (
-      <AppLayout accessToken={ accessToken } keycloak={ keycloak } error={ error } clearError={ this.clearError } redirectTo={ redirect }>
+      <AppLayout 
+        accessToken={ accessToken } 
+        keycloak={ keycloak } 
+        error={ error } 
+        clearError={ this.clearError } 
+        redirectTo={ redirect }>
         <Container>
           <Typography className={ classes.title } variant="h3" component="h1">
             { strings.savedRoutes }
@@ -78,7 +83,13 @@ class SavedRoutesScreen extends React.Component<Props, State> {
           {
             this.renderRouteCards()
           }
-          <ConfirmDialog title={ strings.deleteConfirm } positiveButtonText={ strings.yes } cancelButtonText={ strings.cancel } dialogVisible={ deleteDialogVisible } onDialogConfirm={ this.deleteRoute } onDialogCancel={ this.closeDeleteDialog } />
+          <ConfirmDialog 
+            title={ strings.deleteConfirm } 
+            positiveButtonText={ strings.yes } 
+            cancelButtonText={ strings.cancel } 
+            dialogVisible={ deleteDialogVisible } 
+            onDialogConfirm={ this.deleteRoute } 
+            onDialogCancel={ this.closeDeleteDialog } />
         </Container>
       </AppLayout>
     );
