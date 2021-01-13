@@ -64,8 +64,8 @@ class SavedRoutes extends React.Component<Props, State> {
         </div>
         <ConfirmDialog 
           title={ strings.deleteConfirm } 
-          positiveButtonText={ strings.yes } 
-          cancelButtonText={ strings.cancel } 
+          positiveButtonText={ strings.common.yes } 
+          cancelButtonText={ strings.common.cancel } 
           dialogVisible={ routeDeleteInitiated } 
           onDialogConfirm={ this.onDeleteConfirm } 
           onDialogCancel={ this.onDeleteCancel } />
@@ -90,9 +90,9 @@ class SavedRoutes extends React.Component<Props, State> {
       }
     }).filter( (route: Route | undefined): route is Route => !!route );
 
-    const routes = showAllUserRoutes ? existingRoutes : existingRoutes.splice(0, 2);
+    const routesToDisplay = showAllUserRoutes ? existingRoutes : existingRoutes.splice(0, 2);
 
-    return routes.map((route, index) => {
+    return routesToDisplay.map((route, index) => {
       
       const from = this.truncateName(route.locationFromName, 40);
       const to = this.truncateName(route.locationToName, 40);

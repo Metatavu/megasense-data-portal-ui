@@ -91,7 +91,6 @@ class StatisticsScreen extends React.Component<Props, State> {
       history.push("/");
     }
 
-    
     await this.getData();
     let exposureData: ExposureData[] = [];
     for (let i = 0; i < this.state.statisticsData.length; i++) {
@@ -118,7 +117,8 @@ class StatisticsScreen extends React.Component<Props, State> {
    * Component render method
    */
   public render = () => {
-    const { accessToken, keycloak, classes } = this.props
+    const { accessToken, keycloak, classes } = this.props;
+    const { exposureData } = this.state;
 
     return (
       <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
@@ -133,22 +133,23 @@ class StatisticsScreen extends React.Component<Props, State> {
           { this.getStatisticsSidebarComponent() }
         </Drawer>
         <Container>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
+          <Grid container spacing={ 3 }>
+            <Grid item xs={ 12 }>
               <Card>
                 <Typography variant="h3">
-                  { strings.statistics }
+                  { strings.statistics.title }
                 </Typography>
               </Card>
             </Grid>
           </Grid>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
+          <Grid container spacing={ 3 }>
+            <Grid item xs={ 12 }>
               <Card>
                 <LineChart 
-                  width={730} height={250} 
-                  data={ this.state.exposureData }
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  width={ 730 } height={ 250 } 
+                  data={ exposureData }
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="startedAt" />
                   <YAxis />
