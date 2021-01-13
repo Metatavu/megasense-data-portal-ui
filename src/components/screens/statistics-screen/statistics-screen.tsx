@@ -55,9 +55,9 @@ interface State {
 }
 
 /**
- * Component for warehouses screen
+ * Component for statistics screen
  */
-class SavedRoutes extends React.Component<Props, State> {
+class StatisticsScreen extends React.Component<Props, State> {
 
   /**
    * Component constructor
@@ -121,69 +121,70 @@ class SavedRoutes extends React.Component<Props, State> {
      * Components to display in the drawer
      */
     const statisticsComponent = (
-      <>
-        <Box mt={ 10 }>
-          <List>
-            <ListItem>
-              <FormControl className={ classes.formControl }>
-                <TextField
-                  id="date"
-                  label="Select time"
-                  type="date"
-                  defaultValue="10.10.2020"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </FormControl>
-            </ListItem>
-            <ListItem>
-              <FormControl variant="outlined" className={ classes.formControl }>
-                <InputLabel htmlFor="outlined-age-native-simple">{ strings.statistics.selectPollution }</InputLabel>
-                <Select
-                  native
-                  fullWidth
-                  label="Select time range"
-                  inputProps={{
-                    name: "time",
-                    id: "outlined-age-native-simple",
-                  }}
-                >
-                  <option aria-label="None" value="" />
-                  <option>{ strings.statistics.daily }</option>
-                  <option>{ strings.statistics.weekly }</option>
-                  <option>{ strings.statistics.monthly }</option>
-                  <option>{ strings.statistics.annual }</option>
-                </Select>
-              </FormControl>
-            </ListItem>
-            <ListItem>
-              <FormControl variant="outlined" className={ classes.formControl }>
-                <InputLabel htmlFor="outlined-age-native-simple">{ strings.selectPollution }</InputLabel>
-                <Select
-                  native
-                  fullWidth
-                  label="Select pollution"
-                  inputProps={{
-                    name: "age",
-                    id: "outlined-age-native-simple",
-                  }}
-                >
-                  <option aria-label="None" value="" />
-                  <option>{ strings.statistics.carbonMonoxide }</option>
-                  <option>{ strings.statistics.ozone }</option>
-                  <option>{ strings.statistics.nitrogenDioxine }</option>
-                  <option>{ strings.statistics.sulfurDioxine }</option>
-                </Select>
-              </FormControl>
-            </ListItem>
-          </List>
-        </Box>
-      </>
+      <Box mt={ 10 }>
+        <List>
+          <ListItem>
+            <FormControl className={ classes.formControl }>
+              <TextField
+                id="date"
+                label="Select time"
+                type="date"
+                defaultValue="10.10.2020"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </FormControl>
+          </ListItem>
+          <ListItem>
+            <FormControl variant="outlined" className={ classes.formControl }>
+              <InputLabel htmlFor="outlined-age-native-simple">{ strings.statistics.selectPollution }</InputLabel>
+              <Select
+                native
+                fullWidth
+                label="Select time range"
+                inputProps={{
+                  name: "time",
+                  id: "outlined-age-native-simple",
+                }}
+              >
+                <option aria-label="None" value="" />
+                <option>{ strings.statistics.daily }</option>
+                <option>{ strings.statistics.weekly }</option>
+                <option>{ strings.statistics.monthly }</option>
+                <option>{ strings.statistics.annual }</option>
+              </Select>
+            </FormControl>
+          </ListItem>
+          <ListItem>
+            <FormControl variant="outlined" className={ classes.formControl }>
+              <InputLabel htmlFor="outlined-age-native-simple">{ strings.selectPollution }</InputLabel>
+              <Select
+                native
+                fullWidth
+                label="Select pollution"
+                inputProps={{
+                  name: "age",
+                  id: "outlined-age-native-simple",
+                }}
+              >
+                <option aria-label="None" value="" />
+                <option>{ strings.statistics.carbonMonoxide }</option>
+                <option>{ strings.statistics.ozone }</option>
+                <option>{ strings.statistics.nitrogenDioxine }</option>
+                <option>{ strings.statistics.sulfurDioxine }</option>
+              </Select>
+            </FormControl>
+          </ListItem>
+        </List>
+      </Box>
     );
 
     return (
-      <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
+      <AppLayout
+        accessToken={ accessToken }
+        keycloak={ keycloak }
+      >
         <Drawer
           open={ true }
           variant="persistent"
@@ -199,7 +200,7 @@ class SavedRoutes extends React.Component<Props, State> {
             <Grid item xs={ 12 }>
               <Card>
                 <Typography variant="h3">
-                  { strings.statistics }
+                  { strings.statistics.title }
                 </Typography>
               </Card>
             </Grid>
@@ -210,7 +211,8 @@ class SavedRoutes extends React.Component<Props, State> {
                 <LineChart 
                   width={ 730 } height={ 250 } 
                   data={ this.state.exposureData }
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="startedAt" />
                   <YAxis />
@@ -264,4 +266,4 @@ export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   return {};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SavedRoutes));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(StatisticsScreen));

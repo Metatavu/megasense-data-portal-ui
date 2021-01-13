@@ -24,9 +24,9 @@ interface State {
 }
 
 /**
- * Component for warehouses screen
+ * Component for home screen
  */
-class Home extends React.Component<Props, State> {
+class HomeScreen extends React.Component<Props, State> {
 
   /**
    * Component constructor
@@ -40,6 +40,9 @@ class Home extends React.Component<Props, State> {
     };
   }
 
+  /**
+   * Component life cycle method
+   */
   public componentDidMount = () => {
     const { accessToken, keycloak } = this.props;
 
@@ -62,9 +65,9 @@ class Home extends React.Component<Props, State> {
     return (
       <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
         <Container>
-        <Typography variant="h3">
-          { strings.hello } { userDisplayName }
-        </Typography>
+          <Typography variant="h3">
+            { strings.welcome.hello } { userDisplayName }
+          </Typography>
         </Container>
       </AppLayout>
     );
@@ -94,4 +97,4 @@ export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

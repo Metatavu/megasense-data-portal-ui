@@ -25,6 +25,9 @@ interface Props extends WithStyles<typeof styles> {
 interface State { 
 }
 
+/**
+ * Component for mobile top bar
+ */
 class MobileTopBar extends React.Component<Props, State> {
 
   constructor (props: Props) {

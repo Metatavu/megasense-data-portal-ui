@@ -65,6 +65,11 @@ interface State {
 class MapScreen extends React.Component<Props, State> {
   mapRef: React.RefObject<Map>;
 
+  /**
+   * Component constructor
+   * 
+   * @param props props
+   */
   constructor (props: Props) {
     super(props);
     this.state = {
@@ -89,6 +94,9 @@ class MapScreen extends React.Component<Props, State> {
 
   }
 
+  /**
+   * Component life cycle method
+   */
   public componentDidMount = async () => {
     const { displayedRoute, accessToken } = this.props;
 
@@ -109,6 +117,9 @@ class MapScreen extends React.Component<Props, State> {
     this.getUserSavedRoutes();
   }
 
+  /**
+   * Map screen render method
+   */
   public render = () => {
     const { accessToken, keycloak, classes } = this.props;
     const { loadingUserSettings, userSavedRoutes } = this.state;

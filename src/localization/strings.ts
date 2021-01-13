@@ -13,6 +13,14 @@ export interface IStrings extends LocalizedStringsMethods {
     logout: string;
   };
 
+
+  /**
+   * Translations for authentication
+   */
+  welcome: {
+    hello: string;
+  };
+
   /**
    * Translations for header
    */
@@ -21,7 +29,7 @@ export interface IStrings extends LocalizedStringsMethods {
     map: string;
     settings: string;
     about: string;
-  }
+  };
 
   /**
    * Translations for routes
@@ -42,6 +50,7 @@ export interface IStrings extends LocalizedStringsMethods {
    * Translations for statistics screen
    */
   statistics: {
+    title: string;
     selectPollution: string;
     daily: string;
     weekly: string;
@@ -51,7 +60,7 @@ export interface IStrings extends LocalizedStringsMethods {
     ozone: string;
     nitrogenDioxine: string;
     sulfurDioxine: string;
-  }
+  };
   
   /**
    * Translations for settings screen
@@ -60,7 +69,19 @@ export interface IStrings extends LocalizedStringsMethods {
     title: string;
     applyChanges: string;
     homeAddress: string;
-  },
+    streetAddress: string;
+    city: string;
+    zipCode: string;
+    country: string;
+    postalCode: string;
+    locationNotFoundDialogText: string;
+    confirmButtonText: string;
+    deleteAccount: string;
+    deleteAccountDialogTitle: string;
+    deleteAccountDialogText: string;
+    changeUserData: string;
+    downloadData: string;
+  };
 
   /**
    * Translations for about screen
@@ -70,9 +91,7 @@ export interface IStrings extends LocalizedStringsMethods {
     subTitle: string;
     descriptionText: string;
   };
-
-  frontPage: string;
-  hello: string;
+  
   to: string;
   from: string;
   savedRoutes: string;
@@ -80,16 +99,8 @@ export interface IStrings extends LocalizedStringsMethods {
   savedRoutesFrom: string;
   savedRoutesSavedText: string;
   deleteConfirm: string;
-  yes: string,
-  pollutantPM25: string;
-  pollutantPM10: string;
-  pollutantOzone: string;
-  pollutantNitrogen: string;
-  pollutanSulfur: string;
-  cancel: string;
   confirmTimeRange: string;
   selectPollution: string;
-  reset: string,
   weeklyExposure: string,
   monthlyExposure: string,
   annualExposure: string
@@ -99,22 +110,25 @@ export interface IStrings extends LocalizedStringsMethods {
   movementOptions: string;
   walking: string;
   wheelerchair: string;
-  streetAddress: string;
-  city: string;
-  zipCode: string;
-  country: string;
-  downloadData: string;
-  changeUserData: string;
-  deleteAccount: string;
-  deleteAccountDialogTitle: string;
-  deleteAccountDialogText: string;
   viewRoute: string;
   deleteRoute: string;
   collapseMenuText: string;
   user: string;
-  postalCode: string;
-  confirmButtonText: string;
-  locationNotFoundDialogText: string;
+
+  pollutants: {
+    PM25: string;
+    PM10: string;
+    ozone: string;
+    nitrogenOxide: string;
+    sulfurOxide: string;
+    carbonMonoxide: string;
+  };
+
+  common: {
+    cancel: string;
+    reset: string,
+    yes: string,
+  }
 }
 
 const strings: IStrings = new LocalizedStrings({

@@ -11,7 +11,7 @@ import * as actions from "../../../actions/route";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import AppLayout from "../../layouts/app-layout/app-layout";
-import { Container, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, WithStyles, CircularProgress } from '@material-ui/core';
+import { Container, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles, Button, Typography, WithStyles, CircularProgress } from "@material-ui/core";
 
 /**
  * Interface describing component props
@@ -57,6 +57,9 @@ class SavedRoutes extends React.Component<Props, State> {
     };
   }
 
+  /**
+   * Component life cycle method
+   */
   public componentDidMount = async () => {
     await this.updateRoutesList();
   }
@@ -68,7 +71,7 @@ class SavedRoutes extends React.Component<Props, State> {
     const { routes, redirect } = this.state;
     const { accessToken, keycloak, classes } = this.props;
     const routeCards = routes.map(this.renderRouteCard);
- 
+
     if (redirect) {
       return (
         <Redirect to="/map" push={ true }/>
@@ -151,6 +154,9 @@ class SavedRoutes extends React.Component<Props, State> {
     );
   }
 
+  /**
+   * Display route method
+   */
   private displayRoute = (route: Route) => {
     this.props.updateDisplayedRoute(route);
     this.setState({ redirect: true });
@@ -192,7 +198,7 @@ class SavedRoutes extends React.Component<Props, State> {
           {
             !this.state.deletingRoute &&
             <Button variant="contained" className={ classes.errorButton } onClick={ this.deleteRoute }>
-              { strings.yes }
+              { strings.common.yes }
             </Button>
           }
           {
@@ -201,7 +207,7 @@ class SavedRoutes extends React.Component<Props, State> {
           }
 
           <Button variant="contained" className={ classes.warningButton } onClick={ this.closeDeleteDialog } color="primary" autoFocus>
-            { strings.cancel }
+            { strings.common.cancel }
           </Button>
         </DialogActions>
       </Dialog>

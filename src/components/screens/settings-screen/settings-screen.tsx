@@ -35,7 +35,7 @@ interface State {
 }
 
 /**
- * Component for warehouses screen
+ * Component for settings screen
  */
 class Settings extends React.Component<Props, State> {
 
@@ -61,6 +61,9 @@ class Settings extends React.Component<Props, State> {
     };
   }
 
+  /**
+   * Component life cycle method
+   */
   public componentDidMount = async () => {
     const { accessToken, history } = this.props;
 
@@ -96,7 +99,7 @@ class Settings extends React.Component<Props, State> {
    */
   public render() {
     const { accessToken, keycloak, classes } = this.props;
-    const { homeAddress, loadingUserSettings, savingUserSettings } = this.state;
+    const { homeAddress, loadingUserSettings, savingUserSettings, deleteDialogVisible, locationNotFoundDialogVisible } = this.state;
     const { streetAddress, postalCode, city, country } = homeAddress;
 
     return (
@@ -117,17 +120,17 @@ class Settings extends React.Component<Props, State> {
               <CardContent>
                 <Box pt={ 3 } pb={ 3 }>
                   <Button onClick={ this.downloadData } variant="contained" >
-                    { strings.downloadData }
+                    { strings.settings.downloadData }
                   </Button>
                 </Box>
                 <Box pt={ 3 } pb={ 3 }>
                   <Button onClick={ this.onChangeAccountSettings } variant="contained" >
-                    { strings.changeUserData }
+                    { strings.settings.changeUserData }
                   </Button>
                 </Box>
                 <Box pt={ 3 } pb={ 3 }>
-                  <Button variant="contained" className={classes.errorButton} onClick={() => this.toggleDeleteUserDialog()}>
-                    { strings.deleteAccount }
+                  <Button variant="contained" className={ classes.errorButton } onClick={() => this.toggleDeleteUserDialog()}>
+                    { strings.settings.deleteAccount }
                   </Button>
                 </Box>
               </CardContent>
@@ -144,7 +147,7 @@ class Settings extends React.Component<Props, State> {
                   
                   <Box mt={ 5 } mb={ 5 }>
                     <TextField
-                      placeholder={ strings.streetAddress }
+                      placeholder={ strings.settings.streetAddress }
                       value={ streetAddress }
                       onChange={ this.onStreetAddressChange }
                     />
@@ -152,7 +155,7 @@ class Settings extends React.Component<Props, State> {
 
                   <Box mt={ 5 } mb={ 5 }>
                     <TextField
-                      placeholder={ strings.postalCode }
+                      placeholder={ strings.settings.postalCode }
                       value={ postalCode }
                       onChange={ this.onPostalCodeChange }
                     />
@@ -160,7 +163,7 @@ class Settings extends React.Component<Props, State> {
 
                   <Box mt={ 5 } mb={ 5 }>
                     <TextField
-                      placeholder={ strings.city }
+                      placeholder={ strings.settings.city }
                       value={ city }
                       onChange={ this.onCityChange }
                     />
@@ -168,7 +171,7 @@ class Settings extends React.Component<Props, State> {
 
                   <Box mt={ 5 } mb={ 5 }>
                     <TextField 
-                      placeholder={ strings.country }
+                      placeholder={ strings.settings.country }
                       value={ country }
                       onChange={ this.onCountryChange }
                     />
@@ -188,49 +191,57 @@ class Settings extends React.Component<Props, State> {
                     savingUserSettings && <CircularProgress/>
                   }
                 </CardContent>
-              }
+                }
 
-              {
-                loadingUserSettings && <CircularProgress/>
-              }
-              
-            </Card>
-          </Grid>
+                {
+                  loadingUserSettings && <CircularProgress/>
+                }
+                
+              </Card>
+            </Grid>
           </Grid>
 
           <Dialog
-            open={ this.state.deleteDialogVisible }
+            open={ deleteDialogVisible }
             onClose={ this.toggleDeleteUserDialog }
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{ strings.deleteAccountDialogTitle }</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{ strings.settings.deleteAccountDialogTitle }</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                { strings.deleteAccountDialogText }
+                { strings.settings.deleteAccountDialogText }
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button variant="contained" className={ classes.errorButton } onClick={ this.deleteUser }>
-                { strings.yes }
+              <Button
+                variant="contained"
+                className={ classes.errorButton }
+                onClick={ this.deleteUser }
+              >
+                { strings.common.yes }
               </Button>
-              <Button variant="contained" className={ classes.warningButton } onClick={ this.toggleDeleteUserDialog } color="primary" autoFocus>
-                { strings.cancel }
+              <Button
+                variant="contained"
+                className={ classes.warningButton }
+                onClick={ this.toggleDeleteUserDialog }
+                color="primary" autoFocus
+              >
+                { strings.common.cancel }
               </Button>
             </DialogActions>
           </Dialog>
 
-
           <Dialog
-            open={ this.state.locationNotFoundDialogVisible }
+            open={ locationNotFoundDialogVisible }
             onClose={ this.closeLocationNotFoundDialog }
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{ strings.locationNotFoundDialogText }</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{ strings.settings.locationNotFoundDialogText }</DialogTitle>
             <DialogActions>
               <Button variant="contained" className={ classes.errorButton } onClick={ this.closeLocationNotFoundDialog }>
-                { strings.confirmButtonText }
+                { strings.settings.confirmButtonText }
               </Button>
             </DialogActions>
           </Dialog>
@@ -239,6 +250,9 @@ class Settings extends React.Component<Props, State> {
     );
   }
 
+  /**
+   * Download user data
+   */
   private downloadData = async () => {
     const { accessToken } = this.props;
 
@@ -402,7 +416,6 @@ class Settings extends React.Component<Props, State> {
         console.log(error);
       }
     }
-
 
     this.setState({ savingUserSettings: false });
   }

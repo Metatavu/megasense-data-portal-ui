@@ -4,6 +4,10 @@
     "logout": "Kirjaudu ulos"
   },
 
+  "welcome": {
+    "hello": "Hei,"
+  },
+
   "header": {
     "statistics": "Statistiikka",
     "map": "Kartta",
@@ -24,6 +28,7 @@
   },
 
   "statistics": {
+    "title": "Tilastot",
     "selectPollution": "Valitse saaste:",
     "daily": "Päiväkohtainen",
     "weekly": "Viikottainen",
@@ -38,7 +43,19 @@
   "settings": {
     "title": "Asetukset",
     "applyChanges": "Tallenna muutokset",
-    "homeAddress": "Kotiosoite"
+    "homeAddress": "Kotiosoite",
+    "streetAddress": "Katuosoite",
+    "city": "Kaupunki",
+    "zipCode": "Postinumero",
+    "country": "Maa",
+    "postalCode": "Postinumero",
+    "locationNotFoundDialogText": "Paikkaa ei löydetty",
+    "confirmButtonText": "Selvä",
+    "deleteAccount": "Poista tilisi",
+    "deleteAccountDialogTitle": "Oletko varma että haluat poistaa tilisi?",
+    "deleteAccountDialogText": "Jos painat kyllä, tätä tiliä ei voi enää palauttaa. Sinut ohjataan kirjautumissivulle.",
+    "changeUserData": "Muokkaa käyttäjätietoja",
+    "downloadData": "Lataa datasi"
   },
 
   "aboutScreen": {
@@ -48,7 +65,6 @@
   },
 
   "yourTokenIs": "Avaimesi on: ",
-  "frontPage": "Etusivu",
   "hello": "Hei,",
   "from": "Valitse aloituspiste...",
   "to": "Valitse määränpää...",
@@ -57,16 +73,8 @@
   "savedRoutesTo": "Minne",
   "savedRoutesSavedText": "Tallennettu",
   "deleteConfirm": "Oletko varma että haluat poistaa tämän?",
-  "yes": "Kyllä",
-  "pollutantPM25": "PM25",
-  "pollutantPM10": "PM10",
-  "pollutantOzone": "Otsooni",
-  "pollutantNitrogen": "Typpidioksidi",
-  "pollutanSulfur": "Rikkidioksidi",
-  "cancel": "Peruuta",
   "confirmTimeRange": "Valitse aikaväli",
   "selectPollution": "Valitse ilmansaaste",
-  "reset": "Palauta",
   "weeklyExposure": "Viikottainen altistuminen",
   "monthlyExposure": "Kuukausittainen altistuminen",
   "annualExposure": "Vuosittainen altistuminen",
@@ -76,20 +84,23 @@
   "movementOptions": "Liikkumisasetukset",
   "walking": "Kävely",
   "wheelerchair": "Pyörätuoli",
-  "streetAddress": "Katuosoite",
-  "city": "Kaupunki",
-  "zipCode": "Postinumero",
-  "country": "Maa",
-  "downloadData": "Lataa datasi",
-  "changeUserData": "Muokkaa käyttäjätietoja",
-  "deleteAccount": "Poista tilisi",
-  "deleteAccountDialogTitle": "Oletko varma että haluat poistaa tilisi?",
-  "deleteAccountDialogText": "Jos painat kyllä, tätä tiliä ei voi enää palauttaa. Sinut ohjataan kirjautumissivulle.",
   "viewRoute": "Näytä reitti",
   "deleteRoute": "Poista reitti",
   "collapseMenuText": "Piilota menu",
   "user": "Käyttäjä",
-  "postalCode": "Postinumero",
-  "confirmButtonText": "Selvä",
-  "locationNotFoundDialogText": "Paikkaa ei löydetty"
+
+  "pollutants": {
+    "PM25": "Pienhiukkaset",
+    "PM10": "Hengitettävät hiukkaset",
+    "ozone": "Otsoni",
+    "nitrogenDioxide": "Typpioksidi",
+    "sulfurDioxide": "Rikkioksidi",
+    "carbonMonoxide": "Häkä"
+  },
+
+  "common": {
+    "reset": "Palauta",
+    "cancel": "Peruuta",
+    "yes": "Kyllä"
+  }
 }

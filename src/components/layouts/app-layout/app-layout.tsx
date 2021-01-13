@@ -15,7 +15,17 @@ interface State {
   sideMenuOpen: boolean;
 }
 
+
+/**
+ * AppLayout component
+ */
 class AppLayout extends React.Component<Props, State> {
+
+  /**
+   * Component constructor
+   * 
+   * @param props props
+   */
   constructor (props: Props) {
     super(props);
     this.state = {
@@ -23,6 +33,9 @@ class AppLayout extends React.Component<Props, State> {
     };
   }
 
+  /**
+   * Component render method
+   */
   public render = () => {
     const { accessToken, keycloak, classes, children } = this.props;
     
@@ -43,6 +56,9 @@ class AppLayout extends React.Component<Props, State> {
     );
   }
 
+  /**
+   * Side menu toggle
+   */
   private toggleSideMenu = () => {
     const sideMenuOpen = !this.state.sideMenuOpen;
     this.setState({ 
