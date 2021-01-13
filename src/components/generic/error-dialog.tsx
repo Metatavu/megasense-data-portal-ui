@@ -22,7 +22,7 @@ interface State {
 /**
  * React component displaying error dialogs
  */
-export default class ErrorDialogue extends React.Component<Props, State> {
+export default class ErrorDialog extends React.Component<Props, State> {
 
   /**
    * Constructor
