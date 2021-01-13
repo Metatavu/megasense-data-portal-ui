@@ -62,10 +62,21 @@ class Home extends React.Component<Props, State> {
    * Component render method
    */
   public render() {
+    return (
+      <>
+        { this.renderHomeScreen() }
+      </>
+    );
+  }
+
+  /**
+   * Method for rendering home screen
+   */
+  private renderHomeScreen = () => {
     const { classes } = this.props;
     const { accessToken, keycloak } = this.props;
     const { userDisplayName } = this.state;
-    
+
     if (accessToken) {
       return (
         <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
@@ -87,11 +98,7 @@ class Home extends React.Component<Props, State> {
               variant="outlined" 
               className={ classes.logInButton }
               endIcon={ <ArrowIcon /> }
-              onClick={ () => {
-                if (keycloak) {
-                  keycloak.login({ idpHint: "oidc" });
-                }
-              }}
+              onClick={ () => { this.logIn() }}
             >
               { strings.auth.login }
             </Button>
@@ -116,11 +123,21 @@ class Home extends React.Component<Props, State> {
   }
 
   /**
+   * Method for logging in
+   */
+  private logIn = () => {
+    const { keycloak } = this.props;
+    if (keycloak) {
+      keycloak.login({ idpHint: "oidc" });
+    }
+  }
+
+  /**
    * Navigate to given route path
    * 
    * @param path path string
    */
-  private navigateTo = (path: string) = () => {
+  private navigateTo = (path: string) => () => {
     const { history } = this.props;
     history.push(path);
   }
