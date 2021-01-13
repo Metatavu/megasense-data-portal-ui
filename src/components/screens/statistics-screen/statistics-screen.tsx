@@ -15,6 +15,7 @@ import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import { LineChart, Line, CartesianGrid, XAxis, Tooltip, Legend, YAxis } from 'recharts';
 import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem} from '@material-ui/core';
 import moment from "moment";
+import 'moment/locale/fi';
 
 /**
  * Interface describing component props
@@ -87,6 +88,7 @@ class StatisticsScreen extends React.Component<Props, State> {
    */
   public componentDidMount = async () => {
     const { accessToken, history } = this.props;
+    moment.locale(strings.getLanguage());
 
     if (!accessToken) {
       history.push("/");

@@ -13,6 +13,7 @@ import AppLayout from "../../layouts/app-layout/app-layout";
 import { Container, Card, CardContent, CardActions, withStyles, Button, Typography, WithStyles, CircularProgress } from '@material-ui/core';
 import DeleteDialogue from "../../generic/confirm-dialog";
 import moment from 'moment';
+import 'moment/locale/fi';
 
 /**
  * Interface describing component props
@@ -124,7 +125,7 @@ class SavedRoutesScreen extends React.Component<Props, State> {
             { strings.savedRoutesTo }: { route.locationToName }
             </Typography>
           <Typography variant="caption" component="p">
-            { strings.savedRoutesSavedText }: { this.dateToYMD(route.savedAt!) }
+            { strings.savedRoutesSavedText }: { this.dateToDMY(route.savedAt!) }
             </Typography>
         </CardContent>
         <CardActions>
@@ -141,14 +142,16 @@ class SavedRoutesScreen extends React.Component<Props, State> {
   } 
 
   /**
-   * Converts Date to a string in YY-MM-DD format
+   * Converts Date to a localized string in DD-MMMM-YYYY format
    * 
    * @param date A date to convert
    * 
-   * @returns A string in YY-MM-DD format
+   * @returns A localized string in DD-MMMM-YYYY format
    */
-  private dateToYMD = (date: Date): string => {
-    return moment(date).format('MM-DD-YYYY');
+  private dateToDMY = (date: Date): string => {
+    const time = moment(date);
+    time.locale(strings.getLanguage());
+    return time.format('DD-MMMM-YYYY');
   }
 
   /**
