@@ -70,8 +70,6 @@ class AppLayout extends React.Component<Props, State> {
 
   /**
    * Handles recieved route redirection
-   * 
-   * @param route route string
    */
   private routeRedirect = () => {
     const { redirectTo } = this.props;
