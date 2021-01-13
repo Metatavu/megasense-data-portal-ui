@@ -1,5 +1,5 @@
 import { createStyles } from "@material-ui/core";
-import { globalStyles } from "../../styles/globalStyles";
+import { globalStyles } from "./globalStyles";
 
 export const styles = createStyles({
   ...globalStyles,

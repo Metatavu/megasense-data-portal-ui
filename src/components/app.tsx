@@ -12,6 +12,7 @@ import { ReduxActions, ReduxState, rootReducer } from "../store";
 import AccessTokenRefresh from "./containers/access-token-refresh";
 import SavedRoutesScreen from "./screens/saved-routes-screen/saved-routes-screen";
 import AboutScreen from "./screens/about-screen/about-screen";
+import 'moment/locale/fi';
 
 /**
  * Initialize Redux store
@@ -28,7 +29,6 @@ interface Props {
  * Interface describing component state
  */
 interface State {
-  activeUserName?: string;
 }
 
 /**

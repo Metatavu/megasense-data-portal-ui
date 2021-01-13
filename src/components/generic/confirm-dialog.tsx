@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, WithStyles, withStyles } from "@material-ui/core";
-import { styles } from "./confirm-dialog.styles";
+import { styles } from "../../styles/confirm-dialog.styles";
 import React from "react";
 
 /**

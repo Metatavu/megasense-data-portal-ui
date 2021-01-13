@@ -15,7 +15,6 @@ import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import { LineChart, Line, CartesianGrid, XAxis, Tooltip, Legend, YAxis } from 'recharts';
 import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem} from '@material-ui/core';
 import moment from "moment";
-import 'moment/locale/fi';
 
 /**
  * Interface describing component props
@@ -106,8 +105,8 @@ class StatisticsScreen extends React.Component<Props, State> {
         nitrogenMonoxide: data.nitrogenMonoxide,
         ozone: data.ozone,
         routeId: data.routeId || "",
-        startedAt: moment(data.startedAt).format("DD.MM.YYYY"),
-        endedAt: moment(data.endedAt).format("DD.MM.YYYY"),
+        startedAt: moment(data.startedAt).format("L"),
+        endedAt: moment(data.endedAt).format("L"),
         sulfurDioxide: data.sulfurDioxide
       });
     }

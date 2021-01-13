@@ -11,9 +11,8 @@ import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { Container, Card, CardContent, CardActions, withStyles, Button, Typography, WithStyles, CircularProgress } from '@material-ui/core';
-import DeleteDialogue from "../../generic/confirm-dialog";
+import ConfirmDialog from "../../generic/confirm-dialog";
 import moment from 'moment';
-import 'moment/locale/fi';
 
 /**
  * Interface describing component props
@@ -79,7 +78,7 @@ class SavedRoutesScreen extends React.Component<Props, State> {
           {
             this.renderRouteCards()
           }
-          <DeleteDialogue title={ strings.deleteConfirm } positiveButtonText={ strings.yes } cancelButtonText={ strings.cancel } dialogVisible={ deleteDialogVisible } onDialogConfirm={ this.deleteRoute } onDialogCancel={ this.closeDeleteDialog } />
+          <ConfirmDialog title={ strings.deleteConfirm } positiveButtonText={ strings.yes } cancelButtonText={ strings.cancel } dialogVisible={ deleteDialogVisible } onDialogConfirm={ this.deleteRoute } onDialogCancel={ this.closeDeleteDialog } />
         </Container>
       </AppLayout>
     );
@@ -151,7 +150,7 @@ class SavedRoutesScreen extends React.Component<Props, State> {
   private dateToDMY = (date: Date): string => {
     const time = moment(date);
     time.locale(strings.getLanguage());
-    return time.format('DD-MMMM-YYYY');
+    return time.format("LL");
   }
 
   /**
