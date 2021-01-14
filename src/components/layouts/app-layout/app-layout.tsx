@@ -67,7 +67,7 @@ class AppLayout extends React.Component<Props, State> {
         { this.renderErrorDialog() }
       </div>
     );
-}
+  }
 
   /**
    * Renders error dialog
