@@ -14,7 +14,7 @@ interface Props extends WithStyles<typeof styles> {
   hideHeader?: boolean;
   error?: string | Error | Response;
   clearError?: () => void;
-  redirectTo?: string
+  redirectTo?: string;
 }
 
 interface State {
@@ -30,16 +30,15 @@ class AppLayout extends React.Component<Props, State> {
   }
 
   public render = () => {
-    const { classes, children, hideHeader } = this.props;
+    const { classes, children } = this.props;
     
     return (
       <div className={ classes.root }>
-        { !hideHeader &&
-          this.renderHeader()
-        }
+        { this.renderHeader() }
         <div className={ classes.content }>
           { children }
         </div>
+        { this.routeRedirect() }
       </div>
     );
   }
@@ -48,9 +47,13 @@ class AppLayout extends React.Component<Props, State> {
    * Method for rendering header
    */
   private renderHeader = () => {
-    const { accessToken, keycloak, routing, classes, children } = this.props;
+    const { accessToken, keycloak, routing, classes, children, hideHeader } = this.props;
+    if (hideHeader) {
+      return null;
+    }
+    
     return (
-      <div className={ classes.root }>
+      <div className={ classes.root}>
         <Header
           accessToken={ accessToken }
           keycloak={ keycloak }
@@ -61,11 +64,10 @@ class AppLayout extends React.Component<Props, State> {
         <div className={ classes.content }>
           { children }
         </div>
-        { this.routeRedirect() }
         { this.renderErrorDialog() }
       </div>
     );
-  }
+}
 
   /**
    * Renders error dialog
