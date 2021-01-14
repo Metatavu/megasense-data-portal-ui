@@ -50,7 +50,7 @@ class AppLayout extends React.Component<Props, State> {
   private renderHeader = () => {
     const { accessToken, keycloak, routing, classes, children } = this.props;
     return (
-      <div className={ classes.root}>
+      <div className={ classes.root }>
         <Header
           accessToken={ accessToken }
           keycloak={ keycloak }
