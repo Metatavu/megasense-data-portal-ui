@@ -53,7 +53,7 @@ class AppLayout extends React.Component<Props, State> {
     }
     
     return (
-      <div className={ classes.root}>
+      <div className={ classes.root }>
         <Header
           accessToken={ accessToken }
           keycloak={ keycloak }
