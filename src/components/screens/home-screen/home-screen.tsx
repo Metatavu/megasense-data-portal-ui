@@ -25,6 +25,7 @@ interface Props extends WithStyles<typeof styles> {
  * Interface describing component state
  */
 interface State {
+  redirectTo?: string;
 }
 
 /**
@@ -55,17 +56,6 @@ class HomeScreen extends React.Component<Props, State> {
    * Component render method
    */
   public render() {
-    return (
-      <>
-        { this.renderHomeScreen() }
-      </>
-    );
-  }
-
-  /**
-   * Method for rendering home screen
-   */
-  private renderHomeScreen = () => {
     const { classes } = this.props;
     const { accessToken, keycloak } = this.props;
     const userName = accessToken?.userName || strings.user.toLowerCase();
@@ -83,15 +73,15 @@ class HomeScreen extends React.Component<Props, State> {
     }
 
     return (
-      <AppLayout accessToken={ accessToken } keycloak={ keycloak } hideHeader={ true }>
+      <AppLayout accessToken={ accessToken } keycloak={ keycloak } hideHeader={ true } redirectTo={ this.state.redirectTo }>
         <Grid container className={ classes.backgroundContainer }>
           <Grid container className={ classes.loginGrid }>
-            <img src={ Logo } className={ classes.logoBig } />  
+            <img src={ Logo } className={ classes.logoBig } />
             <Button 
               variant="outlined" 
               className={ classes.logInButton }
               endIcon={ <ArrowIcon /> }
-              onClick={ () => { this.logIn() }}
+              onClick={ () => this.onLoginButtonClick() }
             >
               { strings.auth.login }
             </Button>
@@ -105,7 +95,7 @@ class HomeScreen extends React.Component<Props, State> {
             <Button 
               variant="text"
               className={ classes.logInButton }
-              onClick={ () => this.navigateTo("/map") }
+              onClick={ () => this.onGuestButtonClick() }
             >
               { strings.auth.guestUser }
             </Button>
@@ -118,7 +108,7 @@ class HomeScreen extends React.Component<Props, State> {
   /**
    * Method for logging in
    */
-  private logIn = () => {
+  private onLoginButtonClick = () => {
     const { keycloak } = this.props;
     if (keycloak) {
       keycloak.login({ idpHint: "oidc" });
@@ -126,14 +116,13 @@ class HomeScreen extends React.Component<Props, State> {
   }
 
   /**
-   * Navigate to given route path
-   * 
-   * @param path path string
+   * Method for continuing in as a guest user
    */
-  private navigateTo = (path: string) => {
-    const { history } = this.props;
-    history.push(path);
-  }
+  private onGuestButtonClick = () => {
+    this.setState({ 
+      redirectTo: "/map"
+    });
+  }  
 }
 
 /**
