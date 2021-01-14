@@ -11,9 +11,10 @@ interface Props extends WithStyles<typeof styles> {
   routing?: JSX.Element;
   accessToken?: NullableToken;
   keycloak?: Keycloak.KeycloakInstance;
+  hideHeader?: boolean;
   error?: string | Error | Response;
   clearError?: () => void;
-  redirectTo?: string
+  redirectTo?: string;
 }
 
 interface State {
@@ -29,22 +30,40 @@ class AppLayout extends React.Component<Props, State> {
   }
 
   public render = () => {
-    const { accessToken, keycloak, classes, children } = this.props;
+    const { classes, children } = this.props;
+    
+    return (
+      <div className={ classes.root }>
+        { this.renderHeader() }
+        <div className={ classes.content }>
+          { children }
+        </div>
+        { this.routeRedirect() }
+      </div>
+    );
+  }
+
+  /**
+   * Method for rendering header
+   */
+  private renderHeader = () => {
+    const { accessToken, keycloak, routing, classes, children, hideHeader } = this.props;
+    if (hideHeader) {
+      return null;
+    }
     
     return (
       <div className={ classes.root }>
         <Header
           accessToken={ accessToken }
           keycloak={ keycloak }
-          routing={ this.props.routing }
+          routing={ routing }
           toggleSideMenu={ this.toggleSideMenu }
         />
-        {/* Empty toolbar to add correct spacing to prevent the content to go below the App header */}
         <Toolbar />
         <div className={ classes.content }>
           { children }
         </div>
-        { this.routeRedirect() }
         { this.renderErrorDialog() }
       </div>
     );

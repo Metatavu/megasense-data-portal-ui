@@ -1,8 +1,10 @@
 {
 
   "auth": {
-    "login": "Log in",
-    "logout": "Log out"
+    "login": "Login",
+    "logout": "Log out",
+    "register": "Register",
+    "guestUser": "Continue as a guest"
   },
 
   "errorDialog": {
