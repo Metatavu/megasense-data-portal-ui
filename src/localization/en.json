@@ -1,10 +1,20 @@
 {
-
   "auth": {
     "login": "Login",
     "logout": "Log out",
     "register": "Register",
     "guestUser": "Continue as a guest"
+  },
+
+  "welcome": {
+    "hello": "Hello,"
+  },
+
+  "header": {
+    "statistics": "Statistics",
+    "map": "Map",
+    "settings": "Settings",
+    "about": "About"
   },
 
   "errorDialog": {
@@ -32,10 +42,44 @@
     "cancelButton": "Cancel"
   },
 
+  "statistics": {
+    "title": "Statistics",
+    "selectPollution": "Select pollution:",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "carbonMonoxide": "Carbon monoxide",
+    "ozone": "Ozone",
+    "nitrogenDioxide": "Nitrogen dioxide",
+    "sulfurDioxide": "Sulfur dioxide"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "applyChanges": "Apply changes",
+    "homeAddress": "Home address",
+    "streetAddress": "Street address",
+    "city": "City",
+    "zipCode": "Zip code",
+    "country": "Country",
+    "postalCode": "Postal code",
+    "locationNotFoundDialogText": "Location not found",
+    "confirmButtonText": "Confirmed",
+    "deleteAccount": "Delete account",
+    "deleteAccountDialogTitle": "Are you sure you want to delete your account?",
+    "deleteAccountDialogText": "If you press yes your account can't be recovered. You will be redirected to login page.",
+    "changeUserData": "Change account settings",
+    "downloadData": "Download your data"
+  },
+
+  "aboutScreen": {
+    "title": "Megasense data portal UI",
+    "subTitle": "Clean air routing web application. Product developed as a part of a Megasense consortium.",
+    "descriptionText": "Provides clean air route building capabilities. Features user tailored post-routing user statistics. Application is currently in development."
+  },
+
   "yourTokenIs": "Your token is: ",
-  "frontPage": "Front page",
-  "hello": "Hello,",
-  "map": "Map",
   "from": "From",
   "to": "To",
   "savedRoutes": "Saved routes",
@@ -43,49 +87,34 @@
   "savedRoutesTo": "To",
   "savedRoutesSavedText": "Saved",
   "deleteConfirm": "Are you sure you want to delete this?",
-  "yes": "Yes",
-  "statistics": "Statistics",
-  "pollutantPM25": "PM25",
-  "pollutantPM10": "PM10",
-  "pollutantOzone": "Ozone",
-  "pollutantNitrogen": "Nitrogen dioxine",
-  "pollutanSulfur": "Sulfur dioxine",
-  "cancel": "cancel",
   "confirmTimeRange": "Confirm time range",
   "selectPollution": "Select pollution",
-  "reset": "reset",
   "weeklyExposure": "Weekly exposure",
   "monthlyExposure": "Monthly exposure",
   "annualExposure": "Annual exposure",
   "displayTables": "Select time to display tables",
   "selectTime": "Select time",
-  "settings": "Settings",
   "airQualityMode": "Air quality mode",
   "movementOptions": "Movement options",
   "walking": "Walking",
   "wheelerchair": "Wheelerchair",
-  "homeAddress": "Home address",
-  "streetAddress": "Street address",
-  "city": "City",
-  "zipCode": "Zip code",
-  "country": "Country",
-  "applyChanges": "Apply changes",
-  "downloadData": "Download your data",
-  "changeUserData": "Change account settings",
-  "deleteAccount": "Delete account",
-  "deleteAccountDialogTitle": "Are you sure you want to delete your account?",
-  "deleteAccountDialogText": "If you press yes your account can't be recovered. You will be redirected to login page.",
   "viewRoute": "View route",
   "deleteRoute": "Delete route",
   "collapseMenuText": "Collapse menu",
   "user": "User",
-  "postalCode": "Postal code",
-  "confirmButtonText": "Confirmed",
-  "locationNotFoundDialogText": "Location not found",
-  "about": "About",
-  "aboutScreen": {
-    "title": "Megasense data portal UI",
-    "subTitle": "Clean air routing web application. Product developed as a part of a Megasense consortium.",
-    "descriptionText": "Provides clean air route building capabilities. Features user tailored post-routing user statistics. Application is currently in development."
+
+  "pollutants": {
+    "PM25": "PM25",
+    "PM10": "PM10",
+    "ozone": "Ozone",
+    "nitrogenDioxide": "Nitrogen dioxine",
+    "sulfurDioxide": "Sulfur dioxine",
+    "carbonMonoxide": "Carbon monoxide"
+  },
+
+  "common": {
+    "reset": "reset",
+    "cancel": "cancel",
+    "yes": "Yes"
   }
 }

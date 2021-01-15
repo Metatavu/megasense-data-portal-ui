@@ -16,6 +16,23 @@ export interface IStrings extends LocalizedStringsMethods {
   };
 
   /**
+   * Translations for authentication
+   */
+  welcome: {
+    hello: string;
+  };
+
+  /**
+   * Translations for header
+   */
+  header: {
+    statistics: string;
+    map: string;
+    settings: string;
+    about: string;
+  };
+
+  /**
    * Translations for error dialog
    */
   errorDialog: {
@@ -46,61 +63,89 @@ export interface IStrings extends LocalizedStringsMethods {
     cancelButton: string;
   };
 
-  frontPage: string;
-  hello: string;
-  to: string;
-  from: string;
-  map: string;
-  savedRoutes: string;
-  savedRoutesTo: string;
-  savedRoutesFrom: string;
-  savedRoutesSavedText: string;
-  deleteConfirm: string;
-  yes: string,
-  statistics: string;
-  pollutantPM25: string;
-  pollutantPM10: string;
-  pollutantOzone: string;
-  pollutantNitrogen: string;
-  pollutanSulfur: string;
-  cancel: string;
-  confirmTimeRange: string;
-  selectPollution: string;
-  reset: string,
-  weeklyExposure: string,
-  monthlyExposure: string,
-  annualExposure: string
-  displayTables: string;
-  selectTime: string;
-  settings: string;
-  airQualityMode: string;
-  movementOptions: string;
-  walking: string;
-  wheelerchair: string;
-  homeAddress: string;
-  streetAddress: string;
-  city: string;
-  zipCode: string;
-  country: string;
-  applyChanges: string;
-  downloadData: string;
-  changeUserData: string;
-  deleteAccount: string;
-  deleteAccountDialogTitle: string;
-  deleteAccountDialogText: string;
-  viewRoute: string;
-  deleteRoute: string;
-  collapseMenuText: string;
-  user: string;
-  postalCode: string;
-  confirmButtonText: string;
-  locationNotFoundDialogText: string;
-  about: string;
+  /**
+   * Translations for statistics screen
+   */
+  statistics: {
+    title: string;
+    selectPollution: string;
+    daily: string;
+    weekly: string;
+    monthly: string;
+    annual: string;
+    carbonMonoxide: string;
+    ozone: string;
+    nitrogenDioxine: string;
+    sulfurDioxine: string;
+  };
+  
+  /**
+   * Translations for settings screen
+   */
+  settings: {
+    title: string;
+    applyChanges: string;
+    homeAddress: string;
+    streetAddress: string;
+    city: string;
+    zipCode: string;
+    country: string;
+    postalCode: string;
+    locationNotFoundDialogText: string;
+    confirmButtonText: string;
+    deleteAccount: string;
+    deleteAccountDialogTitle: string;
+    deleteAccountDialogText: string;
+    changeUserData: string;
+    downloadData: string;
+  };
+
+  /**
+   * Translations for about screen
+   */
   aboutScreen: {
     title: string;
     subTitle: string;
     descriptionText: string;
   };
+  
+  to: string;
+  from: string;
+  savedRoutes: string;
+  savedRoutesTo: string;
+  savedRoutesFrom: string;
+  savedRoutesSavedText: string;
+  deleteConfirm: string;
+  confirmTimeRange: string;
+  selectPollution: string;
+  weeklyExposure: string,
+  monthlyExposure: string,
+  annualExposure: string
+  displayTables: string;
+  selectTime: string;
+  airQualityMode: string;
+  movementOptions: string;
+  walking: string;
+  wheelerchair: string;
+  viewRoute: string;
+  deleteRoute: string;
+  collapseMenuText: string;
+  user: string;
+
+  pollutants: {
+    PM25: string;
+    PM10: string;
+    ozone: string;
+    nitrogenOxide: string;
+    sulfurOxide: string;
+    carbonMonoxide: string;
+  };
+
+  common: {
+    cancel: string;
+    reset: string,
+    yes: string,
+  }
 }
 
 const strings: IStrings = new LocalizedStrings({

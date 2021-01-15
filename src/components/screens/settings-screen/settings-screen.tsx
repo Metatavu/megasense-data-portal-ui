@@ -35,7 +35,7 @@ interface State {
 }
 
 /**
- * Component for warehouses screen
+ * Component for settings screen
  */
 class Settings extends React.Component<Props, State> {
 
@@ -61,6 +61,9 @@ class Settings extends React.Component<Props, State> {
     };
   }
 
+  /**
+   * Component life cycle method
+   */
   public componentDidMount = async () => {
     const { accessToken, history } = this.props;
 
@@ -96,7 +99,7 @@ class Settings extends React.Component<Props, State> {
    */
   public render() {
     const { accessToken, keycloak, classes } = this.props;
-    const { homeAddress, loadingUserSettings, savingUserSettings } = this.state;
+    const { homeAddress, loadingUserSettings, savingUserSettings, deleteDialogVisible, locationNotFoundDialogVisible } = this.state;
     const { streetAddress, postalCode, city, country } = homeAddress;
 
     return (
@@ -108,29 +111,26 @@ class Settings extends React.Component<Props, State> {
               <CardHeader>
               </CardHeader>
               <Typography variant="h3" component="h3">
-                { strings.settings }
+                { strings.settings.title }
               </Typography>
             </Card>
           </Grid>
           <Grid item xs={ 12 } sm={ 6 }>
             <Card>
-              <CardHeader>
-                Something here
-              </CardHeader>
               <CardContent>
                 <Box pt={ 3 } pb={ 3 }>
                   <Button onClick={ this.downloadData } variant="contained" >
-                    { strings.downloadData }
+                    { strings.settings.downloadData }
                   </Button>
                 </Box>
                 <Box pt={ 3 } pb={ 3 }>
                   <Button onClick={ this.onChangeAccountSettings } variant="contained" >
-                    { strings.changeUserData }
+                    { strings.settings.changeUserData }
                   </Button>
                 </Box>
                 <Box pt={ 3 } pb={ 3 }>
-                  <Button variant="contained" className={classes.errorButton} onClick={() => this.toggleDeleteUserDialog()}>
-                    { strings.deleteAccount }
+                  <Button variant="contained" className={ classes.errorButton } onClick={() => this.toggleDeleteUserDialog()}>
+                    { strings.settings.deleteAccount }
                   </Button>
                 </Box>
               </CardContent>
@@ -139,79 +139,111 @@ class Settings extends React.Component<Props, State> {
           <Grid xs={ 6 }>
             <Card>
               <CardHeader>
-                { strings.homeAddress }
+                { strings.settings.homeAddress }
               </CardHeader>
               
               { !loadingUserSettings &&
                 <CardContent>
                   
                   <Box mt={ 5 } mb={ 5 }>
-                    <TextField placeholder={ strings.streetAddress } value={ streetAddress } onChange={ this.onStreetAddressChange } />
+                    <TextField
+                      placeholder={ strings.settings.streetAddress }
+                      value={ streetAddress }
+                      onChange={ this.onStreetAddressChange }
+                    />
                   </Box>
 
                   <Box mt={ 5 } mb={ 5 }>
-                    <TextField placeholder={ strings.postalCode } value={ postalCode } onChange={ this.onPostalCodeChange } />
+                    <TextField
+                      placeholder={ strings.settings.postalCode }
+                      value={ postalCode }
+                      onChange={ this.onPostalCodeChange }
+                    />
                   </Box>
 
                   <Box mt={ 5 } mb={ 5 }>
-                    <TextField placeholder={ strings.city } value={ city } onChange={ this.onCityChange } />
+                    <TextField
+                      placeholder={ strings.settings.city }
+                      value={ city }
+                      onChange={ this.onCityChange }
+                    />
                   </Box>
 
                   <Box mt={ 5 } mb={ 5 }>
-                    <TextField placeholder={ strings.country } value={ country } onChange={ this.onCountryChange } />
+                    <TextField 
+                      placeholder={ strings.settings.country }
+                      value={ country }
+                      onChange={ this.onCountryChange }
+                    />
                   </Box>
 
                   { !savingUserSettings &&
-                    <Button onClick={ this.saveHomeAddress } variant="contained" className={ classes.successButton }>{ strings.applyChanges }</Button>
+                    <Button 
+                      onClick={ this.saveHomeAddress }
+                      variant="contained"
+                      className={ classes.successButton }
+                    >
+                      { strings.settings.applyChanges }
+                    </Button>
                   }
 
                   {
                     savingUserSettings && <CircularProgress/>
                   }
                 </CardContent>
-              }
+                }
 
-              {
-                loadingUserSettings && <CircularProgress/>
-              }
-              
-            </Card>
-          </Grid>
+                {
+                  loadingUserSettings && <CircularProgress/>
+                }
+                
+              </Card>
+            </Grid>
           </Grid>
 
           <Dialog
-            open={ this.state.deleteDialogVisible }
+            open={ deleteDialogVisible }
             onClose={ this.toggleDeleteUserDialog }
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{ strings.deleteAccountDialogTitle }</DialogTitle>
+            <DialogTitle id="alert-dialog-title">
+              { strings.settings.deleteAccountDialogTitle }
+            </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                { strings.deleteAccountDialogText }
+                { strings.settings.deleteAccountDialogText }
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button variant="contained" className={ classes.errorButton } onClick={ this.deleteUser }>
-                { strings.yes }
+              <Button
+                variant="contained"
+                className={ classes.errorButton }
+                onClick={ this.deleteUser }
+              >
+                { strings.common.yes }
               </Button>
-              <Button variant="contained" className={ classes.warningButton } onClick={ this.toggleDeleteUserDialog } color="primary" autoFocus>
-                { strings.cancel }
+              <Button
+                variant="contained"
+                className={ classes.warningButton }
+                onClick={ this.toggleDeleteUserDialog }
+                color="primary" autoFocus
+              >
+                { strings.common.cancel }
               </Button>
             </DialogActions>
           </Dialog>
 
-
           <Dialog
-            open={ this.state.locationNotFoundDialogVisible }
+            open={ locationNotFoundDialogVisible }
             onClose={ this.closeLocationNotFoundDialog }
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{ strings.locationNotFoundDialogText }</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{ strings.settings.locationNotFoundDialogText }</DialogTitle>
             <DialogActions>
               <Button variant="contained" className={ classes.errorButton } onClick={ this.closeLocationNotFoundDialog }>
-                { strings.confirmButtonText }
+                { strings.settings.confirmButtonText }
               </Button>
             </DialogActions>
           </Dialog>
@@ -220,6 +252,9 @@ class Settings extends React.Component<Props, State> {
     );
   }
 
+  /**
+   * Download user data
+   */
   private downloadData = async () => {
     const { accessToken } = this.props;
 
@@ -383,7 +418,6 @@ class Settings extends React.Component<Props, State> {
         console.log(error);
       }
     }
-
 
     this.setState({ savingUserSettings: false });
   }

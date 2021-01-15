@@ -1,10 +1,20 @@
 {
-  
   "auth": {
     "login": "Kirjaudu sisään",
     "logout": "Kirjaudu ulos",
     "register": "Luo käyttäjätili",
     "guestUser": "Jatka kirjautumatta"
+  },
+
+  "welcome": {
+    "hello": "Hei,"
+  },
+
+  "header": {
+    "statistics": "Statistiikka",
+    "map": "Kartta",
+    "settings": "Asetukset",
+    "about": "Tietoa projektista"
   },
   
   "errorDialog": {
@@ -32,10 +42,45 @@
     "cancelButton": "Peruuta"
   },
 
+  "statistics": {
+    "title": "Tilastot",
+    "selectPollution": "Valitse saaste:",
+    "daily": "Päiväkohtainen",
+    "weekly": "Viikottainen",
+    "monthly": "Kuukausittainen",
+    "annual": "Kausi",
+    "carbonMonoxide": "Häkä",
+    "ozone": "Otsoni",
+    "nitrogenDioxide": "Typpioksidi",
+    "sulfurDioxide": "Rikkioksidi"
+  },
+
+  "settings": {
+    "title": "Asetukset",
+    "applyChanges": "Tallenna muutokset",
+    "homeAddress": "Kotiosoite",
+    "streetAddress": "Katuosoite",
+    "city": "Kaupunki",
+    "zipCode": "Postinumero",
+    "country": "Maa",
+    "postalCode": "Postinumero",
+    "locationNotFoundDialogText": "Paikkaa ei löydetty",
+    "confirmButtonText": "Selvä",
+    "deleteAccount": "Poista tilisi",
+    "deleteAccountDialogTitle": "Oletko varma että haluat poistaa tilisi?",
+    "deleteAccountDialogText": "Jos painat kyllä, tätä tiliä ei voi enää palauttaa. Sinut ohjataan kirjautumissivulle.",
+    "changeUserData": "Muokkaa käyttäjätietoja",
+    "downloadData": "Lataa datasi"
+  },
+
+  "aboutScreen": {
+    "title": "Megasense dataportaali",
+    "subTitle": "Puhtaan ilman reitityssovellus. Sovellus on kehitetty osana Megasense-konsortiota.",
+    "descriptionText": "Sovellus tarjoaa mahdollisuuden reitittää käyttäjiä puhtaan ilman reittiä pitkin. Sovellus on vielä kehitysvaiheessa."
+  },
+
   "yourTokenIs": "Avaimesi on: ",
-  "frontPage": "Etusivu",
   "hello": "Hei,",
-  "map": "Kartta",
   "from": "Valitse aloituspiste...",
   "to": "Valitse määränpää...",
   "savedRoutes": "Tallennetut reitit",
@@ -43,49 +88,34 @@
   "savedRoutesTo": "Minne",
   "savedRoutesSavedText": "Tallennettu",
   "deleteConfirm": "Oletko varma että haluat poistaa tämän?",
-  "yes": "Kyllä",
-  "statistics": "Statistiikka",
-  "pollutantPM25": "PM25",
-  "pollutantPM10": "PM10",
-  "pollutantOzone": "Otsooni",
-  "pollutantNitrogen": "Typpidioksidi",
-  "pollutanSulfur": "Rikkidioksidi",
-  "cancel": "Peruuta",
   "confirmTimeRange": "Valitse aikaväli",
   "selectPollution": "Valitse ilmansaaste",
-  "reset": "Palauta",
   "weeklyExposure": "Viikottainen altistuminen",
   "monthlyExposure": "Kuukausittainen altistuminen",
   "annualExposure": "Vuosittainen altistuminen",
   "displayTables": "Valitse aika, jotta voit nähdä taulukot",
   "selectTime": "Valitse aika",
-  "settings": "Asetukset",
   "airQualityMode": "Ilmanlaadun tila",
   "movementOptions": "Liikkumisasetukset",
   "walking": "Kävely",
   "wheelerchair": "Pyörätuoli",
-  "homeAddress": "Kotiosoite",
-  "streetAddress": "Katuosoite",
-  "city": "Kaupunki",
-  "zipCode": "Postinumero",
-  "country": "Maa",
-  "applyChanges": "Tallenna muutokset",
-  "downloadData": "Lataa datasi",
-  "changeUserData": "Muokkaa käyttäjätietoja",
-  "deleteAccount": "Poista tilisi",
-  "deleteAccountDialogTitle": "Oletko varma että haluat poistaa tilisi?",
-  "deleteAccountDialogText": "Jos painat kyllä, tätä tiliä ei voi enää palauttaa. Sinut ohjataan kirjautumissivulle.",
   "viewRoute": "Näytä reitti",
   "deleteRoute": "Poista reitti",
   "collapseMenuText": "Piilota menu",
   "user": "Käyttäjä",
-  "postalCode": "Postinumero",
-  "confirmButtonText": "Selvä",
-  "locationNotFoundDialogText": "Paikkaa ei löydetty",
-  "about": "Tietoa projektista",
-  "aboutScreen": {
-    "title": "Megasense dataportaali",
-    "subTitle": "Puhtaan ilman reitityssovellus. Sovellus on kehitetty osana Megasense-konsortiota.",
-    "descriptionText": "Sovellus tarjoaa mahdollisuuden reitittää käyttäjiä puhtaan ilman reittiä pitkin. Sovellus on vielä kehitysvaiheessa."
+
+  "pollutants": {
+    "PM25": "Pienhiukkaset",
+    "PM10": "Hengitettävät hiukkaset",
+    "ozone": "Otsoni",
+    "nitrogenDioxide": "Typpioksidi",
+    "sulfurDioxide": "Rikkioksidi",
+    "carbonMonoxide": "Häkä"
+  },
+
+  "common": {
+    "reset": "Palauta",
+    "cancel": "Peruuta",
+    "yes": "Kyllä"
   }
 }

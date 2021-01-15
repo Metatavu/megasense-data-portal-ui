@@ -1,6 +1,6 @@
 import { createStyles } from "@material-ui/core";
-import theme from "../../theme/theme";
-import Background from "../../images/main.jpg";
+import theme from "../../../theme/theme";
+import backgroundImage from "../../../resources/images/main.jpg";
 
 export default createStyles({
 
@@ -13,7 +13,7 @@ export default createStyles({
   },
 
   backgroundContainer: {
-    backgroundImage: `url(${Background})`,
+    backgroundImage: `url(${ backgroundImage })`,
     backgroundPosition: "center",
     backgroundSize: "cover",
     backgroundAttachment: "fixed",

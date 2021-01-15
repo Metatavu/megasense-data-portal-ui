@@ -8,8 +8,8 @@ import strings from "../../../localization/strings";
 import { Typography, WithStyles, withStyles, Button, Grid } from "@material-ui/core";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { ReduxActions, ReduxState } from "../../../store";
-import styles from "../../../styles/screens/home";
-import Logo from "../../../../src/images/logo.png";
+import styles from "./home-screen.styles";
+import Logo from "../../../../src/resources/images/logo.png";
 import ArrowIcon from "@material-ui/icons/ArrowForward";
 
 /**
@@ -44,6 +44,9 @@ class HomeScreen extends React.Component<Props, State> {
     };
   }
 
+  /**
+   * Component life cycle method
+   */
   public componentDidMount = () => {
     const { accessToken, keycloak } = this.props;
 
@@ -58,6 +61,7 @@ class HomeScreen extends React.Component<Props, State> {
   public render() {
     const { classes } = this.props;
     const { accessToken, keycloak } = this.props;
+    const { redirectTo } = this.state;
     const userName = accessToken?.userName || strings.user.toLowerCase();
 
     if (accessToken) {
@@ -65,7 +69,7 @@ class HomeScreen extends React.Component<Props, State> {
         <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
           <Grid container className={ classes.backgroundContainer }>
             <Typography className={ classes.title } variant="h3">
-              { strings.hello } { userName }
+              { strings.welcome.hello } { userName }
             </Typography>
           </Grid>
         </AppLayout>
@@ -73,7 +77,11 @@ class HomeScreen extends React.Component<Props, State> {
     }
 
     return (
-      <AppLayout accessToken={ accessToken } keycloak={ keycloak } hideHeader={ true } redirectTo={ this.state.redirectTo }>
+      <AppLayout
+        accessToken={ accessToken }
+        keycloak={ keycloak }
+        hideHeader={ true }
+        redirectTo={ redirectTo }>
         <Grid container className={ classes.backgroundContainer }>
           <Grid container className={ classes.loginGrid }>
             <img src={ Logo } className={ classes.logoBig } />

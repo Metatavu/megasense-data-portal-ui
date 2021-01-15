@@ -1,20 +1,19 @@
-import React from "react";
-
-import Api from "../../../api";
-import { Dispatch } from "redux";
+import { Box, Container, Drawer, FormControl, InputLabel, List, ListItem, Paper, Select, TextField } from "@material-ui/core";
+import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import { History } from "history";
+import moment from "moment";
+import React from "react";
 import { connect } from "react-redux";
-import { styles } from "./statistics.styles";
-import { NullableToken } from "../../../types";
+import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
+import { Dispatch } from "redux";
+import Api from "../../../api";
+import { ExposureInstance } from "../../../generated/client";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
+import { NullableToken } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
-import { ExposureInstance } from "../../../generated/client";
-import DrawerMenu from "../../generic/drawer-menu/drawer-menu";
-import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
-import { LineChart, Line, CartesianGrid, XAxis, Tooltip, Legend, YAxis } from 'recharts';
-import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem} from '@material-ui/core';
-import moment from "moment";
+import { styles } from "./statistics-screen.styles";
+
 
 /**
  * Interface describing component props
@@ -92,7 +91,6 @@ class StatisticsScreen extends React.Component<Props, State> {
       history.push("/");
     }
 
-    
     await this.getData();
     let exposureData: ExposureData[] = [];
     for (let i = 0; i < this.state.statisticsData.length; i++) {
@@ -119,28 +117,30 @@ class StatisticsScreen extends React.Component<Props, State> {
    * Component render method
    */
   public render = () => {
-    const { accessToken, keycloak } = this.props
+    const { accessToken, keycloak, classes } = this.props;
+    const { exposureData } = this.state;
 
     return (
       <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
-        <DrawerMenu open={ true } statisticsControls={ this.getStatisticsSidebarComponent() } />
+        <Drawer
+          open={ true }
+          variant="permanent"
+          anchor="left"
+          classes={{
+            paper: classes.drawer,
+          }}
+        >
+          { this.getStatisticsSidebarComponent() }
+        </Drawer>
         <Container>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Card>
-                <Typography variant="h3">
-                  { strings.statistics }
-                </Typography>
-              </Card>
-            </Grid>
-          </Grid>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Card>
+          <Box mt={ 4 } flexGrow={ 1 }>
+            <Paper>
+              <Box p={ 4 } margin={ "0 auto" }>
                 <LineChart 
-                  width={730} height={250} 
-                  data={ this.state.exposureData }
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  width={ 1050 } height={ 550 } 
+                  data={ exposureData }
+                  style={{ margin: "0 auto" }}
+                  >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="startedAt" />
                   <YAxis />
@@ -152,9 +152,9 @@ class StatisticsScreen extends React.Component<Props, State> {
                   <Line type="monotone" dataKey="ozone" stroke="green" />
                   <Line type="monotone" dataKey="sulfurDioxide" stroke="orange" />
                 </LineChart>
-              </Card>
-            </Grid>
-          </Grid>
+              </Box>
+            </Paper>
+          </Box>
         </Container>
       </AppLayout>
     );
@@ -181,65 +181,63 @@ class StatisticsScreen extends React.Component<Props, State> {
   private getStatisticsSidebarComponent = () => {
     const { classes } = this.props
     return(
-      <>
-        <Box mt={ 10 }>
-          <List>
-            <ListItem>
-              <FormControl className={ classes.formControl }>
-                <TextField
-                  id="date"
-                  label="Select time"
-                  type="date"
-                  defaultValue="10.10.2020"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </FormControl>
-            </ListItem>
-            <ListItem>
-              <FormControl variant="outlined" className={ classes.formControl }>
-                <InputLabel htmlFor="outlined-age-native-simple">Select pollution</InputLabel>
-                <Select
-                  native
-                  fullWidth
-                  label="Select time range"
-                  inputProps={{
-                    name: "time",
-                    id: "outlined-age-native-simple",
-                  }}
-                >
-                  <option aria-label="None" value="" />
-                  <option>Daily</option>
-                  <option>Weekly</option>
-                  <option>Monthly</option>
-                  <option>Annual</option>
-                </Select>
-              </FormControl>
-            </ListItem>
-            <ListItem>
-              <FormControl variant="outlined" className={ classes.formControl }>
-                <InputLabel htmlFor="outlined-age-native-simple">{ strings.selectPollution }</InputLabel>
-                <Select
-                  native
-                  fullWidth
-                  label="Select pollution"
-                  inputProps={{
-                    name: "age",
-                    id: "outlined-age-native-simple",
-                  }}
-                >
-                  <option aria-label="None" value="" />
-                  <option>Carbon monoxide</option>
-                  <option>Ozone</option>
-                  <option>Nitrogen Dioxine</option>
-                  <option>Sulfur Dioxine</option>
-                </Select>
-              </FormControl>
-            </ListItem>
-          </List>
-        </Box>
-      </>
+      <Box mt={ 10 }>
+        <List>
+          <ListItem>
+            <FormControl className={ classes.formControl }>
+              <TextField
+                id="date"
+                label="Select time"
+                type="date"
+                defaultValue="10.10.2020"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </FormControl>
+          </ListItem>
+          <ListItem>
+            <FormControl variant="outlined" className={ classes.formControl }>
+              <InputLabel htmlFor="outlined-age-native-simple">{ strings.statistics.selectPollution }</InputLabel>
+              <Select
+                native
+                fullWidth
+                label="Select time range"
+                inputProps={{
+                  name: "time",
+                  id: "outlined-age-native-simple",
+                }}
+              >
+                <option aria-label="None" value="" />
+                <option>{ strings.statistics.daily }</option>
+                <option>{ strings.statistics.weekly }</option>
+                <option>{ strings.statistics.monthly }</option>
+                <option>{ strings.statistics.annual }</option>
+              </Select>
+            </FormControl>
+          </ListItem>
+          <ListItem>
+            <FormControl variant="outlined" className={ classes.formControl }>
+              <InputLabel htmlFor="outlined-age-native-simple">{ strings.selectPollution }</InputLabel>
+              <Select
+                native
+                fullWidth
+                label="Select pollution"
+                inputProps={{
+                  name: "age",
+                  id: "outlined-age-native-simple",
+                }}
+              >
+                <option aria-label="None" value="" />
+                <option>{ strings.statistics.carbonMonoxide }</option>
+                <option>{ strings.statistics.ozone }</option>
+                <option>{ strings.statistics.nitrogenDioxine }</option>
+                <option>{ strings.statistics.sulfurDioxine }</option>
+              </Select>
+            </FormControl>
+          </ListItem>
+        </List>
+      </Box>
     )
   }
 }

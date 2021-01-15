@@ -4,7 +4,7 @@ import { styles } from "./app-layout.styles";
 import Header from "../../generic/header/header";
 import { Toolbar } from "@material-ui/core";
 import { NullableToken } from "../../../types";
-import ErrorDialog from "../../generic/error-dialog";
+import ErrorDialog from "../../generic/dialogs/error-dialog";
 import { Redirect } from "react-router-dom";
 
 interface Props extends WithStyles<typeof styles> {
@@ -21,7 +21,16 @@ interface State {
   sideMenuOpen: boolean;
 }
 
+/**
+ * AppLayout component
+ */
 class AppLayout extends React.Component<Props, State> {
+
+  /**
+   * Component constructor
+   * 
+   * @param props props
+   */
   constructor (props: Props) {
     super(props);
     this.state = {
@@ -29,6 +38,9 @@ class AppLayout extends React.Component<Props, State> {
     };
   }
 
+  /**
+   * Component render method
+   */
   public render = () => {
     const { classes, children } = this.props;
     
