@@ -15,7 +15,6 @@ export interface IStrings extends LocalizedStringsMethods {
     guestUser: string;
   };
 
-
   /**
    * Translations for authentication
    */
