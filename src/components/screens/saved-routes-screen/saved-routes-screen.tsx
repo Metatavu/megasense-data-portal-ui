@@ -151,6 +151,8 @@ class SavedRoutesScreen extends React.Component<Props, State> {
 
   /**
    * Display route method
+   *
+   * @param route route to display
    */
   private displayRoute = (route: Route) => {
     this.props.updateDisplayedRoute(route);
