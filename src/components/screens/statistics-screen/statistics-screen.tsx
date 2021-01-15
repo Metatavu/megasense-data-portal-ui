@@ -1,4 +1,4 @@
-import { Box, Drawer, FormControl, InputLabel, List, ListItem, Paper, Select, TextField } from "@material-ui/core";
+import { Box, Container, Drawer, FormControl, InputLabel, List, ListItem, Paper, Select, TextField } from "@material-ui/core";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import { History } from "history";
 import moment from "moment";
@@ -132,28 +132,30 @@ class StatisticsScreen extends React.Component<Props, State> {
         >
           { this.getStatisticsSidebarComponent() }
         </Drawer>
-        <Box mt={ 4 } flexGrow={ 1 }>
-          <Paper>
-            <Box p={ 4 } margin={ "0 auto" }>
-              <LineChart 
-                width={ 1050 } height={ 550 } 
-                data={ exposureData }
-                style={{ margin: "0 auto" }}
-                >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="startedAt" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="harmfulMicroparticles" stroke="red" />
-                <Line type="monotone" dataKey="nitrogenDioxide" stroke="black" />
-                <Line type="monotone" dataKey="nitrogenMonoxide" stroke="blue" />
-                <Line type="monotone" dataKey="ozone" stroke="green" />
-                <Line type="monotone" dataKey="sulfurDioxide" stroke="orange" />
-              </LineChart>
-            </Box>
-          </Paper>
-        </Box>
+        <Container>
+          <Box mt={ 4 } flexGrow={ 1 }>
+            <Paper>
+              <Box p={ 4 } margin={ "0 auto" }>
+                <LineChart 
+                  width={ 1050 } height={ 550 } 
+                  data={ exposureData }
+                  style={{ margin: "0 auto" }}
+                  >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="startedAt" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="harmfulMicroparticles" stroke="red" />
+                  <Line type="monotone" dataKey="nitrogenDioxide" stroke="black" />
+                  <Line type="monotone" dataKey="nitrogenMonoxide" stroke="blue" />
+                  <Line type="monotone" dataKey="ozone" stroke="green" />
+                  <Line type="monotone" dataKey="sulfurDioxide" stroke="orange" />
+                </LineChart>
+              </Box>
+            </Paper>
+          </Box>
+        </Container>
       </AppLayout>
     );
   }
