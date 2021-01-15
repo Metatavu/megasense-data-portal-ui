@@ -47,7 +47,6 @@ export default class ErrorDialog extends React.Component<Props, State> {
    * Component render method
    */
   public render() {
-
     const { onClose } = this.props;
 
     return (
