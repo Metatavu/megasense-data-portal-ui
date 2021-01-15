@@ -21,7 +21,6 @@ interface State {
   sideMenuOpen: boolean;
 }
 
-
 /**
  * AppLayout component
  */
