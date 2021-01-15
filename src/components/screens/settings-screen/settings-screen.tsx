@@ -207,7 +207,9 @@ class Settings extends React.Component<Props, State> {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{ strings.settings.deleteAccountDialogTitle }</DialogTitle>
+            <DialogTitle id="alert-dialog-title">
+              { strings.settings.deleteAccountDialogTitle }
+            </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
                 { strings.settings.deleteAccountDialogText }
