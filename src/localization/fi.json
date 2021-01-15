@@ -1,7 +1,9 @@
 {
   "auth": {
     "login": "Kirjaudu sisään",
-    "logout": "Kirjaudu ulos"
+    "logout": "Kirjaudu ulos",
+    "register": "Luo käyttäjätili",
+    "guestUser": "Jatka kirjautumatta"
   },
 
   "welcome": {

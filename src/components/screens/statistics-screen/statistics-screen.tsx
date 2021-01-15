@@ -1,19 +1,19 @@
-import React from "react";
-
-import Api from "../../../api";
-import { Dispatch } from "redux";
+import { Box, Drawer, FormControl, InputLabel, List, ListItem, Paper, Select, TextField } from "@material-ui/core";
+import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import { History } from "history";
+import moment from "moment";
+import React from "react";
 import { connect } from "react-redux";
-import { styles } from "./statistics-screen.styles";
-import { NullableToken } from "../../../types";
+import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
+import { Dispatch } from "redux";
+import Api from "../../../api";
+import { ExposureInstance } from "../../../generated/client";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
+import { NullableToken } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
-import { ExposureInstance } from "../../../generated/client";
-import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
-import { LineChart, Line, CartesianGrid, XAxis, Tooltip, Legend, YAxis } from "recharts";
-import { Container, FormControl, Typography, Grid, Card, Select, InputLabel, TextField, Box, List, ListItem, Drawer} from "@material-ui/core";
-import moment from "moment";
+import { styles } from "./statistics-screen.styles";
+
 
 /**
  * Interface describing component props
@@ -132,39 +132,28 @@ class StatisticsScreen extends React.Component<Props, State> {
         >
           { this.getStatisticsSidebarComponent() }
         </Drawer>
-        <Container>
-          <Grid container spacing={ 3 }>
-            <Grid item xs={ 12 }>
-              <Card>
-                <Typography variant="h3">
-                  { strings.statistics.title }
-                </Typography>
-              </Card>
-            </Grid>
-          </Grid>
-          <Grid container spacing={ 3 }>
-            <Grid item xs={ 12 }>
-              <Card>
-                <LineChart 
-                  width={ 730 } height={ 250 } 
-                  data={ exposureData }
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        <Box mt={ 4 } flexGrow={ 1 }>
+          <Paper>
+            <Box p={ 4 } margin={ "0 auto" }>
+              <LineChart 
+                width={ 1050 } height={ 550 } 
+                data={ exposureData }
+                style={{ margin: "0 auto" }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="startedAt" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="harmfulMicroparticles" stroke="red" />
-                  <Line type="monotone" dataKey="nitrogenDioxide" stroke="black" />
-                  <Line type="monotone" dataKey="nitrogenMonoxide" stroke="blue" />
-                  <Line type="monotone" dataKey="ozone" stroke="green" />
-                  <Line type="monotone" dataKey="sulfurDioxide" stroke="orange" />
-                </LineChart>
-              </Card>
-            </Grid>
-          </Grid>
-        </Container>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="startedAt" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="harmfulMicroparticles" stroke="red" />
+                <Line type="monotone" dataKey="nitrogenDioxide" stroke="black" />
+                <Line type="monotone" dataKey="nitrogenMonoxide" stroke="blue" />
+                <Line type="monotone" dataKey="ozone" stroke="green" />
+                <Line type="monotone" dataKey="sulfurDioxide" stroke="orange" />
+              </LineChart>
+            </Box>
+          </Paper>
+        </Box>
       </AppLayout>
     );
   }

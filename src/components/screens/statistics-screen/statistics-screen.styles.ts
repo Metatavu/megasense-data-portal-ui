@@ -4,7 +4,7 @@ import theme from "../../../theme/theme";
 export const styles = createStyles({
 
   drawer: {
-    width: 320
+    width: 320,
   },
 
   formControl: {
