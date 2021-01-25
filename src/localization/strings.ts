@@ -75,8 +75,8 @@ export interface IStrings extends LocalizedStringsMethods {
     annual: string;
     carbonMonoxide: string;
     ozone: string;
-    nitrogenDioxine: string;
-    sulfurDioxine: string;
+    nitrogenDioxide: string;
+    sulfurDioxide: string;
   };
   
   /**
