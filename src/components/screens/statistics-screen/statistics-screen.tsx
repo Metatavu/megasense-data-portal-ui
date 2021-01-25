@@ -1,10 +1,10 @@
-import { Box, Container, Drawer, FormControl, InputLabel, List, ListItem, Paper, Select, TextField } from "@material-ui/core";
+import { Box, Container, Drawer, FormControl, InputLabel, List, ListItem, Paper, Select } from "@material-ui/core";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import { History } from "history";
 import moment from "moment";
 import React from "react";
 import { connect } from "react-redux";
-import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Legend, Tooltip, XAxis, YAxis, BarChart, Bar, ResponsiveContainer } from "recharts";
 import { Dispatch } from "redux";
 import Api from "../../../api";
 import { ExposureInstance } from "../../../generated/client";
@@ -13,7 +13,10 @@ import { ReduxActions, ReduxState } from "../../../store";
 import { NullableToken } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { styles } from "./statistics-screen.styles";
-
+import MomentUtils from "@date-io/moment";
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import { spacing } from '@material-ui/system';
 
 /**
  * Interface describing component props
@@ -53,6 +56,7 @@ interface State {
   DisplaySinglePollutionData: boolean;
   statisticsData: ExposureInstance[];
   exposureData: ExposureData[];
+  calendarDate: Date;
 }
 
 /**
@@ -77,7 +81,8 @@ class StatisticsScreen extends React.Component<Props, State> {
       pollutantValue: "",
       timeValue: "",
       statisticsData: [],
-      exposureData: []
+      exposureData: [],
+      calendarDate: new Date(),
     };
   }
   
@@ -123,43 +128,42 @@ class StatisticsScreen extends React.Component<Props, State> {
     return (
       <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
         <Drawer
-          open={ true }
-          variant="permanent"
+          open={ false }
           anchor="left"
           classes={{
             paper: classes.drawer,
           }}
-        >
+          >
           { this.getStatisticsSidebarComponent() }
         </Drawer>
-        <Container>
-          <Box mt={ 4 } flexGrow={ 1 }>
-            <Paper>
-              <Box p={ 4 } margin={ "0 auto" }>
-                <LineChart 
-                  width={ 1050 } height={ 550 } 
+          <Box width={ 550 } />
+          <Box mt={ 6 }>
+            <Paper>      
+              <ResponsiveContainer width= "100%" height={ 550 }>
+                <BarChart
                   data={ exposureData }
-                  style={{ margin: "0 auto" }}
-                  >
+                  margin={{
+                    top: 32, right: 32, left: 32, bottom: 32,
+                  }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="startedAt" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="harmfulMicroparticles" stroke="red" />
-                  <Line type="monotone" dataKey="nitrogenDioxide" stroke="black" />
-                  <Line type="monotone" dataKey="nitrogenMonoxide" stroke="blue" />
-                  <Line type="monotone" dataKey="ozone" stroke="green" />
-                  <Line type="monotone" dataKey="sulfurDioxide" stroke="orange" />
-                </LineChart>
-              </Box>
+                  <Bar dataKey="harmfulMicroparticles" barSize={ 60 } stackId="a" fill="#91C4D1" />
+                  <Bar dataKey="nitrogenDioxide" stackId="a" fill="#91C4D1" />
+                  <Bar dataKey="nitrogenMonoxide" stackId="a" fill="#91C4D1" />
+                  <Bar dataKey="ozone" stackId="a" fill="#91C4D1" />
+                  <Bar dataKey="sulfurDioxide" stackId="a" fill="#91C4D1" />
+                </BarChart>
+              </ResponsiveContainer>
             </Paper>
           </Box>
-        </Container>
       </AppLayout>
     );
   }
-  
+
   /**
    * Get data from API
    */
@@ -180,21 +184,11 @@ class StatisticsScreen extends React.Component<Props, State> {
    */
   private getStatisticsSidebarComponent = () => {
     const { classes } = this.props
-    return(
+    return (
       <Box mt={ 10 }>
         <List>
           <ListItem>
-            <FormControl className={ classes.formControl }>
-              <TextField
-                id="date"
-                label="Select time"
-                type="date"
-                defaultValue="10.10.2020"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </FormControl>
+               { this.showCalendar() }
           </ListItem>
           <ListItem>
             <FormControl variant="outlined" className={ classes.formControl }>
@@ -239,6 +233,30 @@ class StatisticsScreen extends React.Component<Props, State> {
         </List>
       </Box>
     )
+  }
+
+  /**
+   * Method for rendering calendar
+   */
+  private showCalendar = () => {
+    const { calendarDate } = this.state;
+    return (
+      <MuiPickersUtilsProvider utils = { MomentUtils }>
+        <DatePicker 
+        value = { calendarDate }
+        onChange = { action => this.onDateChange(action) }
+        variant = "static"
+        disableToolbar = { true }
+        />
+      </MuiPickersUtilsProvider>
+    );
+  }
+
+  private onDateChange = (action: MaterialUiPickersDate) => {
+    const selectedDate = action?.toDate();
+    this.setState({
+      calendarDate: selectedDate!
+    });
   }
 }
 
