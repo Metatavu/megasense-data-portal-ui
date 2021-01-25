@@ -1,6 +1,8 @@
 import { createStyles } from "@material-ui/core";
 import theme from "../../../theme/theme";
 
+const drawerWidth = 420;
+
 export const styles = createStyles({
 
   root: {
@@ -14,8 +16,13 @@ export const styles = createStyles({
     flex: "1 1 auto"
   },
 
+  hasDrawer: {
+    marginLeft: drawerWidth
+  },
+
   drawer: {
-    width: 420
+    width: drawerWidth,
+    boxShadow: "0 0 30px rgba(0,0,0,0.2)"
   }
 
 });

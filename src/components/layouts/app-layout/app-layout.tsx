@@ -1,4 +1,4 @@
-import { Drawer } from "@material-ui/core";
+import { Box, Drawer, Toolbar } from "@material-ui/core";
 import { withStyles, WithStyles } from "@material-ui/core/styles";
 import React from "react";
 import { Redirect } from "react-router-dom";
@@ -50,21 +50,25 @@ class AppLayout extends React.Component<Props, State> {
       routing,
       classes,
       children,
-      hideHeader
+      hideHeader,
+      showDrawer
     } = this.props;
     
     return (
       <>
         <div className={ classes.root }>
           { !hideHeader &&
-            <Header
-              accessToken={ accessToken }
-              keycloak={ keycloak }
-              routing={ routing }
-              onSettingsClick={ this.onSettingsClick }
-            />
+            <>
+              <Header
+                accessToken={ accessToken }
+                keycloak={ keycloak }
+                routing={ routing }
+                onSettingsClick={ this.onSettingsClick }
+              />
+              <Toolbar />
+            </>
           }
-          <div className={ classes.content }>
+          <div className={ `${classes.content} ${ showDrawer ? classes.hasDrawer : ""}` }>
             { children }
           </div>
           { this.routeRedirect() }

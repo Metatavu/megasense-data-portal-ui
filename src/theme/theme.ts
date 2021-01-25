@@ -107,6 +107,11 @@ export default createMuiTheme({
         textOverflow: "ellipsis",
         overflow: "hidden"
       }
+    },
+    MuiDrawer: {
+      paperAnchorDockedLeft: {
+        borderRight: 0
+      }
     }
   },
   props: {

@@ -1,4 +1,4 @@
-import { Box, Container, Drawer, FormControl, InputLabel, List, ListItem, Paper, Select } from "@material-ui/core";
+import { Box, Container, Drawer, FormControl, InputLabel, List, ListItem, Paper, Select, Toolbar } from "@material-ui/core";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import { History } from "history";
 import moment from "moment";
@@ -122,44 +122,41 @@ class StatisticsScreen extends React.Component<Props, State> {
    * Component render method
    */
   public render = () => {
-    const { accessToken, keycloak, classes } = this.props;
+    const { accessToken, keycloak } = this.props;
     const { exposureData } = this.state;
 
     return (
-      <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
-        <Drawer
-          open={ false }
-          anchor="left"
-          classes={{
-            paper: classes.drawer,
-          }}
-          >
-          { this.getStatisticsSidebarComponent() }
-        </Drawer>
-          <Box width={ 550 } />
-          <Box mt={ 6 }>
-            <Paper>      
-              <ResponsiveContainer width= "100%" height={ 550 }>
-                <BarChart
-                  data={ exposureData }
-                  margin={{
-                    top: 32, right: 32, left: 32, bottom: 32,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="startedAt" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="harmfulMicroparticles" barSize={ 60 } stackId="a" fill="#91C4D1" />
-                  <Bar dataKey="nitrogenDioxide" stackId="a" fill="#91C4D1" />
-                  <Bar dataKey="nitrogenMonoxide" stackId="a" fill="#91C4D1" />
-                  <Bar dataKey="ozone" stackId="a" fill="#91C4D1" />
-                  <Bar dataKey="sulfurDioxide" stackId="a" fill="#91C4D1" />
-                </BarChart>
-              </ResponsiveContainer>
-            </Paper>
-          </Box>
+      <AppLayout 
+        accessToken={ accessToken }
+        keycloak={ keycloak }
+        showDrawer={ true }
+        drawerContent={
+          this.getStatisticsSidebarComponent()
+        }
+      >
+        <Box p={ 4 }>
+          <Paper>      
+            <ResponsiveContainer width= "100%" height={ 550 }>
+              <BarChart
+                data={ exposureData }
+                margin={{
+                  top: 32, right: 32, left: 32, bottom: 32,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="startedAt" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="harmfulMicroparticles" barSize={ 60 } stackId="a" fill="#91C4D1" />
+                <Bar dataKey="nitrogenDioxide" stackId="a" fill="#91C4D1" />
+                <Bar dataKey="nitrogenMonoxide" stackId="a" fill="#91C4D1" />
+                <Bar dataKey="ozone" stackId="a" fill="#91C4D1" />
+                <Bar dataKey="sulfurDioxide" stackId="a" fill="#91C4D1" />
+              </BarChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Box>
       </AppLayout>
     );
   }
