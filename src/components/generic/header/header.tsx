@@ -16,7 +16,7 @@ interface Props extends WithStyles<typeof styles> {
   routing?: JSX.Element
   accessToken?: NullableToken;
   keycloak?: Keycloak.KeycloakInstance;
-  toggleSideMenu: () => void;
+  onSettingsClick?: () => void;
 }
 
 /**
@@ -121,7 +121,7 @@ class Header extends React.Component<Props, State> {
    * Method for rendering settings
    */
   private renderSettings = () => {
-    const { accessToken } = this.props;
+    const { accessToken, onSettingsClick } = this.props;
     
     if (!accessToken) {
       return null;
@@ -129,14 +129,13 @@ class Header extends React.Component<Props, State> {
 
     return (
       <Box>
-        <Link to="/settings">
-          <Button
-            variant="outlined"
-            startIcon={ <SettingsIcon /> }
-          >
-            { strings.header.settings }
-          </Button>
-        </Link>
+        <Button
+          onClick={ onSettingsClick }
+          variant="outlined"
+          startIcon={ <SettingsIcon /> }
+        >
+          { strings.header.settings }
+        </Button>
       </Box>
     );
   }
