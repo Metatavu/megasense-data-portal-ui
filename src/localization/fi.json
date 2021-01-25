@@ -56,6 +56,7 @@
   },
 
   "settings": {
+    "unsavedChangesWillBeLost": "Tallentamattomat muutokset menetetään. Jatka tallentamatta?",
     "title": "Asetukset",
     "applyChanges": "Tallenna muutokset",
     "homeAddress": "Kotiosoite",
@@ -114,6 +115,7 @@
   },
 
   "common": {
+    "save": "Tallenna",
     "reset": "Palauta",
     "cancel": "Peruuta",
     "yes": "Kyllä"

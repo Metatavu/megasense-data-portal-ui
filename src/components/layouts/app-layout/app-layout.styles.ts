@@ -12,6 +12,10 @@ export const styles = createStyles({
   content: {
     background: theme.palette.background.default,
     flex: "1 1 auto"
+  },
+
+  drawer: {
+    width: 420
   }
 
 });

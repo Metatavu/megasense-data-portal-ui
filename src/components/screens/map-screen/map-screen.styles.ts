@@ -19,10 +19,6 @@ export const styles = createStyles({
   mapComponent: {
     height: "100%"
   },
-
-  drawer: {
-    width: 420
-  },
   
   routingForm: {
     display: "flex",

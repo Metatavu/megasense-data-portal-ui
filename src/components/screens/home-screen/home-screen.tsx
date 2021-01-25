@@ -84,7 +84,7 @@ class HomeScreen extends React.Component<Props, State> {
         redirectTo={ redirectTo }>
         <Grid container className={ classes.backgroundContainer }>
           <Grid container className={ classes.loginGrid }>
-            <img src={ Logo } className={ classes.logoBig } />
+            <img alt="logo" src={ Logo } className={ classes.logoBig } />
             <Button 
               variant="outlined" 
               className={ classes.logInButton }
