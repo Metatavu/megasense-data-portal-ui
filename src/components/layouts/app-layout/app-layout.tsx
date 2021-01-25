@@ -1,11 +1,12 @@
+import { Drawer } from "@material-ui/core";
 import { withStyles, WithStyles } from "@material-ui/core/styles";
 import React from "react";
-import { styles } from "./app-layout.styles";
-import Header from "../../generic/header/header";
-import { Toolbar } from "@material-ui/core";
+import { Redirect } from "react-router-dom";
 import { NullableToken } from "../../../types";
 import ErrorDialog from "../../generic/dialogs/error-dialog";
-import { Redirect } from "react-router-dom";
+import Header from "../../generic/header/header";
+import Settings from "../../settings/settings";
+import { styles } from "./app-layout.styles";
 
 interface Props extends WithStyles<typeof styles> {
   routing?: JSX.Element;
@@ -15,10 +16,12 @@ interface Props extends WithStyles<typeof styles> {
   error?: string | Error | Response;
   clearError?: () => void;
   redirectTo?: string;
+  showDrawer?: boolean;
+  drawerContent?: JSX.Element;
 }
 
 interface State {
-  sideMenuOpen: boolean;
+  showSettings?: boolean;
 }
 
 /**
@@ -34,7 +37,6 @@ class AppLayout extends React.Component<Props, State> {
   constructor (props: Props) {
     super(props);
     this.state = {
-      sideMenuOpen: false
     };
   }
 
@@ -42,42 +44,92 @@ class AppLayout extends React.Component<Props, State> {
    * Component render method
    */
   public render = () => {
-    const { classes, children } = this.props;
+    const {
+      accessToken,
+      keycloak,
+      routing,
+      classes,
+      children,
+      hideHeader
+    } = this.props;
     
     return (
-      <div className={ classes.root }>
-        { this.renderHeader() }
-        <div className={ classes.content }>
-          { children }
+      <>
+        <div className={ classes.root }>
+          { !hideHeader &&
+            <Header
+              accessToken={ accessToken }
+              keycloak={ keycloak }
+              routing={ routing }
+              onSettingsClick={ this.onSettingsClick }
+            />
+          }
+          <div className={ classes.content }>
+            { children }
+          </div>
+          { this.routeRedirect() }
+          { this.renderLeftSideDrawer() }
+          { this.renderSettings() }
         </div>
-        { this.routeRedirect() }
-      </div>
+        { this.renderErrorDialog() }
+      </>
     );
   }
 
   /**
-   * Method for rendering header
+   * Toggle settings open click handler
    */
-  private renderHeader = () => {
-    const { accessToken, keycloak, routing, classes, children, hideHeader } = this.props;
-    if (hideHeader) {
-      return null;
-    }
-    
-    return (
-      <div className={ classes.root }>
-        <Header
-          accessToken={ accessToken }
-          keycloak={ keycloak }
-          routing={ routing }
-          toggleSideMenu={ this.toggleSideMenu }
-        />
-        <Toolbar />
-        <div className={ classes.content }>
-          { children }
-        </div>
-        { this.renderErrorDialog() }
-      </div>
+  private onSettingsClick = () => {
+    this.setState({
+      showSettings: true
+    });
+  }
+
+  /**
+   * Toggle settings open click handler
+   */
+  private handleSettingsClose = () => {
+    this.setState({
+      showSettings: false
+    });
+  }
+
+  /**
+   * Renders settings drawer
+   */
+  private renderSettings = () => {
+    const { classes } = this.props;
+    const { showSettings } = this.state;
+    return(
+      <Drawer
+        open={ showSettings }
+        variant="temporary"
+        anchor="right"
+        classes={{
+          paper: classes.drawer,
+        }}
+      >
+        <Settings onSettingsCloseClick={ this.handleSettingsClose } />
+      </Drawer>
+    );
+  }
+
+  /**
+   * Renders left side drawer
+   */
+  private renderLeftSideDrawer = () => {
+    const { classes, showDrawer, drawerContent } = this.props;
+    return(
+      <Drawer
+        open={ showDrawer }
+        variant="persistent"
+        anchor="left"
+        classes={{
+          paper: classes.drawer,
+        }}
+      >
+        { drawerContent }
+      </Drawer>
     );
   }
 
@@ -90,13 +142,6 @@ class AppLayout extends React.Component<Props, State> {
     }
 
     return null;
-  }
-
-  private toggleSideMenu = () => {
-    const sideMenuOpen = !this.state.sideMenuOpen;
-    this.setState({ 
-      sideMenuOpen: sideMenuOpen 
-    });
   }
 
   /**

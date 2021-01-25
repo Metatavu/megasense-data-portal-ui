@@ -122,11 +122,18 @@ class MapScreen extends React.Component<Props, State> {
    */
   public render = () => {
     const { accessToken, keycloak, classes } = this.props;
-    const { loadingUserSettings, userSavedRoutes } = this.state;
+    const { loadingUserSettings } = this.state;
 
     if (loadingUserSettings) {
       return (
-        <AppLayout>
+        <AppLayout
+          showDrawer={ true }
+          drawerContent={
+            <div className={ classes.loader }>
+              <CircularProgress size={ 64 }/>
+            </div>
+          }
+        >
           <div className={ classes.loader }>
             <CircularProgress size={ 64 }/>
           </div>
@@ -135,37 +142,47 @@ class MapScreen extends React.Component<Props, State> {
     }
   
     return (
-      <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
-        <Drawer
-          open={ true }
-          variant="permanent"
-          anchor="left"
-          classes={{
-            paper: classes.drawer,
-          }}
-        >
-          <Toolbar />
-          <Toolbar className={ classes.toolbar }>
-            <IconButton>
-              <DirectionsWalkIcon htmlColor="#fff" />
-            </IconButton>
-            <IconButton>
-              <AccessibleIcon htmlColor="#fff" />
-            </IconButton>
-            <IconButton>
-              <DirectionsBikeIcon htmlColor="#fff" />
-            </IconButton>
-          </Toolbar>
-          { this.renderRoutingForm() }
-          <SavedRoutes 
-            savedRoutes={ userSavedRoutes } 
-            showSavedRoutes={ !!accessToken } 
-            onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute } 
-          />
-        </Drawer>
+      <AppLayout 
+        accessToken={ accessToken }
+        keycloak={ keycloak }
+        showDrawer={ true }
+        drawerContent={
+          this.renderDrawerContent()
+        }
+      >
         { this.renderMap() }
       </AppLayout>
       
+    );
+  }
+
+  /**
+   * Render drawer content
+   */
+  private renderDrawerContent = () => {
+    const { accessToken, classes } = this.props;
+    const { userSavedRoutes } = this.state;
+    return (
+      <>
+        <Toolbar />
+        <Toolbar className={ classes.toolbar }>
+          <IconButton>
+            <DirectionsWalkIcon htmlColor="#fff" />
+          </IconButton>
+          <IconButton>
+            <AccessibleIcon htmlColor="#fff" />
+          </IconButton>
+          <IconButton>
+            <DirectionsBikeIcon htmlColor="#fff" />
+          </IconButton>
+        </Toolbar>
+        { this.renderRoutingForm() }
+        <SavedRoutes 
+          savedRoutes={ userSavedRoutes } 
+          showSavedRoutes={ !!accessToken } 
+          onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute } 
+        />
+      </>
     );
   }
 

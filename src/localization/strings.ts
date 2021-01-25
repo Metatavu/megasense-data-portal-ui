@@ -83,6 +83,7 @@ export interface IStrings extends LocalizedStringsMethods {
    * Translations for settings screen
    */
   settings: {
+    unsavedChangesWillBeLost: string;
     title: string;
     applyChanges: string;
     homeAddress: string;
@@ -142,9 +143,10 @@ export interface IStrings extends LocalizedStringsMethods {
   };
 
   common: {
+    save: string;
     cancel: string;
-    reset: string,
-    yes: string,
+    reset: string;
+    yes: string;
   }
 }
 
