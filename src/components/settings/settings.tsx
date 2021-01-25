@@ -8,7 +8,7 @@ import strings from "../../localization/strings";
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles> {
-  onSettingsCloseClick(): void;
+  onSettingsCloseClick: () => void;
 }
 
 /**

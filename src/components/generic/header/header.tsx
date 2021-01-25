@@ -16,7 +16,7 @@ interface Props extends WithStyles<typeof styles> {
   routing?: JSX.Element
   accessToken?: NullableToken;
   keycloak?: Keycloak.KeycloakInstance;
-  onSettingsClick?(): void;
+  onSettingsClick?: () => void;
 }
 
 /**
