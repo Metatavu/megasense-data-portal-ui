@@ -22,7 +22,7 @@ export const styles = createStyles({
 
   drawer: {
     width: drawerWidth,
-    boxShadow: "0 0 30px rgba(0,0,0,0.2)"
+    boxShadow: "0 0 30px rgba(0, 0, 0, 0.2)"
   }
 
 });
