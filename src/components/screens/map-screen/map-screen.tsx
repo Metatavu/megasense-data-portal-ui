@@ -287,7 +287,7 @@ class MapScreen extends React.Component<Props, State> {
    * Renders the form for routing
    */
   private renderRoutingForm = (): JSX.Element => {
-    const { classes } = this.props;
+    const { classes, accessToken } = this.props;
     const { locationFrom, locationTo, locationFromOptions, locationToOptions, locationFromTextInput, locationToTextInput, loadingRoute, savingRoute } = this.state;
 
     return (
@@ -355,21 +355,22 @@ class MapScreen extends React.Component<Props, State> {
           >
             { strings.routes.findRoute }
           </Button>
-
-          <Button
-            variant="outlined"
-            onClick={ this.saveRoute }
-            className={ classes.routingFormButton }
-            endIcon={
-              savingRoute ?
-              <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
-              :
-              <SaveIcon htmlColor="#fff"
-              />
-            }
-          >
-            { strings.routes.saveRoute }
-          </Button>
+          { accessToken &&
+            <Button
+              variant="outlined"
+              onClick={ this.saveRoute }
+              className={ classes.routingFormButton }
+              endIcon={
+                savingRoute ?
+                <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
+                :
+                <SaveIcon htmlColor="#fff"
+                />
+              }
+              >
+              { strings.routes.saveRoute }
+            </Button>
+          }
         </div>
       </div>
     );
