@@ -15,7 +15,7 @@ export const styles = createStyles({
   },
 
   hasDrawer: {
-    marginLeft: drawerWidth
+    marginLeft: 420
   },
 
   drawer: {
