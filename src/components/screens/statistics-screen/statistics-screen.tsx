@@ -1,4 +1,4 @@
-import { Box, Container, Drawer, FormControl, InputLabel, List, ListItem, Paper, Select, Toolbar } from "@material-ui/core";
+import { Box, FormControl, InputLabel, Paper, Select, Typography, Toolbar, Button } from "@material-ui/core";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import { History } from "history";
 import moment from "moment";
@@ -16,7 +16,7 @@ import { styles } from "./statistics-screen.styles";
 import MomentUtils from "@date-io/moment";
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
-import { spacing } from '@material-ui/system';
+import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 
 /**
  * Interface describing component props
@@ -123,8 +123,6 @@ class StatisticsScreen extends React.Component<Props, State> {
    */
   public render = () => {
     const { accessToken, keycloak } = this.props;
-    const { exposureData } = this.state;
-
     return (
       <AppLayout 
         accessToken={ accessToken }
@@ -135,29 +133,116 @@ class StatisticsScreen extends React.Component<Props, State> {
         }
       >
         <Box p={ 4 }>
-          <Paper>      
-            <ResponsiveContainer width= "100%" height={ 550 }>
-              <BarChart
-                data={ exposureData }
-                margin={{
-                  top: 32, right: 32, left: 32, bottom: 32,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="startedAt" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="harmfulMicroparticles" barSize={ 60 } stackId="a" fill="#91C4D1" />
-                <Bar dataKey="nitrogenDioxide" stackId="a" fill="#91C4D1" />
-                <Bar dataKey="nitrogenMonoxide" stackId="a" fill="#91C4D1" />
-                <Bar dataKey="ozone" stackId="a" fill="#91C4D1" />
-                <Bar dataKey="sulfurDioxide" stackId="a" fill="#91C4D1" />
-              </BarChart>
-            </ResponsiveContainer>
+          <Paper>
+            <Box display="flex" pl={ 4 } pt={ 4 } pr={ 4 }>
+              <Box flexGrow={ 1 }>
+                <Typography  variant="h3">
+                  { this.state.calendarDate.toLocaleDateString() }
+                </Typography>
+              </Box>
+              <Box>
+                { this.staticticsSelectTimeRange() }
+              </Box>
+            </Box>
+            { this.staticticsPollutantToolbar() }
+            { this.staticticsBarChart() }          
           </Paper>
         </Box>
       </AppLayout>
+    );
+  }
+
+  /**
+   * Method for rendering statictics bar chart
+   */
+  private staticticsBarChart = () => {
+    const { exposureData } = this.state;
+    return (
+      <ResponsiveContainer width="100%" height={ 550 }>
+        <BarChart
+          data={ exposureData }
+          margin={{
+            top: 32, right: 32, left: 32, bottom: 32,
+          }}
+          barCategoryGap="8"
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="startedAt" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="harmfulMicroparticles" stackId="a" fill="#91C4D1" />
+          <Bar dataKey="nitrogenDioxide" stackId="a" fill="#91C4D1" />
+          <Bar dataKey="nitrogenMonoxide" stackId="a" fill="#91C4D1" />
+          <Bar dataKey="ozone" stackId="a" fill="#91C4D1" />
+          <Bar dataKey="sulfurDioxide" stackId="a" fill="#91C4D1" />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  /**
+   * Method for rendering time range dropdown
+   */
+  private staticticsSelectTimeRange = () => {
+    const { classes } = this.props;
+    return (
+      <FormControl variant="outlined" className={ classes.formControl }>
+        <InputLabel htmlFor="outlined-age-native-simple">{ strings.statistics.selectTimeRange }</InputLabel>
+        <Select
+          native
+          fullWidth
+          label="Select time range"
+          inputProps={{
+            name: "time",
+            id: "outlined-age-native-simple",
+          }}
+        >
+          <option aria-label="None" value="" />
+          <option>{ strings.statistics.daily }</option>
+          <option>{ strings.statistics.weekly }</option>
+          <option>{ strings.statistics.monthly }</option>
+          <option>{ strings.statistics.annual }</option>
+        </Select>
+     </FormControl>
+    );
+  }
+
+  /**
+   * Method for rendering pollutant toolbar
+   */
+  private staticticsPollutantToolbar = () => {
+    return (
+      <Toolbar>
+        <Button 
+        color="primary"
+        variant="contained"
+        startIcon={ <RemoveRedEyeIcon /> } 
+        >
+          { strings.statistics.carbonMonoxide }
+        </Button>
+        <Button 
+        color="primary"
+        variant="contained"
+        startIcon={ <RemoveRedEyeIcon /> } 
+        >
+          { strings.statistics.ozone }
+        </Button>
+        <Button 
+        color="primary"
+        variant="contained"
+        startIcon={ <RemoveRedEyeIcon /> } 
+        >
+          { strings.statistics.nitrogenDioxide }
+        </Button>
+        <Button 
+        color="primary"
+        variant="contained"
+        startIcon={ <RemoveRedEyeIcon /> } 
+        >
+          { strings.statistics.sulfurDioxide }
+        </Button>
+     </Toolbar>
     );
   }
 
@@ -180,54 +265,9 @@ class StatisticsScreen extends React.Component<Props, State> {
    * @returns statistics sidebar component
    */
   private getStatisticsSidebarComponent = () => {
-    const { classes } = this.props
     return (
       <Box mt={ 10 }>
-        <List>
-          <ListItem>
-               { this.showCalendar() }
-          </ListItem>
-          <ListItem>
-            <FormControl variant="outlined" className={ classes.formControl }>
-              <InputLabel htmlFor="outlined-age-native-simple">{ strings.statistics.selectPollution }</InputLabel>
-              <Select
-                native
-                fullWidth
-                label="Select time range"
-                inputProps={{
-                  name: "time",
-                  id: "outlined-age-native-simple",
-                }}
-              >
-                <option aria-label="None" value="" />
-                <option>{ strings.statistics.daily }</option>
-                <option>{ strings.statistics.weekly }</option>
-                <option>{ strings.statistics.monthly }</option>
-                <option>{ strings.statistics.annual }</option>
-              </Select>
-            </FormControl>
-          </ListItem>
-          <ListItem>
-            <FormControl variant="outlined" className={ classes.formControl }>
-              <InputLabel htmlFor="outlined-age-native-simple">{ strings.selectPollution }</InputLabel>
-              <Select
-                native
-                fullWidth
-                label="Select pollution"
-                inputProps={{
-                  name: "age",
-                  id: "outlined-age-native-simple",
-                }}
-              >
-                <option aria-label="None" value="" />
-                <option>{ strings.statistics.carbonMonoxide }</option>
-                <option>{ strings.statistics.ozone }</option>
-                <option>{ strings.statistics.nitrogenDioxine }</option>
-                <option>{ strings.statistics.sulfurDioxine }</option>
-              </Select>
-            </FormControl>
-          </ListItem>
-        </List>
+        { this.showCalendar() }
       </Box>
     )
   }
