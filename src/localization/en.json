@@ -45,6 +45,7 @@
   "statistics": {
     "title": "Statistics",
     "selectPollution": "Select pollution:",
+    "selectTimeRange": "Select time range",
     "daily": "Daily",
     "weekly": "Weekly",
     "monthly": "Monthly",

@@ -45,6 +45,7 @@
   "statistics": {
     "title": "Tilastot",
     "selectPollution": "Valitse saaste:",
+    "selectTimeRange": "Valitse aikahaarukka",
     "daily": "Päiväkohtainen",
     "weekly": "Viikottainen",
     "monthly": "Kuukausittainen",
