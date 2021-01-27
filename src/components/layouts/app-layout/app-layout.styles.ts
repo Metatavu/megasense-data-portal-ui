@@ -19,7 +19,7 @@ export const styles = createStyles({
   },
 
   drawer: {
-    width: drawerWidth,
+    width: 420,
     boxShadow: "0 0 30px rgba(0, 0, 0, 0.2)"
   }
 
