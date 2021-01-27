@@ -157,27 +157,30 @@ class StatisticsScreen extends React.Component<Props, State> {
    */
   private staticticsBarChart = () => {
     const { exposureData } = this.state;
+    const { classes } = this.props;
     return (
-      <ResponsiveContainer width="100%" height={ 550 }>
-        <BarChart
-          data={ exposureData }
-          margin={{
-            top: 32, right: 32, left: 32, bottom: 32,
-          }}
-          barCategoryGap="8"
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="startedAt" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="harmfulMicroparticles" stackId="a" fill="#91C4D1" />
-          <Bar dataKey="nitrogenDioxide" stackId="a" fill="#91C4D1" />
-          <Bar dataKey="nitrogenMonoxide" stackId="a" fill="#91C4D1" />
-          <Bar dataKey="ozone" stackId="a" fill="#91C4D1" />
-          <Bar dataKey="sulfurDioxide" stackId="a" fill="#91C4D1" />
-        </BarChart>
-      </ResponsiveContainer>
+      <Box className={ classes.chartContainerStyling }>
+        <ResponsiveContainer>
+          <BarChart
+            data={ exposureData }
+            margin={{
+              top: 32, right: 32, left: 32, bottom: 32,
+            }}
+            barCategoryGap="8"
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="startedAt" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="harmfulMicroparticles" stackId="a" fill="#91C4D1" />
+            <Bar dataKey="nitrogenDioxide" stackId="a" fill="#91C4D1" />
+            <Bar dataKey="nitrogenMonoxide" stackId="a" fill="#91C4D1" />
+            <Bar dataKey="ozone" stackId="a" fill="#91C4D1" />
+            <Bar dataKey="sulfurDioxide" stackId="a" fill="#91C4D1" />
+          </BarChart>
+        </ResponsiveContainer>
+      </Box>
     );
   }
 
@@ -214,35 +217,27 @@ class StatisticsScreen extends React.Component<Props, State> {
   private staticticsPollutantToolbar = () => {
     return (
       <Toolbar>
-        <Button 
-        color="primary"
-        variant="contained"
-        startIcon={ <RemoveRedEyeIcon /> } 
-        >
-          { strings.statistics.carbonMonoxide }
-        </Button>
-        <Button 
-        color="primary"
-        variant="contained"
-        startIcon={ <RemoveRedEyeIcon /> } 
-        >
-          { strings.statistics.ozone }
-        </Button>
-        <Button 
-        color="primary"
-        variant="contained"
-        startIcon={ <RemoveRedEyeIcon /> } 
-        >
-          { strings.statistics.nitrogenDioxide }
-        </Button>
-        <Button 
-        color="primary"
-        variant="contained"
-        startIcon={ <RemoveRedEyeIcon /> } 
-        >
-          { strings.statistics.sulfurDioxide }
-        </Button>
+        { this.pollutantToolbarButton(strings.statistics.carbonMonoxide) }
+        { this.pollutantToolbarButton(strings.statistics.ozone) }
+        { this.pollutantToolbarButton(strings.statistics.nitrogenDioxide) }
+        { this.pollutantToolbarButton(strings.statistics.sulfurDioxide) }
      </Toolbar>
+    );
+  }
+
+  /**
+   * Method for rendering pollutant toolbar button
+   * @param label pollutant button string
+   */
+  private pollutantToolbarButton = (label: String) => {
+    return (
+      <Button
+      color="primary"
+      variant="contained"
+      startIcon={ <RemoveRedEyeIcon /> } 
+      >
+        { label }
+      </Button>
     );
   }
 
@@ -289,6 +284,10 @@ class StatisticsScreen extends React.Component<Props, State> {
     );
   }
 
+  /**
+   * method for changing calendar date
+   * @param action material-UI date picker
+   */
   private onDateChange = (action: MaterialUiPickersDate) => {
     const selectedDate = action?.toDate();
     this.setState({
