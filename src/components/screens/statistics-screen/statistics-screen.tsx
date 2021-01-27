@@ -229,7 +229,7 @@ class StatisticsScreen extends React.Component<Props, State> {
    * Method for rendering pollutant toolbar button
    * @param label pollutant button string
    */
-  private pollutantToolbarButton = (label: String) => {
+  private pollutantToolbarButton = (label: string) => {
     return (
       <Button
       color="primary"
@@ -289,9 +289,13 @@ class StatisticsScreen extends React.Component<Props, State> {
    * @param action material-UI date picker
    */
   private onDateChange = (action: MaterialUiPickersDate) => {
-    const selectedDate = action?.toDate();
+    if (!action) {
+      return;
+    }
+
+    const selectedDate = action.toDate();
     this.setState({
-      calendarDate: selectedDate!
+      calendarDate: selectedDate
     });
   }
 }
