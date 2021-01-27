@@ -69,14 +69,15 @@ export interface IStrings extends LocalizedStringsMethods {
   statistics: {
     title: string;
     selectPollution: string;
+    selectTimeRange: string;
     daily: string;
     weekly: string;
     monthly: string;
     annual: string;
     carbonMonoxide: string;
     ozone: string;
-    nitrogenDioxine: string;
-    sulfurDioxine: string;
+    nitrogenDioxide: string;
+    sulfurDioxide: string;
   };
   
   /**

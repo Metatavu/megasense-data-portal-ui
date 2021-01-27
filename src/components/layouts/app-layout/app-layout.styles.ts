@@ -14,8 +14,13 @@ export const styles = createStyles({
     flex: "1 1 auto"
   },
 
+  hasDrawer: {
+    marginLeft: 420
+  },
+
   drawer: {
-    width: 420
+    width: 420,
+    boxShadow: "0 0 30px rgba(0, 0, 0, 0.2)"
   }
 
 });
