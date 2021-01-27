@@ -13,6 +13,11 @@ export const styles = createStyles({
 
   selectEmpty: {
     marginTop: theme.spacing(2),
-  }
+  },
+
+  chartContainerStyling: {
+    width: "100%",
+    height: 550,
+  },
 
 })
