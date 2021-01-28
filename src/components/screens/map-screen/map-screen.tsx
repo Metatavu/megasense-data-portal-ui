@@ -485,7 +485,13 @@ class MapScreen extends React.Component<Props, State> {
 
     try {
       const routesApi = Api.getRoutesApi(accessToken);
-      const createdRoute = await routesApi.createRoute({ route: { name: userDialogInput, routePoints: polyline, locationFromName: locationFrom?.name, locationToName: locationTo?.name, savedAt: new Date() } });
+      const createdRoute = await routesApi.createRoute({
+        route: {
+          name: userDialogInput,
+          routePoints: polyline,
+          locationFromName: locationFrom?.name, locationToName: locationTo?.name, savedAt: new Date()
+        }
+      });
       this.setState({
         userSavedRoutes: userSavedRoutes.concat(createdRoute),
         savingRoute: false

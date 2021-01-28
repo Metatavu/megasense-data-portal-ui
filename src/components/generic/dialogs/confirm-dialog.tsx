@@ -8,7 +8,7 @@ import React from "react";
 interface Props extends WithStyles<typeof styles> {
   title: string;
   text?: string;
-  userInput?: () => void;
+  userInput?: () => JSX.Element;
   positiveButtonText: string;
   cancelButtonText: string;
   dialogVisible: boolean;
