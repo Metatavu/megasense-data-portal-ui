@@ -39,7 +39,8 @@
     "showLess": "Show less",
     "deleteDialog": "Please confirm deletion",
     "deleteButton": "Delete",
-    "cancelButton": "Cancel"
+    "cancelButton": "Cancel",
+    "routeNameInput": "Enter route name"
   },
 
   "statistics": {

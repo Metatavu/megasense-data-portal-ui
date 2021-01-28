@@ -456,9 +456,9 @@ class MapScreen extends React.Component<Props, State> {
     const { userDialogInput } = this.state;
     return (
       <TextField
-        label="Enter name for the route"
+        label={ strings.routes.routeNameInput }
         value={ userDialogInput }
-        onChange={ (action) => this.setState({ userDialogInput: action.target.value }) }
+        onChange={ this.onRouteNameInputChange }
       />
     )
   }
@@ -502,6 +502,17 @@ class MapScreen extends React.Component<Props, State> {
         error: error
       });
     }
+  }
+
+  /**
+   * Action handler for route name input
+   * 
+   * @param action input action
+   */
+  private onRouteNameInputChange = (action: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    this.setState({
+      userDialogInput: action.target.value
+    });
   }
 
   /**
@@ -687,13 +698,13 @@ class MapScreen extends React.Component<Props, State> {
   private reverseGeocodeCoordinates = async (type: GeocodeCoordinate, lat: string, lon: string) => {
     const nominatimResponse: Nominatim.NominatimResponse = await Nominatim.reverseGeocode({ lat, lon }, process.env.REACT_APP_NOMINATIM_URL);
     const geocodedName = nominatimResponse.display_name;
-    if (type === "To") {
+    if (type === GeocodeCoordinate.To) {
       this.setState({
         locationToTextInput: geocodedName
       });
     }
 
-    if (type === "From") {
+    if (type === GeocodeCoordinate.From) {
       this.setState({
         locationFromTextInput: geocodedName
       });
@@ -708,8 +719,8 @@ class MapScreen extends React.Component<Props, State> {
   private onUserRouteSelect = (route: Route) => {
     const sourceCoordinates = route.locationFromName.split(",");
     const destCoordinates = route.locationToName.split(",");
-    this.reverseGeocodeCoordinates("From", sourceCoordinates[0], sourceCoordinates[1]);
-    this.reverseGeocodeCoordinates("To", destCoordinates[0], destCoordinates[1]);
+    this.reverseGeocodeCoordinates(GeocodeCoordinate.From, sourceCoordinates[0], sourceCoordinates[1]);
+    this.reverseGeocodeCoordinates(GeocodeCoordinate.To, destCoordinates[0], destCoordinates[1]);
     this.displaySavedRoute(route);
   }
 
