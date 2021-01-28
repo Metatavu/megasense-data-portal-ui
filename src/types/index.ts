@@ -1,6 +1,11 @@
 export type Locale = "fi" | "en";
 
 /**
+ * Type for determining coordinate direction
+ */
+export type GeocodeCoordinate = "To" | "From";
+
+/**
  * Union type for nullable access token
  */
 export type NullableToken = AccessToken | null;

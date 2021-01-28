@@ -21,10 +21,11 @@ import { AirQuality, Route } from "../../../generated/client";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
-import { Location, NullableToken } from "../../../types";
+import { Location, NullableToken, GeocodeCoordinate } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
 import { styles } from "./map-screen.styles";
+import ConfirmDialog from "../../generic/dialogs/confirm-dialog";
 
 
 /**
@@ -57,6 +58,8 @@ interface State {
   locationToTextInput: string;
   loadingUserSettings: boolean;
   userSavedRoutes: Route[];
+  userDialogInput?: string;
+  error?: string | Error | Response;
 }
 
 /**
@@ -122,7 +125,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   public render = () => {
     const { accessToken, keycloak, classes } = this.props;
-    const { loadingUserSettings } = this.state;
+    const { loadingUserSettings, error } = this.state;
 
     if (loadingUserSettings) {
       return (
@@ -149,8 +152,11 @@ class MapScreen extends React.Component<Props, State> {
         drawerContent={
           this.renderDrawerContent()
         }
+        error={ error }
+        clearError={ this.onClearError }
       >
         { this.renderMap() }
+        { this.renderSaveRouteConfirmDialog() }
       </AppLayout>
       
     );
@@ -180,7 +186,8 @@ class MapScreen extends React.Component<Props, State> {
         <SavedRoutes 
           savedRoutes={ userSavedRoutes } 
           showSavedRoutes={ !!accessToken } 
-          onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute } 
+          onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute }
+          onUserRouteSelect={ this.onUserRouteSelect }
         />
       </>
     );
@@ -358,7 +365,7 @@ class MapScreen extends React.Component<Props, State> {
           { accessToken &&
             <Button
               variant="outlined"
-              onClick={ this.saveRoute }
+              onClick={ this.onSaveRouteClick }
               className={ classes.routingFormButton }
               endIcon={
                 savingRoute ?
@@ -426,28 +433,78 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
-   * Saves the route that is currently displayed on the map
+   * Renders save route dialog
    */
-  private saveRoute = async () => {
-    const accessToken = this.props.accessToken;
-    const { polyline, locationFrom, locationTo } = this.state;
+  private renderSaveRouteConfirmDialog = () => {
+    const { savingRoute } = this.state;
+    return (
+      <ConfirmDialog 
+          title={ strings.routes.saveRoute } 
+          positiveButtonText={ strings.common.save } 
+          cancelButtonText={ strings.common.cancel } 
+          dialogVisible={ savingRoute } 
+          onDialogConfirm={ this.onRouteSaveConfirm } 
+          onDialogCancel={ this.onRouteSaveCancel }
+          userInput={ this.renderDialogRouteNameInput } />
+    )
+  }
 
-    if (!accessToken || !polyline || !locationFrom || !locationTo) {
+  /**
+   * Renders user input field for dialog
+   */
+  private renderDialogRouteNameInput = () => {
+    const { userDialogInput } = this.state;
+    return (
+      <TextField
+        label="Enter name for the route"
+        value={ userDialogInput }
+        onChange={ (action) => this.setState({ userDialogInput: action.target.value }) }
+      />
+    )
+  }
+
+  /**
+   * Handles save route button click
+   */
+  private onSaveRouteClick = () => {
+    this.setState({
+      savingRoute: true
+    });
+  }
+
+  /**
+   * Handles save route confirm dialog button click
+   */
+  private onRouteSaveConfirm = async () => {
+    const { accessToken } = this.props;
+    const { polyline, locationFrom, locationTo, userDialogInput, userSavedRoutes } = this.state;
+
+    if (!accessToken || !polyline || !locationFrom || !locationTo || !userDialogInput) {
       return;
     }
 
     try {
       const routesApi = Api.getRoutesApi(accessToken);
-      this.setState({ savingRoute: true });
-
-      await routesApi.createRoute({ route: { routePoints: polyline, locationFromName: locationFrom?.name, locationToName: locationTo?.name, savedAt: new Date() } });
-
-      this.setState({ savingRoute: false });
+      const createdRoute = await routesApi.createRoute({ route: { name: userDialogInput, routePoints: polyline, locationFromName: locationFrom?.name, locationToName: locationTo?.name, savedAt: new Date() } });
+      this.setState({
+        userSavedRoutes: userSavedRoutes.concat(createdRoute),
+        savingRoute: false
+      });
     } catch (error) {
-      this.setState({ savingRoute: false });
-      console.log(error);
+      this.setState({
+        savingRoute: false,
+        error: error
+      });
     }
+  }
 
+  /**
+   * Handles save route dialog cancel button click
+   */
+  private onRouteSaveCancel = () => {
+    this.setState({
+      savingRoute: false
+    });
   }
 
   /**
@@ -495,8 +552,10 @@ class MapScreen extends React.Component<Props, State> {
 
       this.setState({ locationFromOptions });
     } catch (error) {
-      console.log(error);
-      this.setState({ locationFromOptions: [] });
+      this.setState({
+        locationFromOptions: [],
+        error: error
+      });
     }
   }
 
@@ -533,8 +592,10 @@ class MapScreen extends React.Component<Props, State> {
 
       this.setState({ locationToOptions });
     } catch (error) {
-      console.log(error);
-      this.setState({ locationToOptions: [] });
+      this.setState({
+        locationToOptions: [],
+        error: error
+      });
     }
   }
 
@@ -569,8 +630,13 @@ class MapScreen extends React.Component<Props, State> {
 
       this.setState({ route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13, polyline }); 
     } catch (error) {
-      this.setState({ locationFrom: undefined, locationTo: undefined, route: undefined, loadingRoute: false });
-      console.log(error);
+      this.setState({
+        locationFrom: undefined,
+        locationTo: undefined,
+        route: undefined,
+        loadingRoute: false,
+        error: error
+      });
     }
   }
 
@@ -603,6 +669,51 @@ class MapScreen extends React.Component<Props, State> {
         this.setState({ locationTo: location, editingLocationFrom: true, locationToTextInput: nominatimResponse.display_name });
       }
     }
+  }
+
+  /**
+   * Sets locations name from coordinates
+   * 
+   * @param type GeocodeCoordinate type
+   * @param lat lat string
+   * @param lon lon string
+   */
+  private reverseGeocodeCoordinates = async (type: GeocodeCoordinate, lat: string, lon: string) => {
+    const nominatimResponse: Nominatim.NominatimResponse = await Nominatim.reverseGeocode({ lat, lon }, process.env.REACT_APP_NOMINATIM_URL);
+    const geocodedName = nominatimResponse.display_name;
+    if (type === "To") {
+      this.setState({
+        locationToTextInput: geocodedName
+      });
+    }
+
+    if (type === "From") {
+      this.setState({
+        locationFromTextInput: geocodedName
+      });
+    }
+  }
+
+  /**
+   * Sets currently displayed route
+   *
+   * @param route route to display
+   */
+  private onUserRouteSelect = (route: Route) => {
+    const sourceCoordinates = route.locationFromName.split(",");
+    const destCoordinates = route.locationToName.split(",");
+    this.reverseGeocodeCoordinates("From", sourceCoordinates[0], sourceCoordinates[1]);
+    this.reverseGeocodeCoordinates("To", destCoordinates[0], destCoordinates[1]);
+    this.displaySavedRoute(route);
+  }
+
+  /**
+   * Handles Error message clearing
+   */
+  private onClearError = () => {
+    this.setState({
+      error: undefined
+    });
   }
 
 }
