@@ -32,7 +32,7 @@
 
   "routes": {
     "deleteRoute": "Delete route",
-    "savedRoutes": "Tallennetut reitit",
+    "savedRoutes": "Saved routes",
     "findRoute": "Find route",
     "saveRoute": "Save route",
     "showMore": "Show all",
@@ -115,7 +115,7 @@
   },
 
   "common": {
-    "save": "Tallenna",
+    "save": "Save",
     "reset": "reset",
     "cancel": "cancel",
     "yes": "Yes"
