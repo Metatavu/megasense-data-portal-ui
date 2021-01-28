@@ -32,14 +32,15 @@
 
   "routes": {
     "deleteRoute": "Delete route",
-    "savedRoutes": "Tallennetut reitit",
+    "savedRoutes": "Saved routes",
     "findRoute": "Find route",
     "saveRoute": "Save route",
     "showMore": "Show all",
     "showLess": "Show less",
     "deleteDialog": "Please confirm deletion",
     "deleteButton": "Delete",
-    "cancelButton": "Cancel"
+    "cancelButton": "Cancel",
+    "routeNameInput": "Enter route name"
   },
 
   "statistics": {
@@ -115,7 +116,7 @@
   },
 
   "common": {
-    "save": "Tallenna",
+    "save": "Save",
     "reset": "reset",
     "cancel": "cancel",
     "yes": "Yes"

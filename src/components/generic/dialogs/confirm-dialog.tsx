@@ -8,6 +8,7 @@ import React from "react";
 interface Props extends WithStyles<typeof styles> {
   title: string;
   text?: string;
+  userInput?: () => JSX.Element;
   positiveButtonText: string;
   cancelButtonText: string;
   dialogVisible: boolean;
@@ -39,7 +40,7 @@ class ConfirmDialog extends React.Component<Props, State> {
    * Component render method
    */
   public render = () => {
-    const { classes, dialogVisible, onDialogConfirm, onDialogCancel, title, text, positiveButtonText, cancelButtonText } = this.props;
+    const { classes, dialogVisible, onDialogConfirm, onDialogCancel, title, text, userInput, positiveButtonText, cancelButtonText } = this.props;
 
     return (
       <Dialog
@@ -56,6 +57,9 @@ class ConfirmDialog extends React.Component<Props, State> {
             <DialogContentText id="alert-dialog-description">
               { text }
             </DialogContentText>
+          }
+          { userInput &&
+            userInput()
           }
         </DialogContent>
         <DialogActions>
