@@ -114,6 +114,8 @@ export interface IStrings extends LocalizedStringsMethods {
   
   to: string;
   from: string;
+  departureTime: string;
+  departureDate: string;
   savedRoutes: string;
   savedRoutesTo: string;
   savedRoutesFrom: string;

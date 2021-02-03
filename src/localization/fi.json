@@ -84,8 +84,10 @@
 
   "yourTokenIs": "Avaimesi on: ",
   "hello": "Hei,",
-  "from": "Valitse aloituspiste...",
   "to": "Valitse määränpää...",
+  "from": "Valitse aloituspiste...",
+  "departureTime": "Lähtöaika",
+  "departureDate": "Lähtöpäivä",
   "savedRoutes": "Tallennetut reitit",
   "savedRoutesFrom": "Mistä",
   "savedRoutesTo": "Minne",
