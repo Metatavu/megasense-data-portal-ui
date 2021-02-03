@@ -16,6 +16,12 @@
     "settings": "Asetukset",
     "about": "Tietoa projektista"
   },
+
+  "timePicker": {
+    "cancel": "Peruuta",
+    "clear": "Tyhjennä",
+    "today": "Tänään"
+  },
   
   "errorDialog": {
     "title": "Hups! Jokin meni pieleen",
@@ -84,8 +90,10 @@
 
   "yourTokenIs": "Avaimesi on: ",
   "hello": "Hei,",
-  "from": "Valitse aloituspiste...",
   "to": "Valitse määränpää...",
+  "from": "Valitse aloituspiste...",
+  "departureTime": "Lähtöaika",
+  "departureDate": "Lähtöpäivä",
   "savedRoutes": "Tallennetut reitit",
   "savedRoutesFrom": "Mistä",
   "savedRoutesTo": "Minne",

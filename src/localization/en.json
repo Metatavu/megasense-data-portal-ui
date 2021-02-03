@@ -17,6 +17,12 @@
     "about": "About"
   },
 
+  "timePicker": {
+    "cancel": "Cancel",
+    "clear": "Clear",
+    "today": "Today"
+  },
+
   "errorDialog": {
     "title": "Whoops! Something went wrong",
     "reloadPage": "Try reloading the page.",
@@ -83,8 +89,10 @@
   },
 
   "yourTokenIs": "Your token is: ",
-  "from": "From",
   "to": "To",
+  "from": "From",
+  "departureTime": "Departure time",
+  "departureDate": "Departure date",
   "savedRoutes": "Saved routes",
   "savedRoutesFrom": "From",
   "savedRoutesTo": "To",
