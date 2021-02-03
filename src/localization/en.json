@@ -42,6 +42,13 @@
     "cancelButton": "Cancel"
   },
 
+  "places": {
+    "deletePlace": "Poista paikka",
+    "savedPlaces": "Tallennetut paikat",
+    "savePlace": "Tallenna paikka",
+    "findPlace": "Löytää paikka"
+  },
+
   "statistics": {
     "title": "Statistics",
     "selectPollution": "Select pollution:",

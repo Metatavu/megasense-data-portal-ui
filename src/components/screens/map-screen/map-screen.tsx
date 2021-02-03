@@ -24,6 +24,7 @@ import theme from "../../../theme/theme";
 import { Location, NullableToken } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
+import FavouritePlaces from "../../favourite-places/favourite-places";
 import { styles } from "./map-screen.styles";
 
 
@@ -182,6 +183,11 @@ class MapScreen extends React.Component<Props, State> {
           showSavedRoutes={ !!accessToken } 
           onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute } 
         />
+        {/* <FavouritePlaces
+          savedRoutes={ userSavedRoutes } 
+          showSavedRoutes={ !!accessToken } 
+          onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute }
+        /> */}
       </>
     );
   }

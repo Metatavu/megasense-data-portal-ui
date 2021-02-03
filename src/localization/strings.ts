@@ -64,6 +64,16 @@ export interface IStrings extends LocalizedStringsMethods {
   };
 
   /**
+   * Translations for places
+   */
+  places: {
+    deletePlace: string;
+    savedPlaces: string;
+    savePlace: string;
+    findPlace: string;
+  };
+
+  /**
    * Translations for statistics screen
    */
   statistics: {

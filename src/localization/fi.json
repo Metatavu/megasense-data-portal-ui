@@ -42,6 +42,13 @@
     "cancelButton": "Peruuta"
   },
 
+  "places": {
+    "deletePlace": "Poista paikka",
+    "savedPlaces": "Tallennetut paikat",
+    "savePlace": "Tallenna paikka",
+    "findPlace": "Löytää paikka"
+  },
+
   "statistics": {
     "title": "Tilastot",
     "selectPollution": "Valitse saaste:",
