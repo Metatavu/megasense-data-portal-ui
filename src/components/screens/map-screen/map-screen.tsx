@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, Divider, IconButton, InputAdornment, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Button, CircularProgress, Divider, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
 import AccessibleIcon from "@material-ui/icons/Accessible";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
 import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
@@ -31,8 +31,6 @@ import { KeyboardDatePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from 
 import MomentUtils from "@date-io/moment";
 import moment from "moment";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
-import EventIcon from '@material-ui/icons/Event';
-
 
 /**
  * Interface describing component props
