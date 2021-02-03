@@ -18,6 +18,14 @@ import {
     HomeAddressFromJSON,
     HomeAddressFromJSONTyped,
     HomeAddressToJSON,
+    PollutantPenalties,
+    PollutantPenaltiesFromJSON,
+    PollutantPenaltiesFromJSONTyped,
+    PollutantPenaltiesToJSON,
+    PollutantThresholds,
+    PollutantThresholdsFromJSON,
+    PollutantThresholdsFromJSONTyped,
+    PollutantThresholdsToJSON,
 } from './';
 
 /**
@@ -32,6 +40,24 @@ export interface UserSettings {
      * @memberof UserSettings
      */
     homeAddress?: HomeAddress;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserSettings
+     */
+    showMobileWelcomeScreen: boolean;
+    /**
+     * 
+     * @type {PollutantPenalties}
+     * @memberof UserSettings
+     */
+    pollutantPenalties: PollutantPenalties;
+    /**
+     * 
+     * @type {PollutantThresholds}
+     * @memberof UserSettings
+     */
+    pollutantThresholds: PollutantThresholds;
 }
 
 export function UserSettingsFromJSON(json: any): UserSettings {
@@ -44,7 +70,10 @@ export function UserSettingsFromJSONTyped(json: any, ignoreDiscriminator: boolea
     }
     return {
         
-        'homeAddress': !exists(json, 'homeAddress') ? undefined : json['homeAddress'],
+        'homeAddress': !exists(json, 'homeAddress') ? undefined : HomeAddressFromJSON(json['homeAddress']),
+        'showMobileWelcomeScreen': json['showMobileWelcomeScreen'],
+        'pollutantPenalties': PollutantPenaltiesFromJSON(json['pollutantPenalties']),
+        'pollutantThresholds': PollutantThresholdsFromJSON(json['pollutantThresholds']),
     };
 }
 
@@ -57,7 +86,10 @@ export function UserSettingsToJSON(value?: UserSettings | null): any {
     }
     return {
         
-        'homeAddress': value.homeAddress,
+        'homeAddress': HomeAddressToJSON(value.homeAddress),
+        'showMobileWelcomeScreen': value.showMobileWelcomeScreen,
+        'pollutantPenalties': PollutantPenaltiesToJSON(value.pollutantPenalties),
+        'pollutantThresholds': PollutantThresholdsToJSON(value.pollutantThresholds),
     };
 }
 

@@ -39,7 +39,8 @@
     "showLess": "Näytä vähemmän",
     "deleteDialog": "Vahvista poisto",
     "deleteButton": "Poista",
-    "cancelButton": "Peruuta"
+    "cancelButton": "Peruuta",
+    "routeNameInput": "Anna reitin nimi"
   },
 
   "places": {

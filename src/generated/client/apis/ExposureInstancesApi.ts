@@ -24,6 +24,10 @@ export interface CreateExposureInstanceRequest {
     exposureInstance: ExposureInstance;
 }
 
+export interface DeleteExposureInstanceRequest {
+    exposureInstanceId: string;
+}
+
 export interface FindExposureInstanceRequest {
     exposureInstanceId: string;
 }
@@ -77,6 +81,43 @@ export class ExposureInstancesApi extends runtime.BaseAPI {
     async createExposureInstance(requestParameters: CreateExposureInstanceRequest): Promise<ExposureInstance> {
         const response = await this.createExposureInstanceRaw(requestParameters);
         return await response.value();
+    }
+
+    /**
+     * Deletes an exposure instance
+     */
+    async deleteExposureInstanceRaw(requestParameters: DeleteExposureInstanceRequest): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.exposureInstanceId === null || requestParameters.exposureInstanceId === undefined) {
+            throw new runtime.RequiredError('exposureInstanceId','Required parameter requestParameters.exposureInstanceId was null or undefined when calling deleteExposureInstance.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = typeof token === 'function' ? token("bearerAuth", []) : token;
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/exposureInstances/{exposureInstanceId}`.replace(`{${"exposureInstanceId"}}`, encodeURIComponent(String(requestParameters.exposureInstanceId))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Deletes an exposure instance
+     */
+    async deleteExposureInstance(requestParameters: DeleteExposureInstanceRequest): Promise<void> {
+        await this.deleteExposureInstanceRaw(requestParameters);
     }
 
     /**

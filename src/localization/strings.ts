@@ -61,6 +61,7 @@ export interface IStrings extends LocalizedStringsMethods {
     deleteDialog: string;
     deleteButton: string;
     cancelButton: string;
+    routeNameInput: string;
   };
 
   /**

@@ -379,7 +379,11 @@ class Settings extends React.Component<Props, State> {
     const userSettingsApi = Api.getUsersApi(accessToken);
     if (streetAddress === "" && postalCode === "" && city === "" && country === "") {
       try {
-        const userSettings = {};
+        const userSettings = {
+          showMobileWelcomeScreen: false,
+          pollutantPenalties: {},
+          pollutantThresholds: {}
+        };
         if (userSettingsExist) {
           await userSettingsApi.updateUserSettings({ 
             userSettings: userSettings
@@ -402,6 +406,9 @@ class Settings extends React.Component<Props, State> {
   
       try {
         const userSettings = {
+          showMobileWelcomeScreen: false,
+          pollutantPenalties: {},
+          pollutantThresholds: {},
           homeAddress: homeAddress
         };
 
