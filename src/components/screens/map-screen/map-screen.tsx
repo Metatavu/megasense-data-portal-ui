@@ -644,7 +644,6 @@ class MapScreen extends React.Component<Props, State> {
   }
   /**
    * Fires when user changes the departure date
-   * 
    * @param date input date
    */
   private onStartDateChange = (date: MaterialUiPickersDate) => {
