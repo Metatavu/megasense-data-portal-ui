@@ -38,26 +38,31 @@ export const styles = createStyles({
     flexDirection: "column"
   },
 
-  routingTimeControls: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    width: "max-content",
-    color: "rgba(255,255,255,0.5)"
-  },
-
-  routingDateControls: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: "7px",
-    width: "max-content",
-    color: "rgba(255,255,255,0.5)"
-  },
-
-  departureDate: {
-    width: "35%",
-    marginLeft: "5%"
+  keyboardTimePicker: {
+    "& .MuiInputBase-root": {
+      color: "#fff"
+    },
+    "& label": {
+      color: "rgba(255,255,255,0.8)",
+      "&.Mui-focused": {
+        color: "#fff"
+      }
+    },
+    "& .MuiIconButton-root": {
+      color: "#fff",
+      padding: 0
+    },
+    "& .MuiInput-underline:after": {
+      borderBottom: "2px solid rgba(255,255,255,1)",
+    },
+    "& .MuiInput-underline:before": {
+      borderBottom: "1px solid rgba(255,255,255,0.8)",
+    },
+    "&:hover": {
+      "& .MuiInput-underline:before": {
+        borderBottom: "1px solid rgba(255,255,255,1)",
+      }
+    }
   },
 
   routingFormButton: {
@@ -73,7 +78,18 @@ export const styles = createStyles({
   autoCompleteInputWrapper: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    "& .MuiInput-underline:after": {
+      borderBottom: "2px solid rgba(255,255,255,1)",
+    },
+    "& .MuiInput-underline:before": {
+      borderBottom: "1px solid rgba(255,255,255,0.8)",
+    },
+    "&:hover": {
+      "& .MuiInput-underline:before": {
+        borderBottom: "1px solid rgba(255,255,255,1)",
+      }
+    }
   },
 
   routingFormInput: {

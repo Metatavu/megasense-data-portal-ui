@@ -33,6 +33,15 @@ export interface IStrings extends LocalizedStringsMethods {
   };
 
   /**
+   * Translations for timepicker
+   */
+  timePicker: {
+    today: string;
+    cancel: string;
+    clear: string;
+  };
+
+  /**
    * Translations for error dialog
    */
   errorDialog: {

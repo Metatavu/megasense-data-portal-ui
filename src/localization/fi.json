@@ -16,6 +16,12 @@
     "settings": "Asetukset",
     "about": "Tietoa projektista"
   },
+
+  "timePicker": {
+    "cancel": "Peruuta",
+    "clear": "Tyhjennä",
+    "today": "Tänään"
+  },
   
   "errorDialog": {
     "title": "Hups! Jokin meni pieleen",

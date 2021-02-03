@@ -1,4 +1,4 @@
-import { Button, CircularProgress, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Button, CircularProgress, Divider, IconButton, InputAdornment, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
 import AccessibleIcon from "@material-ui/icons/Accessible";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
 import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
@@ -316,7 +316,6 @@ class MapScreen extends React.Component<Props, State> {
             options={ locationFromOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
             value={ locationFrom }
-            size="small" 
             renderInput={ (params) => 
               <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
                 <MyLocationIcon fontSize="small" htmlColor="#FFF" />
@@ -338,7 +337,6 @@ class MapScreen extends React.Component<Props, State> {
             options={ locationToOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
             value={ locationTo } 
-            size="small"
             style={{ marginTop: theme.spacing(2) }}
             renderInput={ (params) => 
               <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
@@ -353,35 +351,38 @@ class MapScreen extends React.Component<Props, State> {
               </div>
             } 
           />
-          <div className={ classes.routingDateControls }>
-            <EventIcon fontSize="small" htmlColor="#FFF" />
-            <p className={ classes.routingFormInput }>
-              { strings.departureDate }
-            </p>
+          <Box mt={ 4 }>
+            <Divider light />
+          </Box>
+          <Box mt={ 2 }>
             <MuiPickersUtilsProvider utils = { MomentUtils }>
               <KeyboardDatePicker
-                className={ classes.departureDate }
+                todayLabel={ strings.timePicker.today}
+                cancelLabel={ strings.timePicker.cancel }
+                inputVariant="standard"
+                showTodayButton
+                className={ classes.keyboardTimePicker }
+                fullWidth
+                label={ strings.departureDate }
                 variant="dialog"
-                color="secondary"
-                format="MM/DD/yyyy"
-                size = "small"
+                format="MM.DD.yyyy"
                 value = { departureTime }
                 onChange = { this.onStartDateChange }
                 disableToolbar = { true }
               />
             </MuiPickersUtilsProvider>
-          </div>
-          <div className={ classes.routingTimeControls }>
-            <AccessTimeIcon fontSize="small" htmlColor="#FFF" />
-            <p className={ classes.routingFormInput }>
-              { strings.departureTime }
-            </p>
+          </Box>
+          <Box mt={ 2 }>
             <MuiPickersUtilsProvider utils = { MomentUtils }>
               <KeyboardTimePicker
-                className={ classes.departureDate }
+                cancelLabel={ strings.timePicker.cancel }
+                inputVariant="standard"
+                className={ classes.keyboardTimePicker }
+                fullWidth
+                ampm={ false }
+                label={ strings.departureTime }
                 variant="dialog"
                 keyboardIcon={ <AccessTimeIcon /> }
-                size="small"
                 value={ departureTime }
                 onChange={ this.onStartDateChange }
                 KeyboardButtonProps={{
@@ -389,7 +390,7 @@ class MapScreen extends React.Component<Props, State> {
                 }}
               />
             </MuiPickersUtilsProvider>
-          </div>
+          </Box>
         </div>
         <div className={ classes.routingControls }>
           <Button
