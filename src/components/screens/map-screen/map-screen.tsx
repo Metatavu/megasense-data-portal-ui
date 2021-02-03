@@ -642,7 +642,6 @@ class MapScreen extends React.Component<Props, State> {
     }
     this.setState({ locationTo });
   }
-
   /**
    * Fires when user changes the departure date
    * 
