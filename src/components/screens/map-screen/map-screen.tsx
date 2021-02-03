@@ -301,7 +301,17 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderRoutingForm = (): JSX.Element => {
     const { classes, accessToken } = this.props;
-    const { locationFrom, locationTo, departureTime, locationFromOptions, locationToOptions, locationFromTextInput, locationToTextInput, loadingRoute, savingRoute } = this.state;
+    const {
+      locationFrom,
+      locationTo,
+      departureTime,
+      locationFromOptions,
+      locationToOptions,
+      locationFromTextInput,
+      locationToTextInput,
+      loadingRoute,
+      savingRoute
+    } = this.state;
 
     return (
       <div className={ classes.routingForm }>
