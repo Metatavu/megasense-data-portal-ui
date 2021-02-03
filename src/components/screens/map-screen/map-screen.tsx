@@ -17,14 +17,14 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { setDisplayedRoute } from "../../../actions/route";
 import Api from "../../../api";
-import { AirQuality, Route } from "../../../generated/client";
+import { AirQuality, Route, FavouriteLocation } from "../../../generated/client";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
 import { Location, NullableToken, GeocodeCoordinate } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
-import FavouritePlaces from "../../favourite-places/favourite-places";
+import FavouriteLocations from "../../favourite-locations/favourite-locations";
 import { styles } from "./map-screen.styles";
 import ConfirmDialog from "../../generic/dialogs/confirm-dialog";
 
@@ -53,12 +53,14 @@ interface State {
   locationToOptions: Location[];
   polyline? : string;
   savingRoute: boolean;
+  savingLocation: boolean;
   airQuality: AirQuality[];
   previousZoom: number;
   locationFromTextInput: string;
   locationToTextInput: string;
   loadingUserSettings: boolean;
   userSavedRoutes: Route[];
+  userFavouriteLocations: FavouriteLocation[];
   userDialogInput?: string;
   error?: string | Error | Response;
 }
@@ -86,12 +88,14 @@ class MapScreen extends React.Component<Props, State> {
       locationFromOptions: [],
       locationToOptions: [],
       savingRoute: false,
+      savingLocation: false,
       airQuality: [],
       previousZoom: 12,
       locationFromTextInput: "",
       locationToTextInput: "",
       loadingUserSettings: false,
-      userSavedRoutes: []
+      userSavedRoutes: [],
+      userFavouriteLocations: []
     };
 
     this.mapRef = React.createRef();
@@ -119,6 +123,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ airQuality });
 
     this.getUserSavedRoutes();
+    this.getUserFavouriteLocations();
   }
 
   /**
@@ -158,6 +163,7 @@ class MapScreen extends React.Component<Props, State> {
       >
         { this.renderMap() }
         { this.renderSaveRouteConfirmDialog() }
+        { this.renderSaveLocationConfirmDialog() }
       </AppLayout>
       
     );
@@ -168,7 +174,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderDrawerContent = () => {
     const { accessToken, classes } = this.props;
-    const { userSavedRoutes } = this.state;
+    const { userSavedRoutes, userFavouriteLocations } = this.state;
     return (
       <>
         <Toolbar />
@@ -190,11 +196,12 @@ class MapScreen extends React.Component<Props, State> {
           onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute }
           onUserRouteSelect={ this.onUserRouteSelect }
         />
-        {/* <FavouritePlaces
-          savedRoutes={ userSavedRoutes } 
-          showSavedRoutes={ !!accessToken } 
-          onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute }
-        /> */}
+        <FavouriteLocations
+          savedFavouriteLocations={ userFavouriteLocations } 
+          showFavouriteLocations={ !!accessToken } 
+          onDeleteUserFavouriteLocation={ this.onDeleteUserSavedRoute }
+          onUserLocationSelect={ this.onUserLocationSelect }
+        />
       </>
     );
   }
@@ -297,11 +304,29 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
+   * Loads user favourite locations
+   */
+  private getUserFavouriteLocations = async () => {
+    const { accessToken } = this.props;
+    
+    if (!accessToken) {
+      return;
+    }
+
+    const locationsApi = Api.getLocationsApi(accessToken);
+    const userFavouriteLocations = await locationsApi.listUserFavouriteLocations();
+
+    this.setState({
+      userFavouriteLocations
+    });
+  }
+
+  /**
    * Renders the form for routing
    */
   private renderRoutingForm = (): JSX.Element => {
     const { classes, accessToken } = this.props;
-    const { locationFrom, locationTo, locationFromOptions, locationToOptions, locationFromTextInput, locationToTextInput, loadingRoute, savingRoute } = this.state;
+    const { locationFrom, locationTo, locationFromOptions, locationToOptions, locationFromTextInput, locationToTextInput, loadingRoute, savingRoute, route } = this.state;
 
     return (
       <div className={ classes.routingForm }>
@@ -368,7 +393,7 @@ class MapScreen extends React.Component<Props, State> {
           >
             { strings.routes.findRoute }
           </Button>
-          { accessToken &&
+          { accessToken && route &&
             <Button
               variant="outlined"
               onClick={ this.onSaveRouteClick }
@@ -382,6 +407,22 @@ class MapScreen extends React.Component<Props, State> {
               }
               >
               { strings.routes.saveRoute }
+            </Button>
+          }
+          { accessToken && locationFrom &&
+            <Button
+              variant="outlined"
+              onClick={ this.onSaveLocationClick }
+              className={ classes.routingFormButton }
+              endIcon={
+                savingRoute ?
+                <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
+                :
+                <SaveIcon htmlColor="#fff"
+                />
+              }
+              >
+              { strings.locations.saveLocation }
             </Button>
           }
         </div>
@@ -451,20 +492,37 @@ class MapScreen extends React.Component<Props, State> {
           dialogVisible={ savingRoute } 
           onDialogConfirm={ this.onRouteSaveConfirm } 
           onDialogCancel={ this.onRouteSaveCancel }
-          userInput={ this.renderDialogRouteNameInput } />
+          userInput={ this.renderDialogNameInput } />
+    )
+  }
+
+  /**
+   * Renders save location dialog
+   */
+  private renderSaveLocationConfirmDialog = () => {
+    const { savingLocation } = this.state;
+    return (
+      <ConfirmDialog 
+          title={ strings.locations.saveLocation } 
+          positiveButtonText={ strings.common.save } 
+          cancelButtonText={ strings.common.cancel } 
+          dialogVisible={ savingLocation } 
+          onDialogConfirm={ this.onLocationSaveConfirm } 
+          onDialogCancel={ this.onLocationSaveCancel }
+          userInput={ this.renderDialogNameInput } />
     )
   }
 
   /**
    * Renders user input field for dialog
    */
-  private renderDialogRouteNameInput = () => {
+  private renderDialogNameInput = () => {
     const { userDialogInput } = this.state;
     return (
       <TextField
         label={ strings.routes.routeNameInput }
         value={ userDialogInput }
-        onChange={ this.onRouteNameInputChange }
+        onChange={ this.onDialogNameInputChange }
       />
     )
   }
@@ -515,7 +573,7 @@ class MapScreen extends React.Component<Props, State> {
    * 
    * @param action input action
    */
-  private onRouteNameInputChange = (action: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+  private onDialogNameInputChange = (action: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     this.setState({
       userDialogInput: action.target.value
     });
@@ -527,6 +585,56 @@ class MapScreen extends React.Component<Props, State> {
   private onRouteSaveCancel = () => {
     this.setState({
       savingRoute: false
+    });
+  }
+
+  /**
+   * Handles save location button click
+   */
+  private onSaveLocationClick = () => {
+    this.setState({
+      savingLocation: true
+    });
+  }
+
+  /**
+   * Handles save location confirm dialog button click
+   */
+  private onLocationSaveConfirm = async () => {
+    const { accessToken } = this.props;
+    const { locationFrom, locationTo, userDialogInput, userFavouriteLocations } = this.state;
+
+    if (!accessToken || !locationFrom || !locationTo || !userDialogInput) {
+      return;
+    }
+
+    try {
+      const locationsApi = Api.getLocationsApi(accessToken);
+      const createdLocation = await locationsApi.createUserFavouriteLocation({
+        favouriteLocation: {
+          name: userDialogInput,
+          latitude: this.coordinatesFromString(locationFrom.coordinates)[0],
+          longitude: this.coordinatesFromString(locationFrom.coordinates)[1]
+        }
+      });
+      this.setState({
+        userFavouriteLocations: userFavouriteLocations.concat(createdLocation),
+        savingLocation: false
+      });
+    } catch (error) {
+      this.setState({
+        savingLocation: false,
+        error: error
+      });
+    }
+  }
+
+  /**
+   * Handles save location dialog cancel button click
+   */
+  private onLocationSaveCancel = () => {
+    this.setState({
+      savingLocation: false
     });
   }
 
@@ -728,6 +836,15 @@ class MapScreen extends React.Component<Props, State> {
     this.reverseGeocodeCoordinates(GeocodeCoordinate.From, sourceCoordinates[0], sourceCoordinates[1]);
     this.reverseGeocodeCoordinates(GeocodeCoordinate.To, destCoordinates[0], destCoordinates[1]);
     this.displaySavedRoute(route);
+  }
+
+  /**
+   * Sets currently displayed location
+   *
+   * @param location location to display
+   */
+  private onUserLocationSelect = (location: FavouriteLocation) => {
+    console.log("Selected location ", location.name);
   }
 
   /**

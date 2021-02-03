@@ -67,11 +67,11 @@ export interface IStrings extends LocalizedStringsMethods {
   /**
    * Translations for places
    */
-  places: {
-    deletePlace: string;
-    savedPlaces: string;
-    savePlace: string;
-    findPlace: string;
+  locations: {
+    deleteLocation: string;
+    savedLocations: string;
+    saveLocation: string;
+    findLocation: string;
   };
 
   /**

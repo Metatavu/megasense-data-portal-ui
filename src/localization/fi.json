@@ -43,11 +43,11 @@
     "routeNameInput": "Anna reitin nimi"
   },
 
-  "places": {
-    "deletePlace": "Poista paikka",
-    "savedPlaces": "Tallennetut paikat",
-    "savePlace": "Tallenna paikka",
-    "findPlace": "Löytää paikka"
+  "locations": {
+    "deleteLocation": "Poista paikka",
+    "savedLocations": "Tallennetut paikat",
+    "saveLocation": "Tallenna paikka",
+    "findLocation": "Löytää paikka"
   },
 
   "statistics": {

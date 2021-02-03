@@ -43,11 +43,11 @@
     "routeNameInput": "Enter route name"
   },
 
-  "places": {
-    "deletePlace": "Poista paikka",
-    "savedPlaces": "Tallennetut paikat",
-    "savePlace": "Tallenna paikka",
-    "findPlace": "Löytää paikka"
+  "locations": {
+    "deleteLocation": "Delete location",
+    "savedLocations": "Saved locations",
+    "saveLocation": "Save location",
+    "findLocation": "Find location"
   },
 
   "statistics": {

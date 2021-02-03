@@ -1,8 +1,8 @@
 import { Avatar, Button, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Toolbar, Typography, withStyles, WithStyles } from "@material-ui/core";
 import React from "react";
-import { Route } from "../../generated/client";
+import { FavouriteLocation } from "../../generated/client";
 import LogoIcon from "../../resources/svg/logo-icon";
-import { styles } from "./favourite-places.styles";
+import { styles } from "./favourite-locations.styles";
 import strings from "../../localization/strings";
 import DeleteIcon from "@material-ui/icons/DeleteForeverOutlined";
 import ConfirmDialog from "../generic/dialogs/confirm-dialog";
@@ -11,18 +11,19 @@ import ConfirmDialog from "../generic/dialogs/confirm-dialog";
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles> {
-  savedRoutes?: Route[];
-  showSavedRoutes?: boolean;
-  onDeleteUserSavedRoute: (routeId: string) => void;
+  savedFavouriteLocations?: FavouriteLocation[];
+  showFavouriteLocations?: boolean;
+  onDeleteUserFavouriteLocation: (favouriteLocationId: string) => void;
+  onUserLocationSelect: (location: FavouriteLocation) => void;
 }
 
 /**
  * Interface describing component state
  */
 interface State {
-  showAllUserRoutes: boolean;
-  routeDeleteInitiated: boolean,
-  routeToDelete?: Route
+  showAllFavouriteLocations: boolean;
+  locationDeleteInitiated: boolean;
+  locationToDelete?: FavouriteLocation;
 }
 
 /**
@@ -38,8 +39,8 @@ class FavouritePlaces extends React.Component<Props, State> {
   constructor (props: Props) {
     super(props);
     this.state = {
-      showAllUserRoutes: false,
-      routeDeleteInitiated: false
+      showAllFavouriteLocations: false,
+      locationDeleteInitiated: false
     };
   }
 
@@ -48,25 +49,25 @@ class FavouritePlaces extends React.Component<Props, State> {
    */
   public render = () => {
     const { classes } = this.props;
-    const { routeDeleteInitiated } = this.state;
+    const { locationDeleteInitiated } = this.state;
     return (
       <>
         <Toolbar>
-          <Typography variant="h2">{ strings.places.savedPlaces }</Typography>
+          <Typography variant="h2">{ strings.locations.savedLocations }</Typography>
         </Toolbar>
         <List style={{ paddingTop: 0 }}>
           { this.renderListItems() }
         </List>
         <div className={ classes.showMoreButtonContainer }>
           <Button color="secondary" fullWidth variant="contained" onClick={ this.onShowMoreClick }>
-            { this.state.showAllUserRoutes ? strings.routes.showLess : strings.routes.showMore }
+            { this.state.showAllFavouriteLocations ? strings.routes.showLess : strings.routes.showMore }
           </Button>
         </div>
         <ConfirmDialog 
           title={ strings.deleteConfirm } 
           positiveButtonText={ strings.common.yes } 
           cancelButtonText={ strings.common.cancel } 
-          dialogVisible={ routeDeleteInitiated } 
+          dialogVisible={ locationDeleteInitiated } 
           onDialogConfirm={ this.onDeleteConfirm } 
           onDialogCancel={ this.onDeleteCancel } />
       </>
@@ -77,25 +78,25 @@ class FavouritePlaces extends React.Component<Props, State> {
    * Returns rendered user saved routes
    */
   private renderListItems = () => {
-    const { savedRoutes, showSavedRoutes } = this.props;
-    const { showAllUserRoutes } = this.state;
+    const { savedFavouriteLocations, showFavouriteLocations } = this.props;
+    const { showAllFavouriteLocations } = this.state;
 
-    if (!savedRoutes || !showSavedRoutes) {
+    if (!savedFavouriteLocations || !showFavouriteLocations) {
       return;
     }
 
-    const existingRoutes = savedRoutes.map(route => {
-      if (route.locationFromName && route.locationToName) {
-        return route;
+    const existingLocations = savedFavouriteLocations.map(location => {
+      if (location.latitude && location.longitude) {
+        return location;
       }
-    }).filter( (route: Route | undefined): route is Route => !!route );
+    }).filter( (location: FavouriteLocation | undefined): location is FavouriteLocation => !!location );
 
-    const routesToDisplay = showAllUserRoutes ? existingRoutes : existingRoutes.splice(0, 2);
+    const locationsToDisplay = showAllFavouriteLocations ? existingLocations : existingLocations.splice(0, 2);
 
-    return routesToDisplay.map((route, index) => {
+    return locationsToDisplay.map((location, index) => {
       
-      const from = this.truncateName(route.locationFromName, 40);
-      const to = this.truncateName(route.locationToName, 40);
+      const lat = location.latitude;
+      const lon = location.longitude;
 
       return (
         <ListItem button key={ index }>
@@ -105,14 +106,14 @@ class FavouritePlaces extends React.Component<Props, State> {
             </Avatar>
           </ListItemAvatar>
           <ListItemText 
-            primary="Route name"
-            secondary={ `${ from } - ${ to }` }
+            primary={ location.name }
+            secondary={ `${ lat } - ${ lon }` }
           />
           <ListItemSecondaryAction>
             <IconButton 
               size="small" 
-              title={ strings.routes.deleteRoute } 
-              onClick={ () => this.onDeleteRouteClick(route) }
+              title={ strings.locations.deleteLocation } 
+              onClick={ () => this.onDeleteLocationClick(location) }
             >
               <DeleteIcon />
             </IconButton>
@@ -123,37 +124,34 @@ class FavouritePlaces extends React.Component<Props, State> {
   }
 
   /**
-   * Formats and truncates a name string
-   * 
-   * @param name name string
-   * @param delimiter delimiter number
+   * List location item click handler click handler
+   *
+   * @param route route clicked
    */
-  private truncateName = (name: string, delimiter: number ) => {
-    if (name.length <= delimiter) {
-      return name;
-    }
-    return `${ name.slice(0, delimiter) }...`;
+  private onListItemClick = (location: FavouriteLocation) => {
+    const { onUserLocationSelect } = this.props;
+    onUserLocationSelect(location);
   }
 
   /**
-   * Initiate route deletion dialog click handler
+   * Initiate location deletion dialog click handler
    *
-   * @param routeId route Id string
+   * @param location favourite location
    */
-  private onDeleteRouteClick = (route: Route) => {
+  private onDeleteLocationClick = (location: FavouriteLocation) => {
     this.setState({
-      routeDeleteInitiated: true,
-      routeToDelete: route 
+      locationDeleteInitiated: true,
+      locationToDelete: location 
     });
   }
 
   /**
-   * Show more saved routes action handler
+   * Show more saved locations action handler
    */
   private onShowMoreClick = () => {
-    const { showAllUserRoutes } = this.state;
+    const { showAllFavouriteLocations } = this.state;
     this.setState({
-      showAllUserRoutes: !showAllUserRoutes
+      showAllFavouriteLocations: !showAllFavouriteLocations
     });
   }
 
@@ -161,12 +159,12 @@ class FavouritePlaces extends React.Component<Props, State> {
    * Delete confirm action handler
    */
   private onDeleteConfirm = () => {
-    const { onDeleteUserSavedRoute } = this.props;
-    const { routeToDelete } = this.state;
-    onDeleteUserSavedRoute(routeToDelete?.id!);
+    const { onDeleteUserFavouriteLocation } = this.props;
+    const { locationToDelete } = this.state;
+    onDeleteUserFavouriteLocation(locationToDelete?.id!);
     this.setState({
-      routeDeleteInitiated: false,
-      routeToDelete: undefined
+      locationDeleteInitiated: false,
+      locationToDelete: undefined
     })
   }
 
@@ -175,8 +173,8 @@ class FavouritePlaces extends React.Component<Props, State> {
    */
   private onDeleteCancel = () => {
     this.setState({
-      routeDeleteInitiated: false,
-      routeToDelete: undefined
+      locationDeleteInitiated: false,
+      locationToDelete: undefined
     })
   }
 }
