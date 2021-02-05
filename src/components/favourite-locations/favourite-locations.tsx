@@ -99,7 +99,7 @@ class FavouritePlaces extends React.Component<Props, State> {
       const lon = location.longitude;
 
       return (
-        <ListItem button key={ index }>
+        <ListItem button key={ index } onClick={ () => this.onListItemClick(location) }>
           <ListItemAvatar>
             <Avatar>
               <LogoIcon htmlColor="#fff" fontSize="small" />
