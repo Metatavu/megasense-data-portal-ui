@@ -78,7 +78,7 @@ class FavouriteLocations extends React.Component<Props, State> {
    * Returns rendered user favourite locations
    */
   private renderListItems = () => {
-    const { savedFavouriteLocations, showFavouriteLocations } = this.props;
+    const { savedFavouriteLocations, showFavouriteLocations, onUserLocationSelect } = this.props;
     const { showAllFavouriteLocations } = this.state;
 
     if (!savedFavouriteLocations || !showFavouriteLocations) {
@@ -95,7 +95,7 @@ class FavouriteLocations extends React.Component<Props, State> {
       const lon = location.longitude;
 
       return (
-        <ListItem button key={ index } onClick={ () => this.onListItemClick(location) }>
+        <ListItem button key={ index } onClick={ () => onUserLocationSelect(location) }>
           <ListItemAvatar>
             <Avatar>
               <LogoIcon htmlColor="#fff" fontSize="small" />
@@ -117,16 +117,6 @@ class FavouriteLocations extends React.Component<Props, State> {
         </ListItem>
       )
     });
-  }
-
-  /**
-   * List location item click handler
-   *
-   * @param location location clicked
-   */
-  private onListItemClick = (location: FavouriteLocation) => {
-    const { onUserLocationSelect } = this.props;
-    onUserLocationSelect(location);
   }
 
   /**

@@ -533,10 +533,10 @@ class MapScreen extends React.Component<Props, State> {
               <h3>
                 { selectedFavouriteLocation.name }
               </h3>
-              <Button onClick={ () => this.onSetSourceClick(selectedFavouriteLocation.coordinates, selectedFavouriteLocation.name) }>
+              <Button onClick={ this.onSetSourceClick(selectedFavouriteLocation.coordinates, selectedFavouriteLocation.name) }>
                 { strings.from }
               </Button>
-              <Button onClick={ () => this.onSetDestinationClick(selectedFavouriteLocation.coordinates, selectedFavouriteLocation.name) }>
+              <Button onClick={ this.onSetDestinationClick(selectedFavouriteLocation.coordinates, selectedFavouriteLocation.name) }>
                 { strings.to }
               </Button>
             </Popup>
@@ -722,6 +722,8 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Handles save location button click
+   *
+   * @param coordinates coordinates string
    */
   private onSaveLocationClick = (coordinates: string) => {
     this.setState({
@@ -1015,7 +1017,7 @@ class MapScreen extends React.Component<Props, State> {
   /**
    * Turns selected favourite location to source location 
    */
-  private onSetSourceClick = (coordinates: string, name: string) => {
+  private onSetSourceClick = (coordinates: string, name: string) => () => {
     this.setState({
       locationFrom: {coordinates, name}
     });
@@ -1027,8 +1029,11 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Turns selected favourite location to destination location 
+   *
+   * @param coordinates coordinates string
+   * @param name name string
    */
-  private onSetDestinationClick = (coordinates: string, name: string) => {
+  private onSetDestinationClick = (coordinates: string, name: string) => () => {
     this.setState({
       locationTo: {coordinates, name}
     });
