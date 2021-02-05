@@ -327,9 +327,7 @@ class MapScreen extends React.Component<Props, State> {
     const locationsApi = Api.getLocationsApi(accessToken);
     const userFavouriteLocations = await locationsApi.listUserFavouriteLocations();
 
-    this.setState({
-      userFavouriteLocations
-    });
+    this.setState({ userFavouriteLocations });
   }
 
   /**
@@ -745,11 +743,12 @@ class MapScreen extends React.Component<Props, State> {
 
     try {
       const locationsApi = Api.getLocationsApi(accessToken);
+      const [latitude, longitude] = this.coordinatesFromString(savingLocationCoordinates);
       const createdLocation = await locationsApi.createUserFavouriteLocation({
         favouriteLocation: {
           name: userDialogInput,
-          latitude: this.coordinatesFromString(savingLocationCoordinates)[0],
-          longitude: this.coordinatesFromString(savingLocationCoordinates)[1]
+          latitude: latitude,
+          longitude: longitude
         }
       });
       this.setState({

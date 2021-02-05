@@ -85,11 +85,7 @@ class FavouriteLocations extends React.Component<Props, State> {
       return;
     }
 
-    const existingLocations = savedFavouriteLocations.map(location => {
-      if (location.latitude && location.longitude) {
-        return location;
-      }
-    }).filter( (location: FavouriteLocation | undefined): location is FavouriteLocation => !!location );
+    const existingLocations = savedFavouriteLocations.filter((location: FavouriteLocation | undefined) => location && location.latitude && location.longitude);
 
     const locationsToDisplay = showAllFavouriteLocations ? existingLocations : existingLocations.splice(0, 2);
 
