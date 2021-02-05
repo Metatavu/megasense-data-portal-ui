@@ -27,9 +27,9 @@ interface State {
 }
 
 /**
- * Component for saved routes listing
+ * Component for favourite locations listing
  */
-class FavouritePlaces extends React.Component<Props, State> {
+class FavouriteLocations extends React.Component<Props, State> {
 
   /**
    * Component constructor
@@ -60,7 +60,7 @@ class FavouritePlaces extends React.Component<Props, State> {
         </List>
         <div className={ classes.showMoreButtonContainer }>
           <Button color="secondary" fullWidth variant="contained" onClick={ this.onShowMoreClick }>
-            { this.state.showAllFavouriteLocations ? strings.routes.showLess : strings.routes.showMore }
+            { this.state.showAllFavouriteLocations ? strings.showLess : strings.showMore }
           </Button>
         </div>
         <ConfirmDialog 
@@ -75,7 +75,7 @@ class FavouritePlaces extends React.Component<Props, State> {
   }
 
   /**
-   * Returns rendered user saved routes
+   * Returns rendered user favourite locations
    */
   private renderListItems = () => {
     const { savedFavouriteLocations, showFavouriteLocations } = this.props;
@@ -124,9 +124,9 @@ class FavouritePlaces extends React.Component<Props, State> {
   }
 
   /**
-   * List location item click handler click handler
+   * List location item click handler
    *
-   * @param route route clicked
+   * @param location location clicked
    */
   private onListItemClick = (location: FavouriteLocation) => {
     const { onUserLocationSelect } = this.props;
@@ -179,4 +179,4 @@ class FavouritePlaces extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(FavouritePlaces);
+export default withStyles(styles)(FavouriteLocations);
