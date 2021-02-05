@@ -1,4 +1,4 @@
-import { Button, CircularProgress, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Button, CircularProgress, Divider, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
 import AccessibleIcon from "@material-ui/icons/Accessible";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
 import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
@@ -27,7 +27,11 @@ import SavedRoutes from "../../routes/saved-routes/saved-routes";
 import FavouriteLocations from "../../favourite-locations/favourite-locations";
 import { styles } from "./map-screen.styles";
 import ConfirmDialog from "../../generic/dialogs/confirm-dialog";
-
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import { KeyboardDatePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import MomentUtils from "@date-io/moment";
+import moment from "moment";
+import AccessTimeIcon from "@material-ui/icons/AccessTime";
 
 /**
  * Interface describing component props
@@ -45,6 +49,7 @@ interface Props extends WithStyles<typeof styles>{
 interface State {
   locationFrom?: Location;
   locationTo?: Location;
+  departureTime: Date;
   route?: LatLng[];
   mapViewport: Viewport;
   editingLocationFrom: boolean;
@@ -79,6 +84,7 @@ class MapScreen extends React.Component<Props, State> {
   constructor (props: Props) {
     super(props);
     this.state = {
+      departureTime: new Date(),
       mapViewport: {
         zoom: 12 , 
         center: [60.1699, 24.9384]
@@ -326,7 +332,18 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderRoutingForm = (): JSX.Element => {
     const { classes, accessToken } = this.props;
-    const { locationFrom, locationTo, locationFromOptions, locationToOptions, locationFromTextInput, locationToTextInput, loadingRoute, savingRoute, route } = this.state;
+    const {
+      locationFrom,
+      locationTo,
+      departureTime,
+      locationFromOptions,
+      locationToOptions,
+      locationFromTextInput,
+      locationToTextInput,
+      loadingRoute,
+      savingRoute,
+      route
+    } = this.state;
 
     return (
       <div className={ classes.routingForm }>
@@ -339,7 +356,6 @@ class MapScreen extends React.Component<Props, State> {
             options={ locationFromOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
             value={ locationFrom }
-            size="small" 
             renderInput={ (params) => 
               <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
                 <MyLocationIcon fontSize="small" htmlColor="#FFF" />
@@ -353,7 +369,6 @@ class MapScreen extends React.Component<Props, State> {
               </div>
             } 
           />
-
           <Autocomplete
             filterOptions={ (options) => options } 
             onInputChange={ this.onLocationToChange } 
@@ -362,7 +377,6 @@ class MapScreen extends React.Component<Props, State> {
             options={ locationToOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
             value={ locationTo } 
-            size="small"
             style={{ marginTop: theme.spacing(2) }}
             renderInput={ (params) => 
               <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
@@ -377,6 +391,46 @@ class MapScreen extends React.Component<Props, State> {
               </div>
             } 
           />
+          <Box mt={ 4 }>
+            <Divider light />
+          </Box>
+          <Box mt={ 2 }>
+            <MuiPickersUtilsProvider utils = { MomentUtils }>
+              <KeyboardDatePicker
+                todayLabel={ strings.timePicker.today}
+                cancelLabel={ strings.timePicker.cancel }
+                inputVariant="standard"
+                showTodayButton
+                className={ classes.keyboardTimePicker }
+                fullWidth
+                label={ strings.departureDate }
+                variant="dialog"
+                format="MM.DD.yyyy"
+                value = { departureTime }
+                onChange = { this.onStartDateChange }
+                disableToolbar = { true }
+              />
+            </MuiPickersUtilsProvider>
+          </Box>
+          <Box mt={ 2 }>
+            <MuiPickersUtilsProvider utils = { MomentUtils }>
+              <KeyboardTimePicker
+                cancelLabel={ strings.timePicker.cancel }
+                inputVariant="standard"
+                className={ classes.keyboardTimePicker }
+                fullWidth
+                ampm={ false }
+                label={ strings.departureTime }
+                variant="dialog"
+                keyboardIcon={ <AccessTimeIcon /> }
+                value={ departureTime }
+                onChange={ this.onStartDateChange }
+                KeyboardButtonProps={{
+                  'aria-label': 'change time',
+                }}
+              />
+            </MuiPickersUtilsProvider>
+          </Box>
         </div>
         <div className={ classes.routingControls }>
           <Button
@@ -703,6 +757,22 @@ class MapScreen extends React.Component<Props, State> {
     }
     this.setState({ locationTo });
   }
+  /**
+   * Fires when user changes the departure date
+   * @param date input date
+   */
+  private onStartDateChange = (date: MaterialUiPickersDate) => {
+    if (!date) {
+      return null;
+    }
+    console.log("Current time was ", this.state.departureTime);
+    const selectedTime = date.format("h.mma");
+    console.log("Selected time is ", new Date(selectedTime));
+
+    this.setState({
+      departureTime: date.toDate()
+    });
+  }
 
   /**
    * Fires when the value of the text input for locationTo changes and updates the list of options
@@ -737,7 +807,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ loadingRoute: true });
 
     try {
-      const { locationTo, locationFrom, mapViewport } = this.state;
+      const { locationTo, locationFrom, mapViewport, departureTime } = this.state;
 
       if (locationFrom && !locationFrom.coordinates) {
         locationFrom.coordinates = locationFrom.name;
@@ -747,7 +817,7 @@ class MapScreen extends React.Component<Props, State> {
         locationTo.coordinates = locationTo.name;
       }
 
-      const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=12:30pm&date=08-29-2020&maxWalkDistance=100000&sulfurDioxideThreshold=1&sulfurDioxidePenalty=200`);
+      const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=${moment(departureTime).format("h:mma")}&date=${moment(departureTime).format("MM-DD-yyyy")}&maxWalkDistance=100000&sulfurDioxideThreshold=1&sulfurDioxidePenalty=200`);
       const jsonResponse = await routingResponse.json();
       const polyline = jsonResponse.plan.itineraries[0].legs[0].legGeometry.points;
       const route = PolyUtil.decode(polyline);
