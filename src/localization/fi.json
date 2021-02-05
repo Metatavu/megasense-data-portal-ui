@@ -41,12 +41,17 @@
     "savedRoutes": "Tallennetut reitit",
     "findRoute": "Hae reitti",
     "saveRoute": "Tallenna reitti",
-    "showMore": "Näytä kaikki",
-    "showLess": "Näytä vähemmän",
     "deleteDialog": "Vahvista poisto",
     "deleteButton": "Poista",
     "cancelButton": "Peruuta",
     "routeNameInput": "Anna reitin nimi"
+  },
+
+  "locations": {
+    "deleteLocation": "Poista paikka",
+    "savedLocations": "Tallennetut paikat",
+    "saveLocation": "Tallenna paikka",
+    "findLocation": "Löytää paikka"
   },
 
   "statistics": {
@@ -114,6 +119,8 @@
   "deleteRoute": "Poista reitti",
   "collapseMenuText": "Piilota menu",
   "user": "Käyttäjä",
+  "showMore": "Näytä kaikki",
+  "showLess": "Näytä vähemmän",
 
   "pollutants": {
     "PM25": "Pienhiukkaset",

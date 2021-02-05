@@ -65,12 +65,20 @@ export interface IStrings extends LocalizedStringsMethods {
     savedRoutes: string;
     saveRoute: string;
     findRoute: string;
-    showMore: string;
-    showLess: string;
     deleteDialog: string;
     deleteButton: string;
     cancelButton: string;
     routeNameInput: string;
+  };
+
+  /**
+   * Translations for places
+   */
+  locations: {
+    deleteLocation: string;
+    savedLocations: string;
+    saveLocation: string;
+    findLocation: string;
   };
 
   /**
@@ -145,6 +153,8 @@ export interface IStrings extends LocalizedStringsMethods {
   deleteRoute: string;
   collapseMenuText: string;
   user: string;
+  showMore: string;
+  showLess: string;
 
   pollutants: {
     PM25: string;

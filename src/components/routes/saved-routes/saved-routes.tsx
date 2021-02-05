@@ -60,7 +60,7 @@ class SavedRoutes extends React.Component<Props, State> {
         </List>
         <div className={ classes.showMoreButtonContainer }>
           <Button color="secondary" fullWidth variant="contained" onClick={ this.onShowMoreClick }>
-            { this.state.showAllUserRoutes ? strings.routes.showLess : strings.routes.showMore }
+            { this.state.showAllUserRoutes ? strings.showLess : strings.showMore }
           </Button>
         </div>
         <ConfirmDialog 

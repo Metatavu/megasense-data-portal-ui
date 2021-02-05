@@ -11,19 +11,20 @@ import { LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
 import * as Nominatim from "nominatim-browser";
 import * as PolyUtil from "polyline-encoded";
 import React, { ChangeEvent } from "react";
-import { Map, Marker, Polyline, TileLayer, Viewport } from "react-leaflet";
+import { Map, Marker, Polyline, Popup, TileLayer, Viewport } from "react-leaflet";
 import HeatmapLayer from "react-leaflet-heatmap-layer";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { setDisplayedRoute } from "../../../actions/route";
 import Api from "../../../api";
-import { AirQuality, Route } from "../../../generated/client";
+import { AirQuality, Route, FavouriteLocation } from "../../../generated/client";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
 import { Location, NullableToken, GeocodeCoordinate } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
+import FavouriteLocations from "../../favourite-locations/favourite-locations";
 import { styles } from "./map-screen.styles";
 import ConfirmDialog from "../../generic/dialogs/confirm-dialog";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
@@ -57,14 +58,19 @@ interface State {
   locationToOptions: Location[];
   polyline? : string;
   savingRoute: boolean;
+  savingLocation: boolean;
   airQuality: AirQuality[];
   previousZoom: number;
   locationFromTextInput: string;
   locationToTextInput: string;
   loadingUserSettings: boolean;
   userSavedRoutes: Route[];
+  userFavouriteLocations: FavouriteLocation[];
   userDialogInput?: string;
   error?: string | Error | Response;
+  savingLocationCoordinates: string;
+  mapInteractive: boolean;
+  selectedFavouriteLocation?: Location; 
 }
 
 /**
@@ -91,12 +97,16 @@ class MapScreen extends React.Component<Props, State> {
       locationFromOptions: [],
       locationToOptions: [],
       savingRoute: false,
+      savingLocation: false,
       airQuality: [],
       previousZoom: 12,
       locationFromTextInput: "",
       locationToTextInput: "",
       loadingUserSettings: false,
-      userSavedRoutes: []
+      userSavedRoutes: [],
+      userFavouriteLocations: [],
+      savingLocationCoordinates: "",
+      mapInteractive: true,
     };
 
     this.mapRef = React.createRef();
@@ -124,6 +134,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ airQuality });
 
     this.getUserSavedRoutes();
+    this.getUserFavouriteLocations();
   }
 
   /**
@@ -163,6 +174,7 @@ class MapScreen extends React.Component<Props, State> {
       >
         { this.renderMap() }
         { this.renderSaveRouteConfirmDialog() }
+        { this.renderSaveLocationConfirmDialog() }
       </AppLayout>
       
     );
@@ -173,7 +185,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderDrawerContent = () => {
     const { accessToken, classes } = this.props;
-    const { userSavedRoutes } = this.state;
+    const { userSavedRoutes, userFavouriteLocations } = this.state;
     return (
       <>
         <Toolbar />
@@ -194,6 +206,12 @@ class MapScreen extends React.Component<Props, State> {
           showSavedRoutes={ !!accessToken } 
           onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute }
           onUserRouteSelect={ this.onUserRouteSelect }
+        />
+        <FavouriteLocations
+          savedFavouriteLocations={ userFavouriteLocations } 
+          showFavouriteLocations={ !!accessToken } 
+          onDeleteUserFavouriteLocation={ this.onDeleteUserFavouriteLocation }
+          onUserLocationSelect={ this.onUserLocationSelect }
         />
       </>
     );
@@ -297,6 +315,43 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
+   * Loads user favourite locations
+   */
+  private getUserFavouriteLocations = async () => {
+    const { accessToken } = this.props;
+    
+    if (!accessToken) {
+      return;
+    }
+
+    const locationsApi = Api.getLocationsApi(accessToken);
+    const userFavouriteLocations = await locationsApi.listUserFavouriteLocations();
+
+    this.setState({ userFavouriteLocations });
+  }
+
+  /**
+   * Deletes user favourite location
+   *
+   * @param locationId location Id string
+   */
+  private onDeleteUserFavouriteLocation = async (locationId: string) => {
+    const { accessToken } = this.props;
+    const { userFavouriteLocations } = this.state;
+    
+    if (!accessToken) {
+      return;
+    }
+
+    const locationsApi = Api.getLocationsApi(accessToken);
+    await locationsApi.deleteUserFavouriteLocation({ favouriteId: locationId });
+
+    this.setState({
+      userFavouriteLocations: userFavouriteLocations.filter(userSavedLocation => userSavedLocation.id !== locationId)
+    });
+  }
+
+  /**
    * Renders the form for routing
    */
   private renderRoutingForm = (): JSX.Element => {
@@ -310,7 +365,8 @@ class MapScreen extends React.Component<Props, State> {
       locationFromTextInput,
       locationToTextInput,
       loadingRoute,
-      savingRoute
+      savingRoute,
+      route
     } = this.state;
 
     return (
@@ -415,7 +471,7 @@ class MapScreen extends React.Component<Props, State> {
           >
             { strings.routes.findRoute }
           </Button>
-          { accessToken &&
+          { accessToken && route &&
             <Button
               variant="outlined"
               onClick={ this.onSaveRouteClick }
@@ -441,7 +497,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderMap = (): JSX.Element => {
     const { classes } = this.props;
-    const { route, locationFrom, locationTo, airQuality } = this.state;
+    const { route, locationFrom, locationTo, selectedFavouriteLocation, airQuality, mapInteractive, locationFromTextInput , locationToTextInput } = this.state;
 
     return (
       <Map
@@ -452,6 +508,8 @@ class MapScreen extends React.Component<Props, State> {
         doubleClickZoom={ false } 
         onViewportChange={ this.onViewportChange }  
         viewport={ this.state.mapViewport }
+        scrollWheelZoom={ mapInteractive }
+        dragging={ mapInteractive }
         >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -462,14 +520,67 @@ class MapScreen extends React.Component<Props, State> {
           <Polyline positions={ route }/>
         }
 
-        {
-          locationFrom?.coordinates &&
-          <Marker position={ this.coordinatesFromString(locationFrom.coordinates) }/>
+        { selectedFavouriteLocation?.coordinates &&
+          <Marker
+            ref={ this.openPopup }
+            position={ this.coordinatesFromString(selectedFavouriteLocation.coordinates) }
+          >
+            <Popup
+              onOpen={ this.switchMapInteraction }
+              onClose={ this.exitSelectedFavouriteLocation }
+              autoPan={ false }
+            >
+              <h3>
+                { selectedFavouriteLocation.name }
+              </h3>
+              <Button onClick={ this.onSetSourceClick(selectedFavouriteLocation.coordinates, selectedFavouriteLocation.name) }>
+                { strings.from }
+              </Button>
+              <Button onClick={ this.onSetDestinationClick(selectedFavouriteLocation.coordinates, selectedFavouriteLocation.name) }>
+                { strings.to }
+              </Button>
+            </Popup>
+          </Marker>
         }
 
-        {
-          locationTo?.coordinates &&
-          <Marker position={ this.coordinatesFromString(locationTo.coordinates) }/>
+        { locationFrom?.coordinates &&
+          <Marker position={ this.coordinatesFromString(locationFrom.coordinates) }>
+            <Popup
+              onOpen={ this.switchMapInteraction }
+              onClose={ this.switchMapInteraction }
+              autoPan={ false }
+            >
+              <h3>
+                { `${strings.from}:` }
+              </h3>
+              <p>
+                { locationFromTextInput || "" }
+              </p>
+              <Button onClick={ () => this.onSaveLocationClick(locationFrom.coordinates) }>
+                { strings.locations.saveLocation }
+              </Button>
+            </Popup>
+          </Marker>
+        }
+
+        { locationTo?.coordinates &&
+          <Marker position={ this.coordinatesFromString(locationTo.coordinates) }>
+            <Popup
+              onOpen={ this.switchMapInteraction }
+              onClose={ this.switchMapInteraction }
+              autoPan={ false }
+            >
+              <h3>
+                { `${strings.to}:` }
+              </h3>
+              <p>
+                { locationToTextInput || "" }
+              </p>
+              <Button onClick={ () => this.onSaveLocationClick(locationTo.coordinates) }>
+                { strings.locations.saveLocation }
+              </Button>
+            </Popup>
+          </Marker>
         }
 
         { this.state.mapViewport.zoom === 6 &&
@@ -498,22 +609,52 @@ class MapScreen extends React.Component<Props, State> {
           dialogVisible={ savingRoute } 
           onDialogConfirm={ this.onRouteSaveConfirm } 
           onDialogCancel={ this.onRouteSaveCancel }
-          userInput={ this.renderDialogRouteNameInput } />
+          userInput={ this.renderDialogNameInput } />
+    )
+  }
+
+  /**
+   * Renders save location dialog
+   */
+  private renderSaveLocationConfirmDialog = () => {
+    const { savingLocation } = this.state;
+    return (
+      <ConfirmDialog 
+          title={ strings.locations.saveLocation } 
+          positiveButtonText={ strings.common.save } 
+          cancelButtonText={ strings.common.cancel } 
+          dialogVisible={ savingLocation } 
+          onDialogConfirm={ this.onLocationSaveConfirm } 
+          onDialogCancel={ this.onLocationSaveCancel }
+          userInput={ this.renderDialogNameInput } />
     )
   }
 
   /**
    * Renders user input field for dialog
    */
-  private renderDialogRouteNameInput = () => {
+  private renderDialogNameInput = () => {
     const { userDialogInput } = this.state;
     return (
       <TextField
         label={ strings.routes.routeNameInput }
         value={ userDialogInput }
-        onChange={ this.onRouteNameInputChange }
+        onChange={ this.onDialogNameInputChange }
       />
     )
+  }
+
+  /**
+   * Opens popup when component renders
+   * 
+   * @param marker marker
+   */
+  private openPopup = (marker: Marker) => {
+    if (marker && marker.leafletElement) {
+      window.setTimeout(() => {
+        marker.leafletElement.openPopup();
+      })
+    }
   }
 
   /**
@@ -547,7 +688,8 @@ class MapScreen extends React.Component<Props, State> {
       });
       this.setState({
         userSavedRoutes: userSavedRoutes.concat(createdRoute),
-        savingRoute: false
+        savingRoute: false,
+        userDialogInput: ""
       });
     } catch (error) {
       this.setState({
@@ -562,7 +704,7 @@ class MapScreen extends React.Component<Props, State> {
    * 
    * @param action input action
    */
-  private onRouteNameInputChange = (action: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+  private onDialogNameInputChange = (action: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     this.setState({
       userDialogInput: action.target.value
     });
@@ -573,7 +715,65 @@ class MapScreen extends React.Component<Props, State> {
    */
   private onRouteSaveCancel = () => {
     this.setState({
-      savingRoute: false
+      savingRoute: false,
+      userDialogInput: ""
+    });
+  }
+
+  /**
+   * Handles save location button click
+   *
+   * @param coordinates coordinates string
+   */
+  private onSaveLocationClick = (coordinates: string) => {
+    this.setState({
+      savingLocation: true,
+      savingLocationCoordinates: coordinates
+    });
+  }
+
+  /**
+   * Handles save location confirm dialog button click
+   */
+  private onLocationSaveConfirm = async () => {
+    const { accessToken } = this.props;
+    const { userDialogInput, userFavouriteLocations, savingLocationCoordinates } = this.state;
+
+    if (!accessToken || !userDialogInput || !savingLocationCoordinates) {
+      return;
+    }
+
+    try {
+      const locationsApi = Api.getLocationsApi(accessToken);
+      const [latitude, longitude] = this.coordinatesFromString(savingLocationCoordinates);
+      const createdLocation = await locationsApi.createUserFavouriteLocation({
+        favouriteLocation: {
+          name: userDialogInput,
+          latitude: latitude,
+          longitude: longitude
+        }
+      });
+      this.setState({
+        userFavouriteLocations: userFavouriteLocations.concat(createdLocation),
+        savingLocationCoordinates: "",
+        savingLocation: false,
+        userDialogInput: ""
+      });
+    } catch (error) {
+      this.setState({
+        savingLocation: false,
+        error: error
+      });
+    }
+  }
+
+  /**
+   * Handles save location dialog cancel button click
+   */
+  private onLocationSaveCancel = () => {
+    this.setState({
+      savingLocation: false,
+      userDialogInput: ""
     });
   }
 
@@ -794,12 +994,82 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
+   * Sets currently displayed location
+   *
+   * @param location location to display
+   */
+  private onUserLocationSelect = (location: FavouriteLocation) => {
+    if (!location) {
+      return;
+    }
+
+    const coordinates = `${location.latitude},${location.longitude}`;
+    const locationObject = { name: location.name, coordinates };
+    this.setState({
+      mapViewport: {
+        center: [location.latitude, location.longitude],
+        zoom: 15
+      },
+      selectedFavouriteLocation: locationObject
+    });
+  }
+
+  /**
+   * Turns selected favourite location to source location 
+   */
+  private onSetSourceClick = (coordinates: string, name: string) => () => {
+    this.setState({
+      locationFrom: {coordinates, name}
+    });
+
+    const sourceCoordinates = coordinates.split(",");
+    this.reverseGeocodeCoordinates(GeocodeCoordinate.From, sourceCoordinates[0], sourceCoordinates[1]);
+    this.exitSelectedFavouriteLocation();
+  }
+
+  /**
+   * Turns selected favourite location to destination location 
+   *
+   * @param coordinates coordinates string
+   * @param name name string
+   */
+  private onSetDestinationClick = (coordinates: string, name: string) => () => {
+    this.setState({
+      locationTo: {coordinates, name}
+    });
+
+    const destCoordinates = coordinates.split(",");
+    this.reverseGeocodeCoordinates(GeocodeCoordinate.To, destCoordinates[0], destCoordinates[1]);
+    this.exitSelectedFavouriteLocation();
+  }
+
+  /**
    * Handles Error message clearing
    */
   private onClearError = () => {
     this.setState({
       error: undefined
     });
+  }
+
+  /**
+   * Hides selected favourite location marker
+   */
+  private exitSelectedFavouriteLocation = () => {
+    this.setState({
+      selectedFavouriteLocation: undefined,
+      mapInteractive: true
+    })
+  }
+
+  /**
+   * Switches map dragability
+   */
+  private switchMapInteraction = () => {
+    const { mapInteractive } = this.state;
+    this.setState({
+      mapInteractive: !mapInteractive
+    })
   }
 
 }

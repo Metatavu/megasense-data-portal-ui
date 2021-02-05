@@ -41,12 +41,17 @@
     "savedRoutes": "Saved routes",
     "findRoute": "Find route",
     "saveRoute": "Save route",
-    "showMore": "Show all",
-    "showLess": "Show less",
     "deleteDialog": "Please confirm deletion",
     "deleteButton": "Delete",
     "cancelButton": "Cancel",
     "routeNameInput": "Enter route name"
+  },
+
+  "locations": {
+    "deleteLocation": "Delete location",
+    "savedLocations": "Saved locations",
+    "saveLocation": "Save location",
+    "findLocation": "Find location"
   },
 
   "statistics": {
@@ -113,6 +118,8 @@
   "deleteRoute": "Delete route",
   "collapseMenuText": "Collapse menu",
   "user": "User",
+  "showMore": "Show all",
+  "showLess": "Show less",
 
   "pollutants": {
     "PM25": "PM25",

@@ -1,4 +1,4 @@
-import { AirQualityApi, Configuration, ExposureInstancesApi, RoutesApi, TotalExposureApi, UsersApi } from "../generated/client";
+import { AirQualityApi, Configuration, ExposureInstancesApi, FavouriteLocationsApi, RoutesApi, TotalExposureApi, UsersApi } from "../generated/client";
 import { NullableToken } from "../types";
 
 /**
@@ -6,13 +6,21 @@ import { NullableToken } from "../types";
  */
 export default class Api {
   /**
-  
    * Gets initialized routes API
    * 
    * @param accessToken access token
    */
   public static getRoutesApi (accessToken?: NullableToken): RoutesApi {
     return new RoutesApi(this.getConfiguration(accessToken));
+  }
+
+  /**
+   * Gets initialized locations API
+   * 
+   * @param accessToken access token
+   */
+  public static getLocationsApi (accessToken?: NullableToken): FavouriteLocationsApi {
+    return new FavouriteLocationsApi(this.getConfiguration(accessToken));
   }
 
   /**
