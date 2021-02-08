@@ -16,6 +16,12 @@
     "settings": "Asetukset",
     "about": "Tietoa projektista"
   },
+
+  "timePicker": {
+    "cancel": "Peruuta",
+    "clear": "Tyhjennä",
+    "today": "Tänään"
+  },
   
   "errorDialog": {
     "title": "Hups! Jokin meni pieleen",
@@ -35,11 +41,17 @@
     "savedRoutes": "Tallennetut reitit",
     "findRoute": "Hae reitti",
     "saveRoute": "Tallenna reitti",
-    "showMore": "Näytä kaikki",
-    "showLess": "Näytä vähemmän",
     "deleteDialog": "Vahvista poisto",
     "deleteButton": "Poista",
-    "cancelButton": "Peruuta"
+    "cancelButton": "Peruuta",
+    "routeNameInput": "Anna reitin nimi"
+  },
+
+  "locations": {
+    "deleteLocation": "Poista paikka",
+    "savedLocations": "Tallennetut paikat",
+    "saveLocation": "Tallenna paikka",
+    "findLocation": "Löytää paikka"
   },
 
   "statistics": {
@@ -83,8 +95,10 @@
 
   "yourTokenIs": "Avaimesi on: ",
   "hello": "Hei,",
-  "from": "Valitse aloituspiste...",
   "to": "Valitse määränpää...",
+  "from": "Valitse aloituspiste...",
+  "departureTime": "Lähtöaika",
+  "departureDate": "Lähtöpäivä",
   "savedRoutes": "Tallennetut reitit",
   "savedRoutesFrom": "Mistä",
   "savedRoutesTo": "Minne",
@@ -105,6 +119,8 @@
   "deleteRoute": "Poista reitti",
   "collapseMenuText": "Piilota menu",
   "user": "Käyttäjä",
+  "showMore": "Näytä kaikki",
+  "showLess": "Näytä vähemmän",
 
   "pollutants": {
     "PM25": "Pienhiukkaset",

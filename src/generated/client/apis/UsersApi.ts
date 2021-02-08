@@ -108,6 +108,39 @@ export class UsersApi extends runtime.BaseAPI {
     }
 
     /**
+     * Deletes user settings of the user who is logged in
+     */
+    async deleteUserSettingsRaw(): Promise<runtime.ApiResponse<void>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = typeof token === 'function' ? token("bearerAuth", []) : token;
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/users/settings`,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Deletes user settings of the user who is logged in
+     */
+    async deleteUserSettings(): Promise<void> {
+        await this.deleteUserSettingsRaw();
+    }
+
+    /**
      * Downloads the data of the user who is logged in
      */
     async downloadUserDataRaw(): Promise<runtime.ApiResponse<Blob>> {

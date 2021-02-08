@@ -30,6 +30,12 @@ export interface Route {
      * @type {string}
      * @memberof Route
      */
+    name: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Route
+     */
     routePoints: string;
     /**
      * 
@@ -62,6 +68,7 @@ export function RouteFromJSONTyped(json: any, ignoreDiscriminator: boolean): Rou
     return {
         
         'id': !exists(json, 'id') ? undefined : json['id'],
+        'name': json['name'],
         'routePoints': json['routePoints'],
         'locationFromName': json['locationFromName'],
         'locationToName': json['locationToName'],
@@ -79,6 +86,7 @@ export function RouteToJSON(value?: Route | null): any {
     return {
         
         'id': value.id,
+        'name': value.name,
         'routePoints': value.routePoints,
         'locationFromName': value.locationFromName,
         'locationToName': value.locationToName,

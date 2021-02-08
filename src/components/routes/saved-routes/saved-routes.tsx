@@ -14,6 +14,7 @@ interface Props extends WithStyles<typeof styles> {
   savedRoutes?: Route[];
   showSavedRoutes?: boolean;
   onDeleteUserSavedRoute: (routeId: string) => void;
+  onUserRouteSelect: (route: Route) => void;
 }
 
 /**
@@ -59,7 +60,7 @@ class SavedRoutes extends React.Component<Props, State> {
         </List>
         <div className={ classes.showMoreButtonContainer }>
           <Button color="secondary" fullWidth variant="contained" onClick={ this.onShowMoreClick }>
-            { this.state.showAllUserRoutes ? strings.routes.showLess : strings.routes.showMore }
+            { this.state.showAllUserRoutes ? strings.showLess : strings.showMore }
           </Button>
         </div>
         <ConfirmDialog 
@@ -93,19 +94,19 @@ class SavedRoutes extends React.Component<Props, State> {
     const routesToDisplay = showAllUserRoutes ? existingRoutes : existingRoutes.splice(0, 2);
 
     return routesToDisplay.map((route, index) => {
-      
+      const routeName = route.name;
       const from = this.truncateName(route.locationFromName, 40);
       const to = this.truncateName(route.locationToName, 40);
 
       return (
-        <ListItem button key={ index }>
+        <ListItem button key={ index } onClick={ () => this.onListItemClick(route) }>
           <ListItemAvatar>
             <Avatar>
               <LogoIcon htmlColor="#fff" fontSize="small" />
             </Avatar>
           </ListItemAvatar>
           <ListItemText 
-            primary="Route name"
+            primary={ routeName }
             secondary={ `${ from } - ${ to }` }
           />
           <ListItemSecondaryAction>
@@ -133,6 +134,16 @@ class SavedRoutes extends React.Component<Props, State> {
       return name;
     }
     return `${ name.slice(0, delimiter) }...`;
+  }
+
+  /**
+   * List route item click handler click handler
+   *
+   * @param route route clicked
+   */
+  private onListItemClick = (route: Route) => {
+    const { onUserRouteSelect } = this.props;
+    onUserRouteSelect(route);
   }
 
   /**

@@ -1,4 +1,4 @@
-import { Button, CircularProgress, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Button, CircularProgress, Divider, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
 import AccessibleIcon from "@material-ui/icons/Accessible";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
 import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
@@ -11,21 +11,27 @@ import { LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
 import * as Nominatim from "nominatim-browser";
 import * as PolyUtil from "polyline-encoded";
 import React, { ChangeEvent } from "react";
-import { Map, Marker, Polyline, TileLayer, Viewport } from "react-leaflet";
+import { Map, Marker, Polyline, Popup, TileLayer, Viewport } from "react-leaflet";
 import HeatmapLayer from "react-leaflet-heatmap-layer";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { setDisplayedRoute } from "../../../actions/route";
 import Api from "../../../api";
-import { AirQuality, Route } from "../../../generated/client";
+import { AirQuality, Route, FavouriteLocation } from "../../../generated/client";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
-import { Location, NullableToken } from "../../../types";
+import { Location, NullableToken, GeocodeCoordinate } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
+import FavouriteLocations from "../../favourite-locations/favourite-locations";
 import { styles } from "./map-screen.styles";
-
+import ConfirmDialog from "../../generic/dialogs/confirm-dialog";
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import { KeyboardDatePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import MomentUtils from "@date-io/moment";
+import moment from "moment";
+import AccessTimeIcon from "@material-ui/icons/AccessTime";
 
 /**
  * Interface describing component props
@@ -43,6 +49,7 @@ interface Props extends WithStyles<typeof styles>{
 interface State {
   locationFrom?: Location;
   locationTo?: Location;
+  departureTime: Date;
   route?: LatLng[];
   mapViewport: Viewport;
   editingLocationFrom: boolean;
@@ -51,12 +58,19 @@ interface State {
   locationToOptions: Location[];
   polyline? : string;
   savingRoute: boolean;
+  savingLocation: boolean;
   airQuality: AirQuality[];
   previousZoom: number;
   locationFromTextInput: string;
   locationToTextInput: string;
   loadingUserSettings: boolean;
   userSavedRoutes: Route[];
+  userFavouriteLocations: FavouriteLocation[];
+  userDialogInput?: string;
+  error?: string | Error | Response;
+  savingLocationCoordinates: string;
+  mapInteractive: boolean;
+  selectedFavouriteLocation?: Location; 
 }
 
 /**
@@ -73,6 +87,7 @@ class MapScreen extends React.Component<Props, State> {
   constructor (props: Props) {
     super(props);
     this.state = {
+      departureTime: new Date(),
       mapViewport: {
         zoom: 12 , 
         center: [60.1699, 24.9384]
@@ -82,12 +97,16 @@ class MapScreen extends React.Component<Props, State> {
       locationFromOptions: [],
       locationToOptions: [],
       savingRoute: false,
+      savingLocation: false,
       airQuality: [],
       previousZoom: 12,
       locationFromTextInput: "",
       locationToTextInput: "",
       loadingUserSettings: false,
-      userSavedRoutes: []
+      userSavedRoutes: [],
+      userFavouriteLocations: [],
+      savingLocationCoordinates: "",
+      mapInteractive: true,
     };
 
     this.mapRef = React.createRef();
@@ -115,6 +134,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ airQuality });
 
     this.getUserSavedRoutes();
+    this.getUserFavouriteLocations();
   }
 
   /**
@@ -122,7 +142,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   public render = () => {
     const { accessToken, keycloak, classes } = this.props;
-    const { loadingUserSettings } = this.state;
+    const { loadingUserSettings, error } = this.state;
 
     if (loadingUserSettings) {
       return (
@@ -149,8 +169,12 @@ class MapScreen extends React.Component<Props, State> {
         drawerContent={
           this.renderDrawerContent()
         }
+        error={ error }
+        clearError={ this.onClearError }
       >
         { this.renderMap() }
+        { this.renderSaveRouteConfirmDialog() }
+        { this.renderSaveLocationConfirmDialog() }
       </AppLayout>
       
     );
@@ -161,7 +185,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderDrawerContent = () => {
     const { accessToken, classes } = this.props;
-    const { userSavedRoutes } = this.state;
+    const { userSavedRoutes, userFavouriteLocations } = this.state;
     return (
       <>
         <Toolbar />
@@ -180,7 +204,14 @@ class MapScreen extends React.Component<Props, State> {
         <SavedRoutes 
           savedRoutes={ userSavedRoutes } 
           showSavedRoutes={ !!accessToken } 
-          onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute } 
+          onDeleteUserSavedRoute={ this.onDeleteUserSavedRoute }
+          onUserRouteSelect={ this.onUserRouteSelect }
+        />
+        <FavouriteLocations
+          savedFavouriteLocations={ userFavouriteLocations } 
+          showFavouriteLocations={ !!accessToken } 
+          onDeleteUserFavouriteLocation={ this.onDeleteUserFavouriteLocation }
+          onUserLocationSelect={ this.onUserLocationSelect }
         />
       </>
     );
@@ -284,11 +315,59 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
+   * Loads user favourite locations
+   */
+  private getUserFavouriteLocations = async () => {
+    const { accessToken } = this.props;
+    
+    if (!accessToken) {
+      return;
+    }
+
+    const locationsApi = Api.getLocationsApi(accessToken);
+    const userFavouriteLocations = await locationsApi.listUserFavouriteLocations();
+
+    this.setState({ userFavouriteLocations });
+  }
+
+  /**
+   * Deletes user favourite location
+   *
+   * @param locationId location Id string
+   */
+  private onDeleteUserFavouriteLocation = async (locationId: string) => {
+    const { accessToken } = this.props;
+    const { userFavouriteLocations } = this.state;
+    
+    if (!accessToken) {
+      return;
+    }
+
+    const locationsApi = Api.getLocationsApi(accessToken);
+    await locationsApi.deleteUserFavouriteLocation({ favouriteId: locationId });
+
+    this.setState({
+      userFavouriteLocations: userFavouriteLocations.filter(userSavedLocation => userSavedLocation.id !== locationId)
+    });
+  }
+
+  /**
    * Renders the form for routing
    */
   private renderRoutingForm = (): JSX.Element => {
     const { classes, accessToken } = this.props;
-    const { locationFrom, locationTo, locationFromOptions, locationToOptions, locationFromTextInput, locationToTextInput, loadingRoute, savingRoute } = this.state;
+    const {
+      locationFrom,
+      locationTo,
+      departureTime,
+      locationFromOptions,
+      locationToOptions,
+      locationFromTextInput,
+      locationToTextInput,
+      loadingRoute,
+      savingRoute,
+      route
+    } = this.state;
 
     return (
       <div className={ classes.routingForm }>
@@ -301,7 +380,6 @@ class MapScreen extends React.Component<Props, State> {
             options={ locationFromOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
             value={ locationFrom }
-            size="small" 
             renderInput={ (params) => 
               <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
                 <MyLocationIcon fontSize="small" htmlColor="#FFF" />
@@ -315,7 +393,6 @@ class MapScreen extends React.Component<Props, State> {
               </div>
             } 
           />
-
           <Autocomplete
             filterOptions={ (options) => options } 
             onInputChange={ this.onLocationToChange } 
@@ -324,7 +401,6 @@ class MapScreen extends React.Component<Props, State> {
             options={ locationToOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
             value={ locationTo } 
-            size="small"
             style={{ marginTop: theme.spacing(2) }}
             renderInput={ (params) => 
               <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
@@ -339,6 +415,46 @@ class MapScreen extends React.Component<Props, State> {
               </div>
             } 
           />
+          <Box mt={ 4 }>
+            <Divider light />
+          </Box>
+          <Box mt={ 2 }>
+            <MuiPickersUtilsProvider utils = { MomentUtils }>
+              <KeyboardDatePicker
+                todayLabel={ strings.timePicker.today}
+                cancelLabel={ strings.timePicker.cancel }
+                inputVariant="standard"
+                showTodayButton
+                className={ classes.keyboardTimePicker }
+                fullWidth
+                label={ strings.departureDate }
+                variant="dialog"
+                format="MM.DD.yyyy"
+                value = { departureTime }
+                onChange = { this.onStartDateChange }
+                disableToolbar = { true }
+              />
+            </MuiPickersUtilsProvider>
+          </Box>
+          <Box mt={ 2 }>
+            <MuiPickersUtilsProvider utils = { MomentUtils }>
+              <KeyboardTimePicker
+                cancelLabel={ strings.timePicker.cancel }
+                inputVariant="standard"
+                className={ classes.keyboardTimePicker }
+                fullWidth
+                ampm={ false }
+                label={ strings.departureTime }
+                variant="dialog"
+                keyboardIcon={ <AccessTimeIcon /> }
+                value={ departureTime }
+                onChange={ this.onStartDateChange }
+                KeyboardButtonProps={{
+                  'aria-label': 'change time',
+                }}
+              />
+            </MuiPickersUtilsProvider>
+          </Box>
         </div>
         <div className={ classes.routingControls }>
           <Button
@@ -355,10 +471,10 @@ class MapScreen extends React.Component<Props, State> {
           >
             { strings.routes.findRoute }
           </Button>
-          { accessToken &&
+          { accessToken && route &&
             <Button
               variant="outlined"
-              onClick={ this.saveRoute }
+              onClick={ this.onSaveRouteClick }
               className={ classes.routingFormButton }
               endIcon={
                 savingRoute ?
@@ -381,7 +497,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderMap = (): JSX.Element => {
     const { classes } = this.props;
-    const { route, locationFrom, locationTo, airQuality } = this.state;
+    const { route, locationFrom, locationTo, selectedFavouriteLocation, airQuality, mapInteractive, locationFromTextInput , locationToTextInput } = this.state;
 
     return (
       <Map
@@ -392,6 +508,8 @@ class MapScreen extends React.Component<Props, State> {
         doubleClickZoom={ false } 
         onViewportChange={ this.onViewportChange }  
         viewport={ this.state.mapViewport }
+        scrollWheelZoom={ mapInteractive }
+        dragging={ mapInteractive }
         >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -402,14 +520,67 @@ class MapScreen extends React.Component<Props, State> {
           <Polyline positions={ route }/>
         }
 
-        {
-          locationFrom?.coordinates &&
-          <Marker position={ this.coordinatesFromString(locationFrom.coordinates) }/>
+        { selectedFavouriteLocation?.coordinates &&
+          <Marker
+            ref={ this.openPopup }
+            position={ this.coordinatesFromString(selectedFavouriteLocation.coordinates) }
+          >
+            <Popup
+              onOpen={ this.switchMapInteraction }
+              onClose={ this.exitSelectedFavouriteLocation }
+              autoPan={ false }
+            >
+              <h3>
+                { selectedFavouriteLocation.name }
+              </h3>
+              <Button onClick={ this.onSetSourceClick(selectedFavouriteLocation.coordinates, selectedFavouriteLocation.name) }>
+                { strings.from }
+              </Button>
+              <Button onClick={ this.onSetDestinationClick(selectedFavouriteLocation.coordinates, selectedFavouriteLocation.name) }>
+                { strings.to }
+              </Button>
+            </Popup>
+          </Marker>
         }
 
-        {
-          locationTo?.coordinates &&
-          <Marker position={ this.coordinatesFromString(locationTo.coordinates) }/>
+        { locationFrom?.coordinates &&
+          <Marker position={ this.coordinatesFromString(locationFrom.coordinates) }>
+            <Popup
+              onOpen={ this.switchMapInteraction }
+              onClose={ this.switchMapInteraction }
+              autoPan={ false }
+            >
+              <h3>
+                { `${strings.from}:` }
+              </h3>
+              <p>
+                { locationFromTextInput || "" }
+              </p>
+              <Button onClick={ () => this.onSaveLocationClick(locationFrom.coordinates) }>
+                { strings.locations.saveLocation }
+              </Button>
+            </Popup>
+          </Marker>
+        }
+
+        { locationTo?.coordinates &&
+          <Marker position={ this.coordinatesFromString(locationTo.coordinates) }>
+            <Popup
+              onOpen={ this.switchMapInteraction }
+              onClose={ this.switchMapInteraction }
+              autoPan={ false }
+            >
+              <h3>
+                { `${strings.to}:` }
+              </h3>
+              <p>
+                { locationToTextInput || "" }
+              </p>
+              <Button onClick={ () => this.onSaveLocationClick(locationTo.coordinates) }>
+                { strings.locations.saveLocation }
+              </Button>
+            </Popup>
+          </Marker>
         }
 
         { this.state.mapViewport.zoom === 6 &&
@@ -426,28 +597,184 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
-   * Saves the route that is currently displayed on the map
+   * Renders save route dialog
    */
-  private saveRoute = async () => {
-    const accessToken = this.props.accessToken;
-    const { polyline, locationFrom, locationTo } = this.state;
+  private renderSaveRouteConfirmDialog = () => {
+    const { savingRoute } = this.state;
+    return (
+      <ConfirmDialog 
+          title={ strings.routes.saveRoute } 
+          positiveButtonText={ strings.common.save } 
+          cancelButtonText={ strings.common.cancel } 
+          dialogVisible={ savingRoute } 
+          onDialogConfirm={ this.onRouteSaveConfirm } 
+          onDialogCancel={ this.onRouteSaveCancel }
+          userInput={ this.renderDialogNameInput } />
+    )
+  }
 
-    if (!accessToken || !polyline || !locationFrom || !locationTo) {
+  /**
+   * Renders save location dialog
+   */
+  private renderSaveLocationConfirmDialog = () => {
+    const { savingLocation } = this.state;
+    return (
+      <ConfirmDialog 
+          title={ strings.locations.saveLocation } 
+          positiveButtonText={ strings.common.save } 
+          cancelButtonText={ strings.common.cancel } 
+          dialogVisible={ savingLocation } 
+          onDialogConfirm={ this.onLocationSaveConfirm } 
+          onDialogCancel={ this.onLocationSaveCancel }
+          userInput={ this.renderDialogNameInput } />
+    )
+  }
+
+  /**
+   * Renders user input field for dialog
+   */
+  private renderDialogNameInput = () => {
+    const { userDialogInput } = this.state;
+    return (
+      <TextField
+        label={ strings.routes.routeNameInput }
+        value={ userDialogInput }
+        onChange={ this.onDialogNameInputChange }
+      />
+    )
+  }
+
+  /**
+   * Opens popup when component renders
+   * 
+   * @param marker marker
+   */
+  private openPopup = (marker: Marker) => {
+    if (marker && marker.leafletElement) {
+      window.setTimeout(() => {
+        marker.leafletElement.openPopup();
+      })
+    }
+  }
+
+  /**
+   * Handles save route button click
+   */
+  private onSaveRouteClick = () => {
+    this.setState({
+      savingRoute: true
+    });
+  }
+
+  /**
+   * Handles save route confirm dialog button click
+   */
+  private onRouteSaveConfirm = async () => {
+    const { accessToken } = this.props;
+    const { polyline, locationFrom, locationTo, userDialogInput, userSavedRoutes } = this.state;
+
+    if (!accessToken || !polyline || !locationFrom || !locationTo || !userDialogInput) {
       return;
     }
 
     try {
       const routesApi = Api.getRoutesApi(accessToken);
-      this.setState({ savingRoute: true });
-
-      await routesApi.createRoute({ route: { routePoints: polyline, locationFromName: locationFrom?.name, locationToName: locationTo?.name, savedAt: new Date() } });
-
-      this.setState({ savingRoute: false });
+      const createdRoute = await routesApi.createRoute({
+        route: {
+          name: userDialogInput,
+          routePoints: polyline,
+          locationFromName: locationFrom?.name, locationToName: locationTo?.name, savedAt: new Date()
+        }
+      });
+      this.setState({
+        userSavedRoutes: userSavedRoutes.concat(createdRoute),
+        savingRoute: false,
+        userDialogInput: ""
+      });
     } catch (error) {
-      this.setState({ savingRoute: false });
-      console.log(error);
+      this.setState({
+        savingRoute: false,
+        error: error
+      });
+    }
+  }
+
+  /**
+   * Action handler for route name input
+   * 
+   * @param action input action
+   */
+  private onDialogNameInputChange = (action: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    this.setState({
+      userDialogInput: action.target.value
+    });
+  }
+
+  /**
+   * Handles save route dialog cancel button click
+   */
+  private onRouteSaveCancel = () => {
+    this.setState({
+      savingRoute: false,
+      userDialogInput: ""
+    });
+  }
+
+  /**
+   * Handles save location button click
+   *
+   * @param coordinates coordinates string
+   */
+  private onSaveLocationClick = (coordinates: string) => {
+    this.setState({
+      savingLocation: true,
+      savingLocationCoordinates: coordinates
+    });
+  }
+
+  /**
+   * Handles save location confirm dialog button click
+   */
+  private onLocationSaveConfirm = async () => {
+    const { accessToken } = this.props;
+    const { userDialogInput, userFavouriteLocations, savingLocationCoordinates } = this.state;
+
+    if (!accessToken || !userDialogInput || !savingLocationCoordinates) {
+      return;
     }
 
+    try {
+      const locationsApi = Api.getLocationsApi(accessToken);
+      const [latitude, longitude] = this.coordinatesFromString(savingLocationCoordinates);
+      const createdLocation = await locationsApi.createUserFavouriteLocation({
+        favouriteLocation: {
+          name: userDialogInput,
+          latitude: latitude,
+          longitude: longitude
+        }
+      });
+      this.setState({
+        userFavouriteLocations: userFavouriteLocations.concat(createdLocation),
+        savingLocationCoordinates: "",
+        savingLocation: false,
+        userDialogInput: ""
+      });
+    } catch (error) {
+      this.setState({
+        savingLocation: false,
+        error: error
+      });
+    }
+  }
+
+  /**
+   * Handles save location dialog cancel button click
+   */
+  private onLocationSaveCancel = () => {
+    this.setState({
+      savingLocation: false,
+      userDialogInput: ""
+    });
   }
 
   /**
@@ -495,8 +822,10 @@ class MapScreen extends React.Component<Props, State> {
 
       this.setState({ locationFromOptions });
     } catch (error) {
-      console.log(error);
-      this.setState({ locationFromOptions: [] });
+      this.setState({
+        locationFromOptions: [],
+        error: error
+      });
     }
   }
 
@@ -512,6 +841,22 @@ class MapScreen extends React.Component<Props, State> {
       locationTo = undefined;
     }
     this.setState({ locationTo });
+  }
+  /**
+   * Fires when user changes the departure date
+   * @param date input date
+   */
+  private onStartDateChange = (date: MaterialUiPickersDate) => {
+    if (!date) {
+      return null;
+    }
+    console.log("Current time was ", this.state.departureTime);
+    const selectedTime = date.format("h.mma");
+    console.log("Selected time is ", new Date(selectedTime));
+
+    this.setState({
+      departureTime: date.toDate()
+    });
   }
 
   /**
@@ -533,8 +878,10 @@ class MapScreen extends React.Component<Props, State> {
 
       this.setState({ locationToOptions });
     } catch (error) {
-      console.log(error);
-      this.setState({ locationToOptions: [] });
+      this.setState({
+        locationToOptions: [],
+        error: error
+      });
     }
   }
 
@@ -545,7 +892,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ loadingRoute: true });
 
     try {
-      const { locationTo, locationFrom, mapViewport } = this.state;
+      const { locationTo, locationFrom, mapViewport, departureTime } = this.state;
 
       if (locationFrom && !locationFrom.coordinates) {
         locationFrom.coordinates = locationFrom.name;
@@ -555,7 +902,7 @@ class MapScreen extends React.Component<Props, State> {
         locationTo.coordinates = locationTo.name;
       }
 
-      const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=12:30pm&date=08-29-2020&maxWalkDistance=100000&sulfurDioxideThreshold=1&sulfurDioxidePenalty=200`);
+      const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=${moment(departureTime).format("h:mma")}&date=${moment(departureTime).format("MM-DD-yyyy")}&maxWalkDistance=100000&sulfurDioxideThreshold=1&sulfurDioxidePenalty=200`);
       const jsonResponse = await routingResponse.json();
       const polyline = jsonResponse.plan.itineraries[0].legs[0].legGeometry.points;
       const route = PolyUtil.decode(polyline);
@@ -569,8 +916,13 @@ class MapScreen extends React.Component<Props, State> {
 
       this.setState({ route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13, polyline }); 
     } catch (error) {
-      this.setState({ locationFrom: undefined, locationTo: undefined, route: undefined, loadingRoute: false });
-      console.log(error);
+      this.setState({
+        locationFrom: undefined,
+        locationTo: undefined,
+        route: undefined,
+        loadingRoute: false,
+        error: error
+      });
     }
   }
 
@@ -603,6 +955,121 @@ class MapScreen extends React.Component<Props, State> {
         this.setState({ locationTo: location, editingLocationFrom: true, locationToTextInput: nominatimResponse.display_name });
       }
     }
+  }
+
+  /**
+   * Sets locations name from coordinates
+   * 
+   * @param type GeocodeCoordinate type
+   * @param lat lat string
+   * @param lon lon string
+   */
+  private reverseGeocodeCoordinates = async (type: GeocodeCoordinate, lat: string, lon: string) => {
+    const nominatimResponse: Nominatim.NominatimResponse = await Nominatim.reverseGeocode({ lat, lon }, process.env.REACT_APP_NOMINATIM_URL);
+    const geocodedName = nominatimResponse.display_name;
+    if (type === GeocodeCoordinate.To) {
+      this.setState({
+        locationToTextInput: geocodedName
+      });
+    }
+
+    if (type === GeocodeCoordinate.From) {
+      this.setState({
+        locationFromTextInput: geocodedName
+      });
+    }
+  }
+
+  /**
+   * Sets currently displayed route
+   *
+   * @param route route to display
+   */
+  private onUserRouteSelect = (route: Route) => {
+    const sourceCoordinates = route.locationFromName.split(",");
+    const destCoordinates = route.locationToName.split(",");
+    this.reverseGeocodeCoordinates(GeocodeCoordinate.From, sourceCoordinates[0], sourceCoordinates[1]);
+    this.reverseGeocodeCoordinates(GeocodeCoordinate.To, destCoordinates[0], destCoordinates[1]);
+    this.displaySavedRoute(route);
+  }
+
+  /**
+   * Sets currently displayed location
+   *
+   * @param location location to display
+   */
+  private onUserLocationSelect = (location: FavouriteLocation) => {
+    if (!location) {
+      return;
+    }
+
+    const coordinates = `${location.latitude},${location.longitude}`;
+    const locationObject = { name: location.name, coordinates };
+    this.setState({
+      mapViewport: {
+        center: [location.latitude, location.longitude],
+        zoom: 15
+      },
+      selectedFavouriteLocation: locationObject
+    });
+  }
+
+  /**
+   * Turns selected favourite location to source location 
+   */
+  private onSetSourceClick = (coordinates: string, name: string) => () => {
+    this.setState({
+      locationFrom: {coordinates, name}
+    });
+
+    const sourceCoordinates = coordinates.split(",");
+    this.reverseGeocodeCoordinates(GeocodeCoordinate.From, sourceCoordinates[0], sourceCoordinates[1]);
+    this.exitSelectedFavouriteLocation();
+  }
+
+  /**
+   * Turns selected favourite location to destination location 
+   *
+   * @param coordinates coordinates string
+   * @param name name string
+   */
+  private onSetDestinationClick = (coordinates: string, name: string) => () => {
+    this.setState({
+      locationTo: {coordinates, name}
+    });
+
+    const destCoordinates = coordinates.split(",");
+    this.reverseGeocodeCoordinates(GeocodeCoordinate.To, destCoordinates[0], destCoordinates[1]);
+    this.exitSelectedFavouriteLocation();
+  }
+
+  /**
+   * Handles Error message clearing
+   */
+  private onClearError = () => {
+    this.setState({
+      error: undefined
+    });
+  }
+
+  /**
+   * Hides selected favourite location marker
+   */
+  private exitSelectedFavouriteLocation = () => {
+    this.setState({
+      selectedFavouriteLocation: undefined,
+      mapInteractive: true
+    })
+  }
+
+  /**
+   * Switches map dragability
+   */
+  private switchMapInteraction = () => {
+    const { mapInteractive } = this.state;
+    this.setState({
+      mapInteractive: !mapInteractive
+    })
   }
 
 }
