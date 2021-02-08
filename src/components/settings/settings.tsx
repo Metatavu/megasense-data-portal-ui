@@ -70,7 +70,6 @@ class Settings extends React.Component<Props, State> {
           </Toolbar>
         </AppBar>
         { this.renderAccordionMenu() }
-        {/* Settings content here */}
       </>
     );
   }
