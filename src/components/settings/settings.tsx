@@ -157,12 +157,12 @@ class Settings extends React.Component<Props, State> {
         </AccordionSummary>
         <AccordionDetails>
           <Typography>{ strings.settingsDrawer.descriptionCustom }</Typography>
-          { this.pollutantSlider(strings.pollutants.carbonMonoxide) }
-          { this.pollutantSlider(strings.pollutants.ozone) }
-          { this.pollutantSlider(strings.pollutants.sulfurOxide) }
-          { this.pollutantSlider(strings.pollutants.nitrogenOxide) }
-          { this.pollutantSlider(strings.pollutants.PM10) }
-          { this.pollutantSlider(strings.pollutants.PM25) }
+          { this.renderPollutantSlider(strings.pollutants.carbonMonoxide) }
+          { this.renderPollutantSlider(strings.pollutants.ozone) }
+          { this.renderPollutantSlider(strings.pollutants.sulfurOxide) }
+          { this.renderPollutantSlider(strings.pollutants.nitrogenOxide) }
+          { this.renderPollutantSlider(strings.pollutants.PM10) }
+          { this.renderPollutantSlider(strings.pollutants.PM25) }
           <Button
             color="primary"
             variant="contained"
