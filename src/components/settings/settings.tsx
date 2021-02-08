@@ -81,9 +81,9 @@ class Settings extends React.Component<Props, State> {
 
     return (
       <Box p={ 3 }>
-        { this.accordionMenuTransportation() }
-        { this.accordionMenuMedical() }
-        { this.accordionMenuCustom() }
+        { this.renderAccordionMenuTransportation() }
+        { this.renderAccordionMenuMedical() }
+        { this.renderAccordionMenuCustom() }
       </Box>
     );
   }
