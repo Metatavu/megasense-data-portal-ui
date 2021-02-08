@@ -89,9 +89,9 @@ class Settings extends React.Component<Props, State> {
   }
 
   /**
-   * Method for transportation accordion menu item
+   * Method for rendering transportation accordion menu item
    */
-  private accordionMenuTransportation = () => {
+  private renderAccordionMenuTransportation = () => {
     return (
       <Accordion defaultExpanded={ true }>
         <AccordionSummary expandIcon={ <ExpandMoreIcon /> }>
