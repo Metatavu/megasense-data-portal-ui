@@ -179,7 +179,7 @@ class Settings extends React.Component<Props, State> {
    * Method for rendering pollutant slider
    * @param label slider label string
    */
-  private pollutantSlider = (label: string) => {
+  private renderPollutantSlider = (label: string) => {
     const marks = [
       {
         value: 0,
