@@ -1,8 +1,12 @@
 import React from "react";
-import { AppBar, Box, Button, IconButton, Toolbar, Typography, withStyles, WithStyles } from "@material-ui/core";
+import { AppBar, Box, Button, IconButton, Toolbar, Typography, withStyles, WithStyles, Checkbox, Slider, FormGroup, FormControlLabel, Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
 import { styles } from "./settings.styles";
 import CloseIcon from "@material-ui/icons/Close";
 import strings from "../../localization/strings";
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import TimerIcon from '@material-ui/icons/Timer';
+import EcoIcon from '@material-ui/icons/Eco';
+import LogoIcon from "../../resources/svg/logo-icon";
 
 /**
  * Interface describing component props
@@ -65,12 +69,149 @@ class Settings extends React.Component<Props, State> {
             </Box>
           </Toolbar>
         </AppBar>
-        <Box p={ 3 }>
-          {/* Settings content here */}
-        </Box>
+        { this.accordionMenu() }
+        {/* Settings content here */}
       </>
     );
   }
+
+  /**
+   * Method for settings accordion menu
+   */
+  private accordionMenu() {
+
+    return (
+      <Box p={ 3 }>
+        { this.accordionMenuTransportation() }
+        { this.accordionMenuMedical() }
+        { this.accordionMenuCustom() }
+      </Box>
+    );
+  }
+
+  /**
+   * Method for transportation accordion menu item
+   */
+  private accordionMenuTransportation = () => {
+    return (
+      <Accordion defaultExpanded={ true }>
+        <AccordionSummary expandIcon={ <ExpandMoreIcon /> }>
+          <Typography>{ strings.settingsDrawer.transportation }</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography>{ strings.settingsDrawer.descriptionTransportation }</Typography>
+          <FormGroup>
+            { this.menuCheckbox(strings.walking) }
+            { this.menuCheckbox(strings.wheelerchair) }
+            { this.menuCheckbox(strings.walking) }
+            { this.menuCheckbox(strings.wheelerchair) }
+          </FormGroup>
+        </AccordionDetails>
+      </Accordion>
+    );
+  }
+
+  /**
+   * Method for medical accordion menu item
+   */
+  private accordionMenuMedical = () => {
+    return (
+      <Accordion defaultExpanded={ true }>
+        <AccordionSummary expandIcon={ <ExpandMoreIcon /> }>
+          <Typography>{ strings.settingsDrawer.medical }</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography>{ strings.settingsDrawer.descriptionMedical }</Typography>
+          <FormGroup>
+            { this.menuCheckbox(strings.medicalConditions.asthma) }
+            { this.menuCheckbox(strings.medicalConditions.ischaemicHeartDisease) }
+            { this.menuCheckbox(strings.medicalConditions.copd) }
+          </FormGroup>
+        </AccordionDetails>
+      </Accordion>
+    );
+  }
+
+  /**
+   * Method for rendering checkbox
+   * @param label checkbox label string
+   */
+  private menuCheckbox = (label: string) => {
+
+    return (
+      <FormControlLabel
+        control={ <Checkbox color="primary" /> }
+        label={ label }  
+        labelPlacement= "start"
+      />
+    );
+  }
+
+  /**
+   * Method for medical accordion menu item
+   */
+  private accordionMenuCustom = () => {
+    return (
+      <Accordion>
+        <AccordionSummary expandIcon={ <ExpandMoreIcon /> }>
+          <Typography>{ strings.settingsDrawer.custom }</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography>{ strings.settingsDrawer.descriptionCustom }</Typography>
+          { this.pollutantSlider(strings.pollutants.carbonMonoxide) }
+          { this.pollutantSlider(strings.pollutants.ozone) }
+          { this.pollutantSlider(strings.pollutants.sulfurOxide) }
+          { this.pollutantSlider(strings.pollutants.nitrogenOxide) }
+          { this.pollutantSlider(strings.pollutants.PM10) }
+          { this.pollutantSlider(strings.pollutants.PM25) }
+          <Button
+            color="primary"
+            variant="contained"
+            fullWidth={ true }
+          >
+            { strings.common.save }
+          </Button>
+        </AccordionDetails>
+      </Accordion>
+    );
+  }
+
+  /**
+   * Method for rendering pollutant slider
+   * @param label slider label string
+   */
+  private pollutantSlider = (label: string) => {
+    const marks = [
+      {
+        value: 0,
+        label: <TimerIcon color="primary" />,
+      },
+      {
+        value: 50,
+        label: <LogoIcon color="primary" />,
+      },
+      {
+        value: 100,
+        label: <EcoIcon color="primary" />,
+      },
+    ];
+  
+    return (
+      <Box>
+        <Typography>
+          { label }
+        </Typography>
+        <Slider
+          defaultValue={ 50 }
+          step={ 50 }
+          valueLabelDisplay="off"
+          marks={ marks }
+          track={ false }
+        />
+      </Box>
+    );
+  }
+
 }
 
 export default withStyles(styles)(Settings);

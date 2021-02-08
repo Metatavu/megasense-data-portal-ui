@@ -1,5 +1,8 @@
 
-import { createMuiTheme } from '@material-ui/core';
+import { createMuiTheme } from "@material-ui/core";
+
+const theme = createMuiTheme();
+const { spacing } = theme;
 
 export default createMuiTheme({
 
@@ -111,6 +114,44 @@ export default createMuiTheme({
     MuiDrawer: {
       paperAnchorDockedLeft: {
         borderRight: 0
+      }
+    },
+    MuiSlider: {
+      rail: {
+        height: 8,
+        borderRadius: 5
+      },  
+      thumb: {
+        height: 18,
+        width: 18,
+      },
+      mark: {
+        height: 8,
+        width: 8,
+        borderRadius: 5
+      }
+    },
+    MuiAccordionSummary: {
+      root: {
+        backgroundColor: "#277B90",
+        borderRadius: 4,
+        height: 64,
+        marginTop: spacing(2),
+        color: "#FFFFFF"
+      }
+    },
+    MuiAccordionDetails: {
+      root: {
+        display: "block",
+        backgroundColor: "#F7F9FC",
+      }
+    },
+    MuiFormControlLabel: {
+      labelPlacementStart: {
+        marginLeft: 0,
+      },
+      label: {
+        marginRight: "auto"
       }
     }
   },
