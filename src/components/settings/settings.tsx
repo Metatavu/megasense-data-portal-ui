@@ -75,9 +75,9 @@ class Settings extends React.Component<Props, State> {
   }
 
   /**
-   * Method for settings accordion menu
+   * Method for rendering settings accordion menu
    */
-  private accordionMenu() {
+  private renderAccordionMenu() {
 
     return (
       <Box p={ 3 }>
