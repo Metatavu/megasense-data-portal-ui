@@ -113,7 +113,7 @@ class Settings extends React.Component<Props, State> {
   /**
    * Method for medical accordion menu item
    */
-  private accordionMenuMedical = () => {
+  private renderAccordionMenuMedical = () => {
     return (
       <Accordion defaultExpanded={ true }>
         <AccordionSummary expandIcon={ <ExpandMoreIcon /> }>
@@ -150,7 +150,7 @@ class Settings extends React.Component<Props, State> {
   /**
    * Method for medical accordion menu item
    */
-  private accordionMenuCustom = () => {
+  private renderAccordionMenuCustom = () => {
     return (
       <Accordion>
         <AccordionSummary expandIcon={ <ExpandMoreIcon /> }>
