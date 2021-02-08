@@ -110,8 +110,8 @@
     "PM25": "Pienhiukkaset",
     "PM10": "Hengitettävät hiukkaset",
     "ozone": "Otsoni",
-    "nitrogenDioxide": "Typpioksidi",
-    "sulfurDioxide": "Rikkioksidi",
+    "nitrogenOxide": "Typpioksidi",
+    "sulfurOxide": "Rikkioksidi",
     "carbonMonoxide": "Häkä"
   },
 
@@ -120,5 +120,20 @@
     "reset": "Palauta",
     "cancel": "Peruuta",
     "yes": "Kyllä"
+  },
+
+  "settingsDrawer": {
+    "transportation": "Matkustusmuoto",
+    "descriptionTransportation": "Valitse matkustusmuoto, jota käytetään oletusvaihtoehtona suunnitellessasi uutta reittiä.",
+    "medical": "Terveystiedot",
+    "descriptionMedical": "Valitse kaikki soveltuvat kohdat. Ne otetaan huomioon reittejä suunniteltaessa.",
+    "custom": "Kustomoitu hakuoptio",
+    "descriptionCustom": "Määritä uusi hakusuodin valitsemalla herkkyytesi eri epäpuhtauksille."
+  },
+
+  "medicalConditions": {
+    "asthma": "Asthma",
+    "ischaemicHeartDisease": "Sepelvaltimotauti",
+    "copd": "Keuhkoahtaumatauti"
   }
 }
