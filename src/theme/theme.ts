@@ -116,6 +116,11 @@ export default createMuiTheme({
         borderRight: 0
       }
     },
+    MuiDivider: {
+      light: {
+        backgroundColor: "rgba(255,255,255,0.2)"
+      }
+    },
     MuiSlider: {
       rail: {
         height: 8,
