@@ -125,8 +125,8 @@
     "PM25": "PM25",
     "PM10": "PM10",
     "ozone": "Ozone",
-    "nitrogenDioxide": "Nitrogen dioxine",
-    "sulfurDioxide": "Sulfur dioxine",
+    "nitrogenOxide": "Nitrogen oxide",
+    "sulfurOxide": "Sulfur oxide",
     "carbonMonoxide": "Carbon monoxide"
   },
 
@@ -135,5 +135,20 @@
     "reset": "reset",
     "cancel": "cancel",
     "yes": "Yes"
+  },
+
+  "settingsDrawer": {
+    "transportation": "Transportation",
+    "descriptionTransportation": "Please select your preferred transportation method. This will be used as the default starting option, when you plan a route.",
+    "medical": "Medical information",
+    "descriptionMedical": "Please check all that apply. They will be factored in when planning routes.",
+    "custom": "Custom Search Option",
+    "descriptionCustom": "Set your own custom search option by selecting your own position to different pollutants."
+  } ,
+
+  "medicalConditions": {
+    "asthma": "Asthma",
+    "ischaemicHeartDisease": "Ischaemic Heart Disease",
+    "copd": "COPD"
   }
 }

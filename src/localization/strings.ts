@@ -170,6 +170,24 @@ export interface IStrings extends LocalizedStringsMethods {
     cancel: string;
     reset: string;
     yes: string;
+  };
+
+  /**
+   * Translations for settings drawer
+   */
+  settingsDrawer: {
+    transportation: string;
+    descriptionTransportation: string;
+    medical: string;
+    descriptionMedical: string;
+    custom: string;
+    descriptionCustom: string;
+  };
+
+  medicalConditions: {
+    asthma: string;
+    ischaemicHeartDisease: string;
+    copd: string;
   }
 }
 
