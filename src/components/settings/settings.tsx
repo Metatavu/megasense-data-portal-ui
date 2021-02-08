@@ -133,6 +133,7 @@ class Settings extends React.Component<Props, State> {
 
   /**
    * Method for rendering checkbox
+   *
    * @param label checkbox label string
    */
   private menuCheckbox = (label: string) => {
