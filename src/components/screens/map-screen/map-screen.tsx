@@ -819,7 +819,14 @@ class MapScreen extends React.Component<Props, State> {
         const name = option.display_name;
         return { name, coordinates };
       });
-
+      const userFavouriteLocations = this.state.userFavouriteLocations
+        .filter((location) => location.name.startsWith(locationFromTextInput))
+        .map((element) => {
+          const name = element.name;
+          const coordinates = element.latitude + "," + element.longitude;
+          return { name, coordinates };
+        });
+      locationFromOptions.unshift(...userFavouriteLocations);  
       this.setState({ locationFromOptions });
     } catch (error) {
       this.setState({
@@ -875,7 +882,14 @@ class MapScreen extends React.Component<Props, State> {
         const name = option.display_name;
         return { name, coordinates };
       });
-
+      const userFavouriteLocations = this.state.userFavouriteLocations
+        .filter((location) => location.name.startsWith(locationToTextInput))
+        .map((element) => {
+          const name = element.name;
+          const coordinates = element.latitude + "," + element.longitude;
+          return { name, coordinates };
+        });
+      locationToOptions.unshift(...userFavouriteLocations);  
       this.setState({ locationToOptions });
     } catch (error) {
       this.setState({
