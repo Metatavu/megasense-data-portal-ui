@@ -134,7 +134,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ airQuality });
 
     this.getUserSavedRoutes();
-    this.getUserFavouriteLocations().then(() => this.setlocationOptions());
+    this.getUserFavouriteLocations().then(() => this.setLocationOptions());
   }
 
   /**
@@ -278,7 +278,7 @@ class MapScreen extends React.Component<Props, State> {
    * Adds users saved locations in location from and location in options. 
    */
 
-   private setlocationOptions = () => {
+   private setLocationOptions = () => {
     const { userFavouriteLocations } = this.state;
     const locationFromOptions = userFavouriteLocations.map((element) => {
       const name = element.name;
