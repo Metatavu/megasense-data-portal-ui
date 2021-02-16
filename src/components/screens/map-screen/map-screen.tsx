@@ -134,7 +134,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ airQuality });
 
     this.getUserSavedRoutes();
-    this.getUserFavouriteLocations();
+    this.getUserFavouriteLocations().then(() => this.setlocationOptions());
   }
 
   /**
@@ -274,7 +274,21 @@ class MapScreen extends React.Component<Props, State> {
     } catch (error) {}
     this.setState({ loadingUserSettings: false });
   }
+  /**
+   * Adds users saved locations in location from and location in options. 
+   */
 
+   private setlocationOptions = () => {
+    const { userFavouriteLocations } = this.state;
+    const locationFromOptions = userFavouriteLocations.map((element) => {
+      const name = element.name;
+      const coordinates = element.latitude + "," + element.longitude;
+      return { name, coordinates };
+    });
+    const locationToOptions = locationFromOptions;
+    this.setState({ locationFromOptions, locationToOptions });
+     
+  }
   /**
    * Loads user saved routes
    */
@@ -819,7 +833,16 @@ class MapScreen extends React.Component<Props, State> {
         const name = option.display_name;
         return { name, coordinates };
       });
-
+      const { userFavouriteLocations } = this.state;
+      locationFromOptions.unshift(
+        ...userFavouriteLocations
+          .filter((location) => location.name.startsWith(locationFromTextInput))
+          .map((element) => {
+            const name = element.name;
+            const coordinates = element.latitude + "," + element.longitude;
+            return { name, coordinates };
+          })
+      );
       this.setState({ locationFromOptions });
     } catch (error) {
       this.setState({
@@ -875,7 +898,16 @@ class MapScreen extends React.Component<Props, State> {
         const name = option.display_name;
         return { name, coordinates };
       });
-
+      const { userFavouriteLocations } = this.state;
+      locationToOptions.unshift(
+        ...userFavouriteLocations
+          .filter((location) => location.name.startsWith(locationToTextInput))
+          .map((element) => {
+            const name = element.name;
+            const coordinates = element.latitude + "," + element.longitude;
+            return { name, coordinates };
+          })
+      );
       this.setState({ locationToOptions });
     } catch (error) {
       this.setState({
