@@ -278,7 +278,6 @@ class MapScreen extends React.Component<Props, State> {
   /**
    * Maps favourite locations to locations 
    */
-  
   private mapLocationsFromFavouriteLocations = (favouriteLocations:FavouriteLocation[]):Location[] => {
     const locations = favouriteLocations.map((element) => {
       const name = element.name;
