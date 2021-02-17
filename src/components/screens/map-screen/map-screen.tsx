@@ -277,7 +277,6 @@ class MapScreen extends React.Component<Props, State> {
   /**
    * Adds users saved locations in location from and location in options. 
    */
-
    private setLocationOptions = () => {
     const { userFavouriteLocations } = this.state;
     const locationFromOptions = userFavouriteLocations.map((element) => {
@@ -287,7 +286,6 @@ class MapScreen extends React.Component<Props, State> {
     });
     const locationToOptions = locationFromOptions;
     this.setState({ locationFromOptions, locationToOptions });
-     
   }
   /**
    * Loads user saved routes
