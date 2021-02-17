@@ -279,17 +279,19 @@ class MapScreen extends React.Component<Props, State> {
    * Maps favourite locations to locations 
    */
   private mapLocationsFromFavouriteLocations = (favouriteLocations:FavouriteLocation[]):Location[] => {
-    const locations = favouriteLocations.map((element) => {
+    return favouriteLocations.map((element) => {
       const name = element.name;
       const coordinates = element.latitude + "," + element.longitude;
       return { name, coordinates };
-    });
-    return locations
+    }).slice(
+      0,
+      MapScreen.NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES
+    );
   }
     /**
    * Filters favourite locations with a specific keyword
    */
-  private SearchInFavouriteLocations = (keyword:string):FavouriteLocation[] =>{
+  private searchInFavouriteLocations = (keyword:string):FavouriteLocation[] =>{
     const {userFavouriteLocations} = this.state    
     return userFavouriteLocations.filter((location) =>
           location.name
@@ -298,15 +300,17 @@ class MapScreen extends React.Component<Props, State> {
         )
   }
   /**
+   * get locations from favourite locations.
+   */
+  private getLocationsFromFavouriteLocations = (keyword:string):Location[] => 
+  this.mapLocationsFromFavouriteLocations(this.searchInFavouriteLocations(keyword));
+  /**
    * Adds users saved locations in location from and location in options. 
    */
    private setLocationOptions = () => {
     const { userFavouriteLocations } = this.state;
     const locationToOptions = this.mapLocationsFromFavouriteLocations(
-      userFavouriteLocations.slice(
-        0,
-        MapScreen.NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES
-      )
+      userFavouriteLocations
     );
     const locationFromOptions = locationToOptions
     this.setState({ locationFromOptions, locationToOptions });
@@ -855,14 +859,7 @@ class MapScreen extends React.Component<Props, State> {
         const name = option.display_name;
         return { name, coordinates };
       });
-      locationFromOptions.unshift(
-        ...this.mapLocationsFromFavouriteLocations(
-          this.SearchInFavouriteLocations(locationFromTextInput).slice(
-            0,
-            MapScreen.NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES
-          )
-        )
-      );
+      locationFromOptions.unshift(...this.getLocationsFromFavouriteLocations(locationFromTextInput));
       this.setState({ locationFromOptions });
     } catch (error) {
       this.setState({
@@ -918,14 +915,7 @@ class MapScreen extends React.Component<Props, State> {
         const name = option.display_name;
         return { name, coordinates };
       });
-      locationToOptions.unshift(
-        ...this.mapLocationsFromFavouriteLocations(
-          this.SearchInFavouriteLocations(locationToTextInput).slice(
-            0,
-            MapScreen.NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES
-          )
-        )
-      );
+      locationToOptions.unshift(...this.getLocationsFromFavouriteLocations(locationToTextInput));
       this.setState({ locationToOptions });
     } catch (error) {
       this.setState({
