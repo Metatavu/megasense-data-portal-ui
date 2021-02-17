@@ -78,6 +78,7 @@ interface State {
  */
 class MapScreen extends React.Component<Props, State> {
   mapRef: React.RefObject<Map>;
+  private static NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES = 4
 
   /**
    * Component constructor
@@ -275,16 +276,40 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ loadingUserSettings: false });
   }
   /**
-   * Adds users saved locations in location from and location in options. 
+   * Maps favourite locations to locations 
    */
-   private setLocationOptions = () => {
-    const { userFavouriteLocations } = this.state;
-    const locationFromOptions = userFavouriteLocations.map((element) => {
+  
+  private mapLocationsFromFavouriteLocations = (favouriteLocations:FavouriteLocation[]):Location[] => {
+    const locations = favouriteLocations.map((element) => {
       const name = element.name;
       const coordinates = element.latitude + "," + element.longitude;
       return { name, coordinates };
     });
-    const locationToOptions = locationFromOptions;
+    return locations
+  }
+    /**
+   * Filters favourite locations with a specific keyword
+   */
+  private SearchInFavouriteLocations = (keyword:string):FavouriteLocation[] =>{
+    const {userFavouriteLocations} = this.state    
+    return userFavouriteLocations.filter((location) =>
+          location.name
+            .toLowerCase()
+            .startsWith(keyword.toLowerCase())
+        )
+  }
+  /**
+   * Adds users saved locations in location from and location in options. 
+   */
+   private setLocationOptions = () => {
+    const { userFavouriteLocations } = this.state;
+    const locationToOptions = this.mapLocationsFromFavouriteLocations(
+      userFavouriteLocations.slice(
+        0,
+        MapScreen.NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES
+      )
+    );
+    const locationFromOptions = locationToOptions
     this.setState({ locationFromOptions, locationToOptions });
   }
   /**
@@ -831,15 +856,13 @@ class MapScreen extends React.Component<Props, State> {
         const name = option.display_name;
         return { name, coordinates };
       });
-      const { userFavouriteLocations } = this.state;
       locationFromOptions.unshift(
-        ...userFavouriteLocations
-          .filter((location) => location.name.startsWith(locationFromTextInput))
-          .map((element) => {
-            const name = element.name;
-            const coordinates = element.latitude + "," + element.longitude;
-            return { name, coordinates };
-          })
+        ...this.mapLocationsFromFavouriteLocations(
+          this.SearchInFavouriteLocations(locationFromTextInput).slice(
+            0,
+            MapScreen.NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES
+          )
+        )
       );
       this.setState({ locationFromOptions });
     } catch (error) {
@@ -896,15 +919,13 @@ class MapScreen extends React.Component<Props, State> {
         const name = option.display_name;
         return { name, coordinates };
       });
-      const { userFavouriteLocations } = this.state;
       locationToOptions.unshift(
-        ...userFavouriteLocations
-          .filter((location) => location.name.startsWith(locationToTextInput))
-          .map((element) => {
-            const name = element.name;
-            const coordinates = element.latitude + "," + element.longitude;
-            return { name, coordinates };
-          })
+        ...this.mapLocationsFromFavouriteLocations(
+          this.SearchInFavouriteLocations(locationToTextInput).slice(
+            0,
+            MapScreen.NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES
+          )
+        )
       );
       this.setState({ locationToOptions });
     } catch (error) {
