@@ -413,7 +413,7 @@ class MapScreen extends React.Component<Props, State> {
           <Autocomplete
             filterOptions={ (options) => options }
             onInputChange={ this.onLocationFromChange } 
-            inputValue={ locationFromTextInput } 
+            inputValue={ locationFromTextInput }
             onChange={ this.onLocationFromSelected } 
             options={ locationFromOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
@@ -857,7 +857,6 @@ class MapScreen extends React.Component<Props, State> {
         const name = option.display_name;
         return { name, coordinates };
       });
-      locationFromOptions.unshift(...this.getLocationsFromFavouriteLocations(locationFromTextInput));
       this.setState({ locationFromOptions });
     } catch (error) {
       this.setState({
@@ -913,7 +912,6 @@ class MapScreen extends React.Component<Props, State> {
         const name = option.display_name;
         return { name, coordinates };
       });
-      locationToOptions.unshift(...this.getLocationsFromFavouriteLocations(locationToTextInput));
       this.setState({ locationToOptions });
     } catch (error) {
       this.setState({
