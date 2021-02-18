@@ -276,13 +276,15 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
-   * Maps favourite locations to locations 
+   * Maps favourite locations to locations
+   * 
+   * @param favouriteLocations  users favourite locations 
    */
-  private mapLocationsFromFavouriteLocations = (favouriteLocations:FavouriteLocation[]):Location[] => {
+  private mapLocationsFromFavouriteLocations = (favouriteLocations: FavouriteLocation[]) => {
     return favouriteLocations.map((element) => {
       const name = element.name;
       const coordinates = element.latitude + "," + element.longitude;
-      return { name, coordinates };
+      return { name, coordinates } as Location;
     }).slice(
       0,
       NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES
@@ -291,23 +293,17 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Filters favourite locations with a specific keyword
+   * 
    * @param keyword the string to search
    */
-  private searchInFavouriteLocations = (keyword:string):FavouriteLocation[] =>{
-    const {userFavouriteLocations} = this.state    
+  private searchInFavouriteLocations = (keyword:string) =>{
+    const {userFavouriteLocations} = this.state;    
     return userFavouriteLocations.filter((location) =>
           location.name
             .toLowerCase()
             .startsWith(keyword.toLowerCase())
-        )
+        );
   }
-
-  /**
-   * get locations from favourite locations.
-   * @param keyword the string to search
-   */
-  private getLocationsFromFavouriteLocations = (keyword:string):Location[] => 
-  this.mapLocationsFromFavouriteLocations(this.searchInFavouriteLocations(keyword));
 
   /**
    * Adds users saved locations in location from and location in options. 
@@ -858,7 +854,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ locationFromTextInput });
     try {
       const locationFromOptions = await (this.nominateCall(locationFromTextInput));
-      locationFromOptions.unshift(...this.getLocationsFromFavouriteLocations(locationFromTextInput));
+      locationFromOptions.unshift(...this.mapLocationsFromFavouriteLocations(this.searchInFavouriteLocations(locationFromTextInput)));
       this.setState({ locationFromOptions });
     } catch (error) {
       this.setState({
@@ -902,23 +898,23 @@ class MapScreen extends React.Component<Props, State> {
    * Calls the api for similar locations and translates it to option format
    * @param keyword the keyword to call the api
    */
-private nominateCall = async (keyword: string): Promise<Location[]> => {
-  try{
-  const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: NOMINATIM_EMAIL, q: keyword }, process.env.REACT_APP_NOMINATIM_URL);
-  return nominatimResponse.map(option => {
-    const coordinates = option.lat + "," + option.lon;
-    const name = option.display_name;
-    return { name, coordinates };
-  });
-}
-catch (error) {
-return error;
-}
-}
+  private nominateCall = async (keyword: string): Promise<Location[]> => {
+    try {
+      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: NOMINATIM_EMAIL, q: keyword }, process.env.REACT_APP_NOMINATIM_URL);
+      return nominatimResponse.map(option => {
+        const coordinates = option.lat + "," + option.lon;
+        const name = option.display_name;
+        return { name, coordinates };
+      });
+    }
+    catch (error) {
+      return error;
+    }
+  }
 
   /**
    * Fires when the value of the text input for locationTo changes and updates the list of options
-   * 
+   *  
    * @param event React event
    * @param name a new value for the text input for locationTo
    * @param reason autocomplete change reason
@@ -926,8 +922,8 @@ return error;
   private onLocationToChange = async (event: ChangeEvent<{}>, locationToTextInput: string, reason: AutocompleteInputChangeReason) => {
     this.setState({ locationToTextInput });
     try {
-      const locationToOptions = await(this.nominateCall(locationToTextInput));
-      locationToOptions.unshift(...this.getLocationsFromFavouriteLocations(locationToTextInput));
+      const locationToOptions = await (this.nominateCall(locationToTextInput));
+      locationToOptions.unshift(...this.mapLocationsFromFavouriteLocations(this.searchInFavouriteLocations(locationToTextInput)));
       this.setState({ locationToOptions });
     } catch (error) {
       this.setState({
