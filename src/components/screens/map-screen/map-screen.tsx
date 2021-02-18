@@ -32,7 +32,7 @@ import { KeyboardDatePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from 
 import MomentUtils from "@date-io/moment";
 import moment from "moment";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
-
+import {NOMINATIM_EMAIL, NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES} from "../../../constants/map"
 /**
  * Interface describing component props
  */
@@ -78,8 +78,7 @@ interface State {
  */
 class MapScreen extends React.Component<Props, State> {
   mapRef: React.RefObject<Map>;
-  private static NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES = 4
-  private static EMAIL = "devs@metatavu.fi"
+
   /**
    * Component constructor
    * 
@@ -264,7 +263,7 @@ class MapScreen extends React.Component<Props, State> {
       
       if (homeAddress) {
         const { streetAddress, postalCode, city, country } = homeAddress;
-        const geocodeRequest = { email: "devs@metatavu.fi", street: streetAddress, postalcode: postalCode, city, country };
+        const geocodeRequest = { email: NOMINATIM_EMAIL, street: streetAddress, postalcode: postalCode, city, country };
         const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode(geocodeRequest, process.env.REACT_APP_NOMINATIM_URL);
         if (nominatimResponse.length === 1) {
           const center = [Number.parseFloat(nominatimResponse[0].lat), Number.parseFloat(nominatimResponse[0].lon)] as [number, number];
@@ -275,6 +274,7 @@ class MapScreen extends React.Component<Props, State> {
     } catch (error) {}
     this.setState({ loadingUserSettings: false });
   }
+
   /**
    * Maps favourite locations to locations 
    */
@@ -285,11 +285,13 @@ class MapScreen extends React.Component<Props, State> {
       return { name, coordinates };
     }).slice(
       0,
-      MapScreen.NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES
+      NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES
     );
   }
-    /**
+
+  /**
    * Filters favourite locations with a specific keyword
+   * @param keyword the string to search
    */
   private searchInFavouriteLocations = (keyword:string):FavouriteLocation[] =>{
     const {userFavouriteLocations} = this.state    
@@ -299,11 +301,14 @@ class MapScreen extends React.Component<Props, State> {
             .startsWith(keyword.toLowerCase())
         )
   }
+
   /**
    * get locations from favourite locations.
+   * @param keyword the string to search
    */
   private getLocationsFromFavouriteLocations = (keyword:string):Location[] => 
   this.mapLocationsFromFavouriteLocations(this.searchInFavouriteLocations(keyword));
+
   /**
    * Adds users saved locations in location from and location in options. 
    */
@@ -313,6 +318,7 @@ class MapScreen extends React.Component<Props, State> {
     const locationFromOptions = locationToOptions
     this.setState({ locationFromOptions, locationToOptions });
   }
+
   /**
    * Loads user saved routes
    */
@@ -851,7 +857,7 @@ class MapScreen extends React.Component<Props, State> {
   private onLocationFromChange = async (event: ChangeEvent<{}>, locationFromTextInput: string, reason: AutocompleteInputChangeReason) => {
     this.setState({ locationFromTextInput });
     try {
-      const locationFromOptions = await(this.nominateCall(locationFromTextInput));
+      const locationFromOptions = await (this.nominateCall(locationFromTextInput));
       locationFromOptions.unshift(...this.getLocationsFromFavouriteLocations(locationFromTextInput));
       this.setState({ locationFromOptions });
     } catch (error) {
@@ -891,13 +897,14 @@ class MapScreen extends React.Component<Props, State> {
       departureTime: date.toDate()
     });
   }
+  
   /**
    * Calls the api for similar locations and translates it to option format
    * @param keyword the keyword to call the api
    */
 private nominateCall = async (keyword: string): Promise<Location[]> => {
   try{
-  const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: MapScreen.EMAIL, q: keyword }, process.env.REACT_APP_NOMINATIM_URL);
+  const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: NOMINATIM_EMAIL, q: keyword }, process.env.REACT_APP_NOMINATIM_URL);
   return nominatimResponse.map(option => {
     const coordinates = option.lat + "," + option.lon;
     const name = option.display_name;
