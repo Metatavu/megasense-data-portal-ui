@@ -81,7 +81,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Component constructor
-   * 
+   *
    * @param props props
    */
   constructor (props: Props) {
@@ -277,7 +277,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Maps favourite locations to locations
-   * 
+   *
    * @param favouriteLocations  users favourite locations 
    */
   private mapLocationsFromFavouriteLocations = (favouriteLocations: FavouriteLocation[]) => {
@@ -303,7 +303,7 @@ class MapScreen extends React.Component<Props, State> {
             .toLowerCase()
             .startsWith(keyword.toLowerCase())
         );
-  }
+  } 
 
   /**
    * Adds users saved locations in location from and location in options. 
@@ -686,7 +686,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Opens popup when component renders
-   * 
+   *
    * @param marker marker
    */
   private openPopup = (marker: Marker) => {
@@ -741,7 +741,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Action handler for route name input
-   * 
+   *
    * @param action input action
    */
   private onDialogNameInputChange = (action: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -819,9 +819,9 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Converts coordinates from string to LatLngTuple
-   * 
+   *
    * @param stringCoordinates coordinates to convert
-   * 
+   *
    * @returns coordinates in LatLngTuple format
    */
   private coordinatesFromString = (stringCoordinates: string): LatLngTuple => {
@@ -831,7 +831,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Fires when a new locationFrom is selected
-   * 
+   *
    * @param event React event
    * @param locationFrom a new value for locationFrom 
    * @param reason autocomplete change reason
@@ -845,7 +845,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Fires when the value of the text input for locationFrom changes and updates the list of options
-   * 
+   *
    * @param event React event
    * @param locationFromTextInput a new value for the text input for locationFrom
    * @param reason autocomplete change reason
@@ -866,7 +866,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Fires when a new locationTo is selected
-   * 
+   *
    * @param event React event
    * @param locationTo a new value for locationTo
    * @param reason autocomplete change reason
@@ -879,6 +879,7 @@ class MapScreen extends React.Component<Props, State> {
   }
   /**
    * Fires when user changes the departure date
+   *
    * @param date input date
    */
   private onStartDateChange = (date: MaterialUiPickersDate) => {
@@ -896,6 +897,7 @@ class MapScreen extends React.Component<Props, State> {
   
   /**
    * Calls the api for similar locations and translates it to option format
+   *
    * @param keyword the keyword to call the api
    */
   private nominateCall = async (keyword: string): Promise<Location[]> => {
@@ -914,7 +916,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Fires when the value of the text input for locationTo changes and updates the list of options
-   *  
+   *
    * @param event React event
    * @param name a new value for the text input for locationTo
    * @param reason autocomplete change reason
@@ -976,7 +978,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Fires when the viewport of the map changes
-   * 
+   *
    * @param mapViewport a new viewport
    */
   private onViewportChange = async (mapViewport: Viewport) => {
@@ -985,7 +987,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Fires when user doubleclicks the map
-   * 
+   *
    * @param mouseEvent mouse event
    */
   private addRoutePoint = async (mouseEvent: LeafletMouseEvent) => {
@@ -1007,7 +1009,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Sets locations name from coordinates
-   * 
+   *
    * @param type GeocodeCoordinate type
    * @param lat lat string
    * @param lon lon string
