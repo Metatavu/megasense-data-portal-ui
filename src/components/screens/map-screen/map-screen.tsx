@@ -79,7 +79,7 @@ interface State {
 class MapScreen extends React.Component<Props, State> {
   mapRef: React.RefObject<Map>;
   private static NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES = 4
-
+  private static EMAIL = "devs@metatavu.fi"
   /**
    * Component constructor
    * 
@@ -851,12 +851,8 @@ class MapScreen extends React.Component<Props, State> {
   private onLocationFromChange = async (event: ChangeEvent<{}>, locationFromTextInput: string, reason: AutocompleteInputChangeReason) => {
     this.setState({ locationFromTextInput });
     try {
-      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: locationFromTextInput }, process.env.REACT_APP_NOMINATIM_URL);
-      const locationFromOptions = nominatimResponse.map(option => {
-        const coordinates = option.lat + "," + option.lon;
-        const name = option.display_name;
-        return { name, coordinates };
-      });
+      const locationFromOptions = await(this.nominateCall(locationFromTextInput));
+      locationFromOptions.unshift(...this.getLocationsFromFavouriteLocations(locationFromTextInput));
       this.setState({ locationFromOptions });
     } catch (error) {
       this.setState({
@@ -895,6 +891,23 @@ class MapScreen extends React.Component<Props, State> {
       departureTime: date.toDate()
     });
   }
+  /**
+   * Calls the api for similar locations and translates it to option format
+   * @param keyword the keyword to call the api
+   */
+private nominateCall = async (keyword: string): Promise<Location[]> => {
+  try{
+  const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: MapScreen.EMAIL, q: keyword }, process.env.REACT_APP_NOMINATIM_URL);
+  return nominatimResponse.map(option => {
+    const coordinates = option.lat + "," + option.lon;
+    const name = option.display_name;
+    return { name, coordinates };
+  });
+}
+catch (error) {
+return error;
+}
+}
 
   /**
    * Fires when the value of the text input for locationTo changes and updates the list of options
@@ -906,12 +919,8 @@ class MapScreen extends React.Component<Props, State> {
   private onLocationToChange = async (event: ChangeEvent<{}>, locationToTextInput: string, reason: AutocompleteInputChangeReason) => {
     this.setState({ locationToTextInput });
     try {
-      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: locationToTextInput }, process.env.REACT_APP_NOMINATIM_URL);
-      const locationToOptions = nominatimResponse.map(option => {
-        const coordinates = option.lat + "," + option.lon;
-        const name = option.display_name;
-        return { name, coordinates };
-      });
+      const locationToOptions = await(this.nominateCall(locationToTextInput));
+      locationToOptions.unshift(...this.getLocationsFromFavouriteLocations(locationToTextInput));
       this.setState({ locationToOptions });
     } catch (error) {
       this.setState({
