@@ -32,7 +32,7 @@ import { KeyboardDatePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from 
 import MomentUtils from "@date-io/moment";
 import moment from "moment";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
-
+import {NOMINATIM_EMAIL, NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES} from "../../../constants/map"
 /**
  * Interface describing component props
  */
@@ -81,7 +81,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Component constructor
-   * 
+   *
    * @param props props
    */
   constructor (props: Props) {
@@ -134,7 +134,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ airQuality });
 
     this.getUserSavedRoutes();
-    this.getUserFavouriteLocations();
+    this.getUserFavouriteLocations().then(() => this.setLocationOptions());
   }
 
   /**
@@ -263,7 +263,7 @@ class MapScreen extends React.Component<Props, State> {
       
       if (homeAddress) {
         const { streetAddress, postalCode, city, country } = homeAddress;
-        const geocodeRequest = { email: "devs@metatavu.fi", street: streetAddress, postalcode: postalCode, city, country };
+        const geocodeRequest = { email: NOMINATIM_EMAIL, street: streetAddress, postalcode: postalCode, city, country };
         const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode(geocodeRequest, process.env.REACT_APP_NOMINATIM_URL);
         if (nominatimResponse.length === 1) {
           const center = [Number.parseFloat(nominatimResponse[0].lat), Number.parseFloat(nominatimResponse[0].lon)] as [number, number];
@@ -273,6 +273,46 @@ class MapScreen extends React.Component<Props, State> {
       }
     } catch (error) {}
     this.setState({ loadingUserSettings: false });
+  }
+
+  /**
+   * Maps favourite locations to locations
+   *
+   * @param favouriteLocations  users favourite locations 
+   */
+  private mapLocationsFromFavouriteLocations = (favouriteLocations: FavouriteLocation[]) => {
+    return favouriteLocations.map((element) => {
+      const name = element.name;
+      const coordinates = element.latitude + "," + element.longitude;
+      return { name, coordinates } as Location;
+    }).slice(
+      0,
+      NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES
+    );
+  }
+
+  /**
+   * Filters favourite locations with a specific keyword
+   * 
+   * @param keyword the string to search
+   */
+  private searchInFavouriteLocations = (keyword:string) =>{
+    const {userFavouriteLocations} = this.state;    
+    return userFavouriteLocations.filter((location) =>
+          location.name
+            .toLowerCase()
+            .startsWith(keyword.toLowerCase())
+        );
+  } 
+
+  /**
+   * Adds users saved locations in location from and location in options. 
+   */
+  private setLocationOptions = () => {
+    const { userFavouriteLocations } = this.state;
+    const locationToOptions = this.mapLocationsFromFavouriteLocations(userFavouriteLocations);
+    const locationFromOptions = locationToOptions
+    this.setState({ locationFromOptions, locationToOptions });
   }
 
   /**
@@ -375,7 +415,7 @@ class MapScreen extends React.Component<Props, State> {
           <Autocomplete
             filterOptions={ (options) => options }
             onInputChange={ this.onLocationFromChange } 
-            inputValue={ locationFromTextInput } 
+            inputValue={ locationFromTextInput }
             onChange={ this.onLocationFromSelected } 
             options={ locationFromOptions } 
             getOptionLabel={(option: Location) => option.name || ""} 
@@ -646,7 +686,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Opens popup when component renders
-   * 
+   *
    * @param marker marker
    */
   private openPopup = (marker: Marker) => {
@@ -701,7 +741,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Action handler for route name input
-   * 
+   *
    * @param action input action
    */
   private onDialogNameInputChange = (action: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -779,9 +819,9 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Converts coordinates from string to LatLngTuple
-   * 
+   *
    * @param stringCoordinates coordinates to convert
-   * 
+   *
    * @returns coordinates in LatLngTuple format
    */
   private coordinatesFromString = (stringCoordinates: string): LatLngTuple => {
@@ -791,7 +831,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Fires when a new locationFrom is selected
-   * 
+   *
    * @param event React event
    * @param locationFrom a new value for locationFrom 
    * @param reason autocomplete change reason
@@ -805,7 +845,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Fires when the value of the text input for locationFrom changes and updates the list of options
-   * 
+   *
    * @param event React event
    * @param locationFromTextInput a new value for the text input for locationFrom
    * @param reason autocomplete change reason
@@ -813,13 +853,8 @@ class MapScreen extends React.Component<Props, State> {
   private onLocationFromChange = async (event: ChangeEvent<{}>, locationFromTextInput: string, reason: AutocompleteInputChangeReason) => {
     this.setState({ locationFromTextInput });
     try {
-      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: locationFromTextInput }, process.env.REACT_APP_NOMINATIM_URL);
-      const locationFromOptions = nominatimResponse.map(option => {
-        const coordinates = option.lat + "," + option.lon;
-        const name = option.display_name;
-        return { name, coordinates };
-      });
-
+      const locationFromOptions = await (this.nominateCall(locationFromTextInput));
+      locationFromOptions.unshift(...this.mapLocationsFromFavouriteLocations(this.searchInFavouriteLocations(locationFromTextInput)));
       this.setState({ locationFromOptions });
     } catch (error) {
       this.setState({
@@ -831,7 +866,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Fires when a new locationTo is selected
-   * 
+   *
    * @param event React event
    * @param locationTo a new value for locationTo
    * @param reason autocomplete change reason
@@ -844,6 +879,7 @@ class MapScreen extends React.Component<Props, State> {
   }
   /**
    * Fires when user changes the departure date
+   *
    * @param date input date
    */
   private onStartDateChange = (date: MaterialUiPickersDate) => {
@@ -858,10 +894,29 @@ class MapScreen extends React.Component<Props, State> {
       departureTime: date.toDate()
     });
   }
+  
+  /**
+   * Calls the api for similar locations and translates it to option format
+   *
+   * @param keyword the keyword to call the api
+   */
+  private nominateCall = async (keyword: string): Promise<Location[]> => {
+    try {
+      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: NOMINATIM_EMAIL, q: keyword }, process.env.REACT_APP_NOMINATIM_URL);
+      return nominatimResponse.map(option => {
+        const coordinates = option.lat + "," + option.lon;
+        const name = option.display_name;
+        return { name, coordinates };
+      });
+    }
+    catch (error) {
+      return error;
+    }
+  }
 
   /**
    * Fires when the value of the text input for locationTo changes and updates the list of options
-   * 
+   *
    * @param event React event
    * @param name a new value for the text input for locationTo
    * @param reason autocomplete change reason
@@ -869,13 +924,8 @@ class MapScreen extends React.Component<Props, State> {
   private onLocationToChange = async (event: ChangeEvent<{}>, locationToTextInput: string, reason: AutocompleteInputChangeReason) => {
     this.setState({ locationToTextInput });
     try {
-      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: "devs@metatavu.fi", q: locationToTextInput }, process.env.REACT_APP_NOMINATIM_URL);
-      const locationToOptions = nominatimResponse.map(option => {
-        const coordinates = option.lat + "," + option.lon;
-        const name = option.display_name;
-        return { name, coordinates };
-      });
-
+      const locationToOptions = await (this.nominateCall(locationToTextInput));
+      locationToOptions.unshift(...this.mapLocationsFromFavouriteLocations(this.searchInFavouriteLocations(locationToTextInput)));
       this.setState({ locationToOptions });
     } catch (error) {
       this.setState({
@@ -928,7 +978,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Fires when the viewport of the map changes
-   * 
+   *
    * @param mapViewport a new viewport
    */
   private onViewportChange = async (mapViewport: Viewport) => {
@@ -937,7 +987,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Fires when user doubleclicks the map
-   * 
+   *
    * @param mouseEvent mouse event
    */
   private addRoutePoint = async (mouseEvent: LeafletMouseEvent) => {
@@ -959,7 +1009,7 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Sets locations name from coordinates
-   * 
+   *
    * @param type GeocodeCoordinate type
    * @param lat lat string
    * @param lon lon string
