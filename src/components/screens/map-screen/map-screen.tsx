@@ -440,8 +440,8 @@ class MapScreen extends React.Component<Props, State> {
             inputValue={ locationToTextInput } 
             onChange={ this.onLocationToSelected } 
             options={ locationToOptions } 
-            getOptionLabel={(option: Location) => option.name || ""}
-            getOptionSelected={(option, value) => option.name === value.name}
+            getOptionLabel={ (option: Location) => option.name || "" }
+            getOptionSelected={ (option, value) => option.name === value.name }
             value={ locationTo } 
             style={{ marginTop: theme.spacing(2) }}
             renderInput={ (params) => 
