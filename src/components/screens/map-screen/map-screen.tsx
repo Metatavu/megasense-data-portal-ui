@@ -418,8 +418,8 @@ class MapScreen extends React.Component<Props, State> {
             inputValue={ locationFromTextInput }
             onChange={ this.onLocationFromSelected } 
             options={ locationFromOptions } 
-            getOptionLabel={(option: Location) => option.name || ""}
-            getOptionSelected={(option, value) => option.name === value.name}
+            getOptionLabel={ (option: Location) => option.name || "" }
+            getOptionSelected={ (option, value) => option.name === value.name }
             value={ locationFrom }
             renderInput={ (params) => 
               <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
