@@ -54,6 +54,14 @@
     "findLocation": "Löytää paikka"
   },
 
+  "map":{
+    "myLocation": "Minun paikka",
+    "zoomIn": "Loitonna",
+    "zoomOut": "Lähennä",
+    "showMap": "Näytä kartta",
+    "showDataOverlay":"Näytä data"
+  },
+  
   "statistics": {
     "title": "Tilastot",
     "selectPollution": "Valitse saaste:",
