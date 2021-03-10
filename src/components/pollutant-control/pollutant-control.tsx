@@ -4,7 +4,7 @@ import { MyLocation, Add, Remove } from "@material-ui/icons";
 import React from "react";
 import { Map, TileLayer } from "react-leaflet";
 import strings from "../../localization/strings";
-import { styles } from "./pollutant-control.styles";
+import styles from "./pollutant-control.styles";
 import HeatmapLayer from "react-leaflet-heatmap-layer";
 import { AirQuality } from "../../generated/client";
 
@@ -47,27 +47,26 @@ class PollutantControl extends React.Component<Props, State> {
    * PollutantControl render method
    */
   public render = () => {
-    const { classes } = this.props;
     const { showPollutantData } = this.state;
     
     return (
-      <div id="layercontrol" className={ "leaflet-bottom leaflet-left" }>
-        <div className={ classes.buttonholder }>
-          <IconButton className={ classes.button }
+      <div id="layercontrol" className="leaflet-bottom leaflet-left">
+        <div style={ styles.buttonholder as React.CSSProperties }>
+          <IconButton style={ styles.button as React.CSSProperties }
             size="medium"
             title={ strings.map.zoomIn }
             onClick={ this.zoomIn }
           >
             <Add />
           </IconButton>
-          <IconButton className={ classes.button }
+          <IconButton style={ styles.button as React.CSSProperties }
             size="medium"
             title={ strings.map.zoomOut }
             onClick={ this.zoomOut }
           >
             <Remove />
           </IconButton>
-          <IconButton className={ classes.button }
+          <IconButton style={ styles.button as React.CSSProperties }
             size="medium"
             title={ strings.map.myLocation }
             onClick={ this.findMe }
@@ -75,18 +74,18 @@ class PollutantControl extends React.Component<Props, State> {
             <MyLocation />
           </IconButton>
         </div>
-        <Paper className={ classes.mapContainer }>
+        <Paper style={ styles.mapContainer as React.CSSProperties}>
           <Typography
             variant="h2"
             color="primary"
-            className={ classes.toggleMap }
+            style={ styles.toggleMap as React.CSSProperties}
             onClick={ this.toggleMap }
           >
             { showPollutantData ? strings.map.showMap : strings.map.showDataOverlay }
           </Typography>
           { this.props.parentMapRef.current &&
             <Map
-              className={ classes.smallMap }
+              style={ styles.smallMap as React.CSSProperties}
               center={ this.props.parentMapRef.current?.leafletElement.getCenter() }
               zoom={ 8 }
               dragging={ true }

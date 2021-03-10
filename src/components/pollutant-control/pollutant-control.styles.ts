@@ -1,7 +1,7 @@
 import { createStyles } from "@material-ui/core";
 import theme from "../../theme/theme";
 
-export const styles = createStyles({
+export default createStyles({
 
   button: {
     color: theme.palette.primary.light,
@@ -40,6 +40,6 @@ export const styles = createStyles({
     width: "100%",
     marginLeft: "5%",
     marginright: "5%",
-  }
+  },
 
 });
