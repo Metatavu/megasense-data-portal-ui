@@ -1,5 +1,4 @@
-import { IconButton, Typography } from "@material-ui/core";
-import { Paper, withStyles, WithStyles } from "@material-ui/core";
+import { IconButton, Typography, Paper, withStyles, WithStyles } from "@material-ui/core";
 import { MyLocation, Add, Remove } from "@material-ui/icons";
 import React from "react";
 import { Map, TileLayer } from "react-leaflet";
