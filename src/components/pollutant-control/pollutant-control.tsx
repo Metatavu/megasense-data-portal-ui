@@ -55,8 +55,8 @@ class PollutantControl extends React.Component<Props, State> {
         <div className={classes.buttonholder}>
           <IconButton className={classes.button}
             size="medium"
-            title={strings.map.zoomIn}
-            onClick={this.zoomIn}
+            title={ strings.map.zoomIn }
+            onClick={ this.zoomIn }
           >
             <Add />
           </IconButton>
