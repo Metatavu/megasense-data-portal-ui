@@ -38,9 +38,7 @@ class PolutantControl extends React.Component<Props, State> {
    * @param props props
    */
   constructor(props: Props) {
-
     super(props);
-
     this.state = {
       parentMap: props.parentMapRef,
       parentLayer: props.parentLayerRef,
