@@ -137,6 +137,7 @@ class MapScreen extends React.Component<Props, State> {
 
     this.getUserSavedRoutes();
     this.getUserFavouriteLocations().then(() => this.setLocationOptions());
+
     if (this.mapRef.current != null) {
       const map = this.mapRef.current.leafletElement;
       const heatLayer = this.overlayRef.current.leafletElement;
