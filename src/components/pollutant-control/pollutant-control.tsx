@@ -49,6 +49,7 @@ class PollutantControl extends React.Component<Props, State> {
   public render = () => {
     const { classes } = this.props;
     const { showPollutantData: showPollutantData } = this.state;
+    
     return (
       <div id="layercontrol" className={"leaflet-bottom leaflet-left"}>
         <div className={classes.buttonholder}>
