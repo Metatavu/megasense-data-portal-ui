@@ -36,6 +36,5 @@ smallMap: {
     width: "100%",
     marginLeft:"5%",
     marginright:"5%"
-
   }
 });
