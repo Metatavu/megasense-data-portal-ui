@@ -162,7 +162,6 @@ class PollutantControl extends React.Component<Props, State> {
     const layer = this.props.parentLayerRef.current?.leafletElement;
     showPollutantData ? map.addLayer(layer) : map.removeLayer(layer);
   }
-
 }
 
 export default withStyles(styles)(PollutantControl);
