@@ -10,7 +10,6 @@ export const styles = createStyles({
     marginLeft: theme.spacing(2),
     zIndex: 1,
     pointerEvents: "auto",    
-
   },
   buttonholder: {
     width:"100%"
