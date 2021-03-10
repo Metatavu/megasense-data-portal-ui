@@ -631,7 +631,6 @@ class MapScreen extends React.Component<Props, State> {
           </Marker>
         }
 
-       
           <HeatmapLayer
             ref={ this.overlayRef } 
             id="heatmap"
