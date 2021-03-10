@@ -639,8 +639,11 @@ class MapScreen extends React.Component<Props, State> {
             latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
             intensityExtractor={ (airQuality: AirQuality) => airQuality.pollutionValue }
             />
-        <PollutantControl parentMapRef={this.mapRef}  parentLayerRef={this.overlayRef} airQuality={this.state.airQuality}
->
+        <PollutantControl
+          parentMapRef={ this.mapRef }
+          parentLayerRef={ this.overlayRef }
+          airQuality={ this.state.airQuality }
+        >
 
         </PollutantControl>
         
