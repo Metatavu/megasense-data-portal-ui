@@ -78,8 +78,14 @@ class PollutantControl extends React.Component<Props, State> {
         </div>
         <Paper className={classes.mapContainer}>
 
-          <Typography variant="h2" color="primary" className={classes.toggleMap} onClick={this.toggleMap}
-          >          {showPollutantData ? strings.map.showMap : strings.map.showDataOverlay} </Typography>
+          <Typography
+            variant="h2"
+            color="primary"
+            className={classes.toggleMap}
+            onClick={this.toggleMap}
+          >
+            { showPollutantData ? strings.map.showMap : strings.map.showDataOverlay }
+          </Typography>
 
           {this.props.parentMapRef.current &&
 
