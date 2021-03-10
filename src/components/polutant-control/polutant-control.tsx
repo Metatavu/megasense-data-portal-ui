@@ -2,10 +2,7 @@ import { IconButton, Typography } from "@material-ui/core";
 import { Paper, withStyles, WithStyles } from "@material-ui/core";
 import { MyLocation, Add, Remove } from "@material-ui/icons";
 import React from "react";
-import {
-  Map,
-  TileLayer,
-} from "react-leaflet";
+import { Map, TileLayer } from "react-leaflet";
 import strings from "../../localization/strings";
 import { styles } from "./polutant-control.styles";
 import HeatmapLayer from "react-leaflet-heatmap-layer";
