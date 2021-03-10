@@ -4,7 +4,7 @@ import { MyLocation, Add, Remove } from "@material-ui/icons";
 import React from "react";
 import { Map, TileLayer } from "react-leaflet";
 import strings from "../../localization/strings";
-import { styles } from "./polutant-control.styles";
+import { styles } from "./pollutant-control.styles";
 import HeatmapLayer from "react-leaflet-heatmap-layer";
 import { AirQuality } from "../../generated/client";
 
@@ -21,17 +21,15 @@ interface Props extends WithStyles<typeof styles> {
  * Interface describing component state
  */
 interface State {
-  parentMap: any;
-  parentLayer: any;
-  showPolutantData: boolean;
+  showPollutantData: boolean;
 }
 
 /**
- * PolutantControl component
+ * PollutantControl component
  */
-class PolutantControl extends React.Component<Props, State> {
+class PollutantControl extends React.Component<Props, State> {
   mapRef: React.RefObject<Map>;
-  
+
   /**
    * Component constructor
    *
@@ -40,68 +38,17 @@ class PolutantControl extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      parentMap: props.parentMapRef,
-      parentLayer: props.parentLayerRef,
-      showPolutantData: false,
-
+      showPollutantData: false,
     };
     this.mapRef = React.createRef();
-    this.findMe = this.findMe.bind(this);
-    this.zoomIn = this.zoomIn.bind(this);
-    this.zoomOut = this.zoomOut.bind(this);
-    this.toggleMap = this.toggleMap.bind(this);
   }
 
   /**
-   * Change the location of the map to the current location of user.
+   * PollutantControl render method
    */
-  findMe() {
-
-    this.state.parentMap.current?.leafletElement.locate({ setView: true, maxZoom: 16 });
-    this.mapRef.current?.leafletElement.locate({ setView: true, maxZoom: 16 });
-  }
-
-  /**
-   * Zoom in the map
-   */
-  zoomIn() {
-    this.state.parentMap.current?.leafletElement.zoomIn(1)
-  }
-  
-  /**
-   * Zoom out the map
-   */
-  zoomOut() {
-    this.state.parentMap.current?.leafletElement.zoomOut(1)
-  }
-  
-  /**
-   * toggle the layer status value and toggles data layer
-   */
-  toggleMap() {
-    const { showPolutantData } = this.state
-    this.setState({ showPolutantData: !showPolutantData })
-    this.toggleLayer(!showPolutantData)
-
-  }
-
-  /**
-   * Component constructor
-   *
-   * @param showPolutantData boolean
-   */
-  toggleLayer(showPolutantData: boolean) {
-    const map = this.state.parentMap.current?.leafletElement;
-    const layer = this.state.parentLayer.current?.leafletElement;
-    showPolutantData ? map.addLayer(layer) : map.removeLayer(layer);
-  }
-
-  /**
-   * PolutantControl render method
-   */
-  render(): JSX.Element {
+  public render = () => {
     const { classes } = this.props;
-    const { showPolutantData } = this.state;
+    const { showPollutantData: showPollutantData } = this.state;
     return (
       <div id="layercontrol" className={"leaflet-bottom leaflet-left"}>
         <div className={classes.buttonholder}>
@@ -131,13 +78,13 @@ class PolutantControl extends React.Component<Props, State> {
         <Paper className={classes.mapContainer}>
 
           <Typography variant="h2" color="primary" className={classes.toggleMap} onClick={this.toggleMap}
-          >          {showPolutantData ? strings.map.showMap : strings.map.showDataOverlay} </Typography>
+          >          {showPollutantData ? strings.map.showMap : strings.map.showDataOverlay} </Typography>
 
-          {this.state.parentMap.current &&
+          {this.props.parentMapRef.current &&
 
             <Map
               className={classes.smallMap}
-              center={this.state.parentMap.current?.leafletElement.getCenter()}
+              center={this.props.parentMapRef.current?.leafletElement.getCenter()}
               zoom={8}
               dragging={true}
               doubleClickZoom={true}
@@ -147,7 +94,7 @@ class PolutantControl extends React.Component<Props, State> {
 
             >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              {!showPolutantData &&
+              {!showPollutantData &&
                 <HeatmapLayer
                   points={this.props.airQuality}
                   longitudeExtractor={(airQuality: AirQuality) => airQuality.location.longitude}
@@ -163,6 +110,52 @@ class PolutantControl extends React.Component<Props, State> {
       </div>
     );
   }
+
+
+  /**
+   * Change the location of the map to the current location of user.
+   */
+  private findMe = () => {
+
+    this.props.parentMapRef.current?.leafletElement.locate({ setView: true, maxZoom: 16 });
+    this.mapRef.current?.leafletElement.locate({ setView: true, maxZoom: 16 });
+  }
+
+  /**
+   * Zoom in the map
+   */
+  private zoomIn = () => {
+    this.props.parentMapRef.current?.leafletElement.zoomIn(1)
+  }
+
+  /**
+   * Zoom out the map
+   */
+  private zoomOut = () => {
+    this.props.parentMapRef.current?.leafletElement.zoomOut(1)
+  }
+
+  /**
+   * toggle the layer status value and toggles data layer
+   */
+  private toggleMap = () => {
+    const { showPollutantData: showPollutantData } = this.state
+    this.setState({ showPollutantData: !showPollutantData })
+    this.toggleLayer(!showPollutantData)
+
+  }
+
+  /**
+   * Component constructor
+   *
+   * @param showPollutantData boolean
+   */
+  private toggleLayer = (showPollutantData: boolean) => {
+    const map = this.props.parentMapRef.current?.leafletElement;
+    const layer = this.props.parentLayerRef.current?.leafletElement;
+    showPollutantData ? map.addLayer(layer) : map.removeLayer(layer);
+  }
+
 }
 
-export default withStyles(styles)(PolutantControl);
+export default withStyles(styles)(PollutantControl);

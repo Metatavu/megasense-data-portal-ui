@@ -33,7 +33,8 @@ import MomentUtils from "@date-io/moment";
 import moment from "moment";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import {NOMINATIM_EMAIL, NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES} from "../../../constants/map"
-import PolutantControl from "../../polutant-control/polutant-control"
+import PollutantControl from "../../pollutant-control/pollutant-control"
+
 /**
  * Interface describing component props
  */
@@ -641,10 +642,10 @@ class MapScreen extends React.Component<Props, State> {
             latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
             intensityExtractor={ (airQuality: AirQuality) => airQuality.pollutionValue }
             />
-        <PolutantControl parentMapRef={this.mapRef}  parentLayerRef={this.overlayRef} airQuality={this.state.airQuality}
+        <PollutantControl parentMapRef={this.mapRef}  parentLayerRef={this.overlayRef} airQuality={this.state.airQuality}
 >
 
-        </PolutantControl>
+        </PollutantControl>
         
 
       </Map>
