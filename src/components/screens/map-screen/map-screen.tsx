@@ -33,7 +33,7 @@ import MomentUtils from "@date-io/moment";
 import moment from "moment";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import {NOMINATIM_EMAIL, NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES} from "../../../constants/map"
-import PollutantControl from "../../pollutant-control/pollutant-control"
+import PollutantControl from "../../pollutant-control/pollutant-control";
 
 /**
  * Interface describing component props
