@@ -91,6 +91,7 @@ export interface IStrings extends LocalizedStringsMethods {
     showDataOverlay: string;
     showMap: string;
   };
+  
   /**
    * Translations for statistics screen
    */
