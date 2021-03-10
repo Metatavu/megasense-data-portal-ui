@@ -630,7 +630,6 @@ class MapScreen extends React.Component<Props, State> {
             </Popup>
           </Marker>
         }
-                    
 
        
           <HeatmapLayer
