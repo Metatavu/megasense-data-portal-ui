@@ -560,8 +560,6 @@ class MapScreen extends React.Component<Props, State> {
         scrollWheelZoom={ mapInteractive }
         dragging={ mapInteractive }
         >
-                     
-                    
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
