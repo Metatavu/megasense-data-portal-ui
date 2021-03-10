@@ -644,9 +644,7 @@ class MapScreen extends React.Component<Props, State> {
           parentLayerRef={ this.overlayRef }
           airQuality={ this.state.airQuality }
         >
-
         </PollutantControl>
-        
 
       </Map>
     );
