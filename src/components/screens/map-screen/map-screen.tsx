@@ -142,7 +142,6 @@ class MapScreen extends React.Component<Props, State> {
       const map = this.mapRef.current.leafletElement;
       const heatLayer = this.overlayRef.current.leafletElement;
       map.removeLayer(heatLayer);
-
     }
   }
 
