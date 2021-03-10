@@ -635,7 +635,8 @@ class MapScreen extends React.Component<Props, State> {
                     
 
        
-          <HeatmapLayer ref={this.overlayRef} 
+          <HeatmapLayer
+            ref={ this.overlayRef } 
             id="heatmap"
             points={ airQuality }
             longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
