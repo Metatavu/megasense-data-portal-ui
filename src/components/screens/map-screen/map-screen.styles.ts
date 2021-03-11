@@ -19,7 +19,7 @@ export const styles = createStyles({
   mapComponent: {
     height: "100%"
   },
-  
+
   routingForm: {
     display: "flex",
     flexDirection: "column",
@@ -66,7 +66,7 @@ export const styles = createStyles({
   },
 
   routingFormButton: {
-    color:  theme.palette.primary.light,
+    color: theme.palette.primary.light,
     marginBottom: theme.spacing(2),
     borderColor: theme.palette.primary.light,
   },

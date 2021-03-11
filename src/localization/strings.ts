@@ -82,6 +82,17 @@ export interface IStrings extends LocalizedStringsMethods {
   };
 
   /**
+   * Translations for map screen
+   */
+  map: {
+    myLocation: string;
+    zoomIn: string;
+    zoomOut: string;
+    showDataOverlay: string;
+    showMap: string;
+  };
+  
+  /**
    * Translations for statistics screen
    */
   statistics: {

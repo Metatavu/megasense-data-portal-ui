@@ -33,6 +33,8 @@ import MomentUtils from "@date-io/moment";
 import moment from "moment";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import {NOMINATIM_EMAIL, NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES} from "../../../constants/map"
+import PollutantControl from "../../pollutant-control/pollutant-control";
+
 /**
  * Interface describing component props
  */
@@ -78,7 +80,7 @@ interface State {
  */
 class MapScreen extends React.Component<Props, State> {
   mapRef: React.RefObject<Map>;
-
+  overlayRef: any;
   /**
    * Component constructor
    *
@@ -110,7 +112,7 @@ class MapScreen extends React.Component<Props, State> {
     };
 
     this.mapRef = React.createRef();
-
+    this.overlayRef = React.createRef();
   }
 
   /**
@@ -135,6 +137,12 @@ class MapScreen extends React.Component<Props, State> {
 
     this.getUserSavedRoutes();
     this.getUserFavouriteLocations().then(() => this.setLocationOptions());
+
+    if (this.mapRef.current != null) {
+      const map = this.mapRef.current.leafletElement;
+      const heatLayer = this.overlayRef.current.leafletElement;
+      map.removeLayer(heatLayer);
+    }
   }
 
   /**
@@ -625,14 +633,20 @@ class MapScreen extends React.Component<Props, State> {
           </Marker>
         }
 
-        { this.state.mapViewport.zoom === 6 &&
           <HeatmapLayer
+            ref={ this.overlayRef } 
+            id="heatmap"
             points={ airQuality }
             longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
             latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
             intensityExtractor={ (airQuality: AirQuality) => airQuality.pollutionValue }
             />
-        }
+        <PollutantControl
+          parentMapRef={ this.mapRef }
+          parentLayerRef={ this.overlayRef }
+          airQuality={ this.state.airQuality }
+        >
+        </PollutantControl>
 
       </Map>
     );

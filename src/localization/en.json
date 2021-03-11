@@ -54,6 +54,14 @@
     "findLocation": "Find location"
   },
 
+  "map":{
+    "myLocation": "My location",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "showMap": "Show map",
+    "showDataOverlay":"Show data overlay"
+  },
+
   "statistics": {
     "title": "Statistics",
     "selectPollution": "Select pollution:",
