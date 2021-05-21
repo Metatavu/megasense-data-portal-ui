@@ -636,15 +636,14 @@ class MapScreen extends React.Component<Props, State> {
             </Popup>
           </Marker>
         }
-
-          <HeatmapLayer
-            ref={ this.overlayRef } 
-            id="heatmap"
-            points={ airQuality }
-            longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
-            latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
-            intensityExtractor={ (airQuality: AirQuality) => airQuality.pollutionValues }
-            />
+        <HeatmapLayer
+          ref={ this.overlayRef } 
+          id="heatmap"
+          points={ airQuality }
+          longitudeExtractor={ (airQualityElement: AirQuality) => airQualityElement.location.longitude }
+          latitudeExtractor={ (airQualityElement: AirQuality) => airQualityElement.location.latitude }
+          intensityExtractor={ (airQualityElement: AirQuality) => airQualityElement.pollutionValues }
+          />
         <PollutantControl
           parentMapRef={ this.mapRef }
           parentLayerRef={ this.overlayRef }
