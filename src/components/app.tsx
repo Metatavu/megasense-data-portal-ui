@@ -16,11 +16,17 @@ import AboutScreen from "./screens/about-screen/about-screen";
 import 'moment/locale/fi';
 import moment from "moment";
 import strings from "../localization/strings";
+import * as Sentry from "@sentry/react";
+
+/**
+ * Initialize Sentry Redux enhancer
+ */
+ const sentryReduxEnhancer = Sentry.createReduxEnhancer({});
 
 /**
  * Initialize Redux store
  */
-const store = createStore<ReduxState, ReduxActions, any, any>(rootReducer);
+const store = createStore<ReduxState, ReduxActions, any, any>(rootReducer,sentryReduxEnhancer);
 
 /**
  * Interface describing component properties
@@ -111,4 +117,4 @@ class App extends React.Component<Props, State> {
   }
 }
 
-export default App;
+export default Sentry.withProfiler(App);
