@@ -3,7 +3,12 @@
     "login": "Kirjaudu sisään",
     "logout": "Kirjaudu ulos",
     "register": "Luo käyttäjätili",
-    "guestUser": "Jatka kirjautumatta"
+    "guestUser": "Jatka kirjautumatta",
+    "name": "Nimi",
+    "email": "Email",
+    "password": "Salsana",
+    "repeatPassword": "Toista salasana",
+    "passwordCheckFail": "Salasanat eivät täsmää..."
   },
 
   "welcome": {

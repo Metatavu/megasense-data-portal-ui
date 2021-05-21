@@ -7,6 +7,7 @@ import HomeScreen from "./screens/home-screen/home-screen";
 import MapScreen from "./screens/map-screen/map-screen";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import StatisticsScreen from "./screens/statistics-screen/statistics-screen";
+import RegistrationScreen from "./screens/registration-screen/registration-screen";
 import Settings from "./screens/settings-screen/settings-screen";
 import { ReduxActions, ReduxState, rootReducer } from "../store";
 import AccessTokenRefresh from "./containers/access-token-refresh";
@@ -92,6 +93,13 @@ class App extends React.Component<Props, State> {
                   path="/about"
                   render={() => (
                     <AboutScreen />
+                  )}
+                />
+                <Route
+                  exact
+                  path="/registration"
+                  render={({ history }) => (
+                    <RegistrationScreen history={ history } />
                   )}
                 />
               </Switch>

@@ -100,7 +100,7 @@ class PollutantControl extends React.Component<Props, State> {
                   points={ this.props.airQuality }
                   longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
                   latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
-                  intensityExtractor={ (airQuality: AirQuality) => airQuality.pollutionValue }
+                  intensityExtractor={ (airQuality: AirQuality) => airQuality.pollutionValues }
                 />
               }
             </Map>

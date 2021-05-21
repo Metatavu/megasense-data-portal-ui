@@ -96,26 +96,28 @@ class StatisticsScreen extends React.Component<Props, State> {
       history.push("/");
     }
 
-    await this.getData();
-    let exposureData: ExposureData[] = [];
-    for (let i = 0; i < this.state.statisticsData.length; i++) {
-      const data = this.state.statisticsData[i];
-      exposureData.push ({
-        id: data.id,
-        harmfulMicroparticles: data.harmfulMicroparticles,
-        nitrogenDioxide: data.nitrogenDioxide,
-        nitrogenMonoxide: data.nitrogenMonoxide,
-        ozone: data.ozone,
-        routeId: data.routeId || "",
-        startedAt: moment(data.startedAt).format("L"),
-        endedAt: moment(data.endedAt).format("L"),
-        sulfurDioxide: data.sulfurDioxide
-      });
-    }
+    //TODO: fix this part
+
+    // await this.getData();
+    // let exposureData: ExposureData[] = [];
+    // for (let i = 0; i < this.state.statisticsData.length; i++) {
+    //   const data = this.state.statisticsData[i];
+    //   exposureData.push ({
+    //     id: data.id,
+    //     harmfulMicroparticles: data.harmfulMicroparticles,
+    //     nitrogenDioxide: data.nitrogenDioxide,
+    //     nitrogenMonoxide: data.nitrogenMonoxide,
+    //     ozone: data.ozone,
+    //     routeId: data.routeId || "",
+    //     startedAt: moment(data.startedAt).format("L"),
+    //     endedAt: moment(data.endedAt).format("L"),
+    //     sulfurDioxide: data.sulfurDioxide
+    //   });
+    // }
     
-    this.setState ({
-      exposureData: exposureData
-    })
+    // this.setState ({
+    //   exposureData: exposureData
+    // })
   }
 
   /**

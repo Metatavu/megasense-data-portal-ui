@@ -8,7 +8,7 @@ import SaveIcon from "@material-ui/icons/Save";
 import SearchIcon from "@material-ui/icons/Search";
 import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab/Autocomplete";
 import { LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
-import * as Nominatim from "nominatim-browser";
+import Geocode from "react-geocode";
 import * as PolyUtil from "polyline-encoded";
 import React, { ChangeEvent } from "react";
 import { Map, Marker, Polyline, Popup, TileLayer, Viewport } from "react-leaflet";
@@ -131,18 +131,20 @@ class MapScreen extends React.Component<Props, State> {
       this.loadUserSettings();
     }
 
-    const airQualityApi = Api.getAirQualityApi(accessToken);
-    const airQuality = await airQualityApi.getAirQuality({ pollutant: "SULFUR_DIOXIDE", boundingBoxCorner1: "55,20", boundingBoxCorner2: "65,30" });
-    this.setState({ airQuality });
+    //TODO: enable once AQ file is added
+    // const airQualityApi = Api.getAirQualityApi(accessToken);
+    // const airQuality = await airQualityApi.getAirQuality({ pollutantId: "SULFUR_DIOXIDE", boundingBoxCorner1: "55,20", boundingBoxCorner2: "65,30" });
+    // this.setState({ airQuality });
 
     this.getUserSavedRoutes();
     this.getUserFavouriteLocations().then(() => this.setLocationOptions());
 
-    if (this.mapRef.current != null) {
-      const map = this.mapRef.current.leafletElement;
-      const heatLayer = this.overlayRef.current.leafletElement;
-      map.removeLayer(heatLayer);
-    }
+    //TODO: enable once AQ file is added
+    // if (this.mapRef.current != null) {
+    //   const map = this.mapRef.current.leafletElement;
+    //   const heatLayer = this.overlayRef.current.leafletElement;
+    //   map.removeLayer(heatLayer);
+    // }
   }
 
   /**
@@ -266,15 +268,17 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ loadingUserSettings: true });
     try {
       const userSettingsApi = Api.getUsersApi(accessToken);
-      const userSettings = await userSettingsApi.getUserSettings();
-      const { homeAddress } = userSettings;
+      const user = await userSettingsApi.getUser({userId: accessToken.userId || ""});
+      const { homeAddress } = user;
       
       if (homeAddress) {
         const { streetAddress, postalCode, city, country } = homeAddress;
-        const geocodeRequest = { email: NOMINATIM_EMAIL, street: streetAddress, postalcode: postalCode, city, country };
-        const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode(geocodeRequest, process.env.REACT_APP_NOMINATIM_URL);
-        if (nominatimResponse.length === 1) {
-          const center = [Number.parseFloat(nominatimResponse[0].lat), Number.parseFloat(nominatimResponse[0].lon)] as [number, number];
+        const addressString = `${streetAddress}, ${city}, ${country}, ${postalCode}`;
+        const geocodingResponse = await Geocode.fromAddress(addressString, "AIzaSyBRpUHKoLVq1AL1cJ1wwmR6fgVsMXTCA_I");
+        
+        if (geocodingResponse.length === 1) {
+          const { lat, lng } = geocodingResponse.results[0].geometry.location;
+          const center = [ Number.parseFloat(lat), Number.parseFloat(lng) ] as [number, number];
           const mapViewport = { center, zoom: 13 }
           this.setState({ mapViewport });
         }
@@ -639,7 +643,7 @@ class MapScreen extends React.Component<Props, State> {
             points={ airQuality }
             longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
             latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
-            intensityExtractor={ (airQuality: AirQuality) => airQuality.pollutionValue }
+            intensityExtractor={ (airQuality: AirQuality) => airQuality.pollutionValues }
             />
         <PollutantControl
           parentMapRef={ this.mapRef }
@@ -918,10 +922,11 @@ class MapScreen extends React.Component<Props, State> {
    */
   private nominateCall = async (keyword: string): Promise<Location[]> => {
     try {
-      const nominatimResponse: Nominatim.NominatimResponse[] = await Nominatim.geocode({ email: NOMINATIM_EMAIL, q: keyword }, process.env.REACT_APP_NOMINATIM_URL);
-      return nominatimResponse.map(option => {
-        const coordinates = option.lat + "," + option.lon;
-        const name = option.display_name;
+      const geocodingResponse = await Geocode.fromAddress(keyword, "AIzaSyBRpUHKoLVq1AL1cJ1wwmR6fgVsMXTCA_I");
+      return geocodingResponse.results.map((result: any) => {
+        const { lat, lng } = result.geometry.location;
+        const coordinates = lat + "," + lng;
+        const name = result.formatted_address;
         return { name, coordinates };
       });
     }
@@ -968,7 +973,7 @@ class MapScreen extends React.Component<Props, State> {
         locationTo.coordinates = locationTo.name;
       }
 
-      const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=${moment(departureTime).format("h:mma")}&date=${moment(departureTime).format("MM-DD-yyyy")}&maxWalkDistance=100000&sulfurDioxideThreshold=1&sulfurDioxidePenalty=200`);
+      const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=${moment(departureTime).format("h:mma")}&date=${moment(departureTime).format("MM-DD-yyyy")}&maxWalkDistance=100000&sulfurDioxideThreshold=1&sulfurDioxidePenalty=20&pm25Threshold=1&pm25Penalty=20`);
       const jsonResponse = await routingResponse.json();
       const polyline = jsonResponse.plan.itineraries[0].legs[0].legGeometry.points;
       const route = PolyUtil.decode(polyline);
@@ -1009,16 +1014,42 @@ class MapScreen extends React.Component<Props, State> {
   private addRoutePoint = async (mouseEvent: LeafletMouseEvent) => {
     const position = mouseEvent.latlng.lat.toString() + "," + mouseEvent.latlng.lng.toString();
     const location = { name: position, coordinates: position };
+    let geocodingResponse = null;
     if (this.state.editingLocationFrom) {
       const locationFromOptions = [location];
-      const nominatimResponse: Nominatim.NominatimResponse = await Nominatim.reverseGeocode({ lat: mouseEvent.latlng.lat.toString(), lon: mouseEvent.latlng.lng.toString() }, process.env.REACT_APP_NOMINATIM_URL)
-      if (nominatimResponse) {
-        this.setState({ locationFromOptions, locationFrom: location, editingLocationFrom: false, locationFromTextInput: nominatimResponse.display_name });
+      try {
+        geocodingResponse = await Geocode.fromLatLng(mouseEvent.latlng.lat.toString(), mouseEvent.latlng.lng.toString(), "AIzaSyBRpUHKoLVq1AL1cJ1wwmR6fgVsMXTCA_I");
+      } catch (e) {
+        console.warn("Geocoding error is ", e);
+      }
+
+      this.setState({
+        locationFromOptions,
+        locationFrom: location,
+        editingLocationFrom: false
+      });
+
+      if (geocodingResponse !== null) {
+        this.setState({
+          locationFromTextInput: geocodingResponse.results[0].formatted_address
+        });
       }
     } else {
-      const nominatimResponse: Nominatim.NominatimResponse = await Nominatim.reverseGeocode({ lat: mouseEvent.latlng.lat.toString(), lon: mouseEvent.latlng.lng.toString() }, process.env.REACT_APP_NOMINATIM_URL)
-      if (nominatimResponse) {
-        this.setState({ locationTo: location, editingLocationFrom: true, locationToTextInput: nominatimResponse.display_name });
+      try {
+        geocodingResponse = await Geocode.fromLatLng(mouseEvent.latlng.lat.toString(), mouseEvent.latlng.lng.toString(), "AIzaSyBRpUHKoLVq1AL1cJ1wwmR6fgVsMXTCA_I");
+      } catch (e) {
+        console.warn("Geocoding error is ", e);
+      }
+
+      this.setState({
+        locationTo: location,
+        editingLocationFrom: true
+      });
+
+      if (geocodingResponse !== null) {
+        this.setState({
+          locationToTextInput: geocodingResponse.results[0].formatted_address
+        });
       }
     }
   }
@@ -1031,18 +1062,22 @@ class MapScreen extends React.Component<Props, State> {
    * @param lon lon string
    */
   private reverseGeocodeCoordinates = async (type: GeocodeCoordinate, lat: string, lon: string) => {
-    const nominatimResponse: Nominatim.NominatimResponse = await Nominatim.reverseGeocode({ lat, lon }, process.env.REACT_APP_NOMINATIM_URL);
-    const geocodedName = nominatimResponse.display_name;
-    if (type === GeocodeCoordinate.To) {
-      this.setState({
-        locationToTextInput: geocodedName
-      });
-    }
-
-    if (type === GeocodeCoordinate.From) {
-      this.setState({
-        locationFromTextInput: geocodedName
-      });
+    try {
+      const geocodingResponse = await Geocode.fromLatLng(lat, lon, "AIzaSyBRpUHKoLVq1AL1cJ1wwmR6fgVsMXTCA_I");
+      const geocodedName = geocodingResponse.results[0].formatted_address || "";
+      if (type === GeocodeCoordinate.To) {
+        this.setState({
+          locationToTextInput: geocodedName
+        });
+      }
+  
+      if (type === GeocodeCoordinate.From) {
+        this.setState({
+          locationFromTextInput: geocodedName
+        });
+      }
+    } catch (e) {
+      console.warn("Geocoding error is ", e);
     }
   }
 

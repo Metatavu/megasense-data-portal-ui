@@ -13,6 +13,11 @@ export interface IStrings extends LocalizedStringsMethods {
     logout: string;
     register: string;
     guestUser: string;
+    name: string;
+    email: string;
+    password: string;
+    repeatPassword: string;
+    passwordCheckFail: string;
   };
 
   /**
