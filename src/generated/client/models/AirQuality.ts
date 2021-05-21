@@ -18,10 +18,10 @@ import {
     LocationFromJSON,
     LocationFromJSONTyped,
     LocationToJSON,
-    PollutantType,
-    PollutantTypeFromJSON,
-    PollutantTypeFromJSONTyped,
-    PollutantTypeToJSON,
+    PollutionEntry,
+    PollutionEntryFromJSON,
+    PollutionEntryFromJSONTyped,
+    PollutionEntryToJSON,
 } from './';
 
 /**
@@ -32,22 +32,16 @@ import {
 export interface AirQuality {
     /**
      * 
-     * @type {number}
-     * @memberof AirQuality
-     */
-    pollutionValue: number;
-    /**
-     * 
-     * @type {PollutantType}
-     * @memberof AirQuality
-     */
-    pollutant: PollutantType;
-    /**
-     * 
      * @type {Location}
      * @memberof AirQuality
      */
     location: Location;
+    /**
+     * 
+     * @type {Array<PollutionEntry>}
+     * @memberof AirQuality
+     */
+    pollutionValues: Array<PollutionEntry>;
 }
 
 export function AirQualityFromJSON(json: any): AirQuality {
@@ -60,9 +54,8 @@ export function AirQualityFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     }
     return {
         
-        'pollutionValue': json['pollutionValue'],
-        'pollutant': json['pollutant'],
-        'location': json['location'],
+        'location': LocationFromJSON(json['location']),
+        'pollutionValues': ((json['pollutionValues'] as Array<any>).map(PollutionEntryFromJSON)),
     };
 }
 
@@ -75,9 +68,8 @@ export function AirQualityToJSON(value?: AirQuality | null): any {
     }
     return {
         
-        'pollutionValue': value.pollutionValue,
-        'pollutant': value.pollutant,
-        'location': value.location,
+        'location': LocationToJSON(value.location),
+        'pollutionValues': ((value.pollutionValues as Array<any>).map(PollutionEntryToJSON)),
     };
 }
 
