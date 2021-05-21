@@ -125,7 +125,7 @@ class RegistrationScreen extends React.Component<Props, State> {
    * Method for registering a new user
    */
   private onRegisterButtonClick = async () => {
-    const { keycloak, accessToken } = this.props;
+    const { accessToken } = this.props;
     const { name, email, password, passwordCheck } = this.state;
 
     if (password !== passwordCheck) {

@@ -1,7 +1,6 @@
 import { Box, FormControl, InputLabel, Paper, Select, Typography, Toolbar, Button } from "@material-ui/core";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import { History } from "history";
-import moment from "moment";
 import React from "react";
 import { connect } from "react-redux";
 import { CartesianGrid, Legend, Tooltip, XAxis, YAxis, BarChart, Bar, ResponsiveContainer } from "recharts";

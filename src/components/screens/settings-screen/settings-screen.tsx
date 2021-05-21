@@ -389,12 +389,6 @@ class Settings extends React.Component<Props, State> {
             },
             userId: accessToken.userId || ""
           });
-        } else {
-          //TODO: check if creating new User is needed here
-          return;
-          // await userSettingsApi.createUserSettings({ 
-          //   userSettings: userSettings
-          // });
         }
       } catch (error) {
         console.log(error);
@@ -408,13 +402,6 @@ class Settings extends React.Component<Props, State> {
       }
   
       try {
-        const userSettings = {
-          showMobileWelcomeScreen: false,
-          pollutantPenalties: {},
-          pollutantThresholds: {},
-          homeAddress: homeAddress
-        };
-
         if (userSettingsExist) {
           const existingUser = await userSettingsApi.getUser({userId: accessToken.userId || ""});
           await userSettingsApi.updateUser({
@@ -426,12 +413,6 @@ class Settings extends React.Component<Props, State> {
             },
             userId: accessToken.userId || ""
           });
-        } else {
-          //TODO: check if creating new User is needed here
-          return;
-          // await userSettingsApi.createUserSettings({
-          //   userSettings: userSettings
-          // });
         }
       } catch (error) {
         console.log(error);
