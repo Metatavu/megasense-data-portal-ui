@@ -15,39 +15,39 @@
 
 import * as runtime from '../runtime';
 import {
-    User,
-    UserFromJSON,
-    UserToJSON,
+    Pollutant,
+    PollutantFromJSON,
+    PollutantToJSON,
 } from '../models';
 
-export interface CreateUserRequest {
-    user: User;
+export interface CreatePollutantRequest {
+    pollutant: Pollutant;
 }
 
-export interface DeleteUserRequest {
-    userId: string;
+export interface DeletePollutantRequest {
+    pollutantId: string;
 }
 
-export interface GetUserRequest {
-    userId: string;
+export interface FindPollutantRequest {
+    pollutantId: string;
 }
 
-export interface UpdateUserRequest {
-    user: User;
-    userId: string;
+export interface UpdatePollutantRequest {
+    pollutant: Pollutant;
+    pollutantId: string;
 }
 
 /**
  * no description
  */
-export class UsersApi extends runtime.BaseAPI {
+export class PollutantsApi extends runtime.BaseAPI {
 
     /**
-     * Creates new user
+     * Creates a new pollutant
      */
-    async createUserRaw(requestParameters: CreateUserRequest): Promise<runtime.ApiResponse<User>> {
-        if (requestParameters.user === null || requestParameters.user === undefined) {
-            throw new runtime.RequiredError('user','Required parameter requestParameters.user was null or undefined when calling createUser.');
+    async createPollutantRaw(requestParameters: CreatePollutantRequest): Promise<runtime.ApiResponse<Pollutant>> {
+        if (requestParameters.pollutant === null || requestParameters.pollutant === undefined) {
+            throw new runtime.RequiredError('pollutant','Required parameter requestParameters.pollutant was null or undefined when calling createPollutant.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -65,30 +65,30 @@ export class UsersApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/v1/users`,
+            path: `/v1/pollutants`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: UserToJSON(requestParameters.user),
+            body: PollutantToJSON(requestParameters.pollutant),
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => UserFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => PollutantFromJSON(jsonValue));
     }
 
     /**
-     * Creates new user
+     * Creates a new pollutant
      */
-    async createUser(requestParameters: CreateUserRequest): Promise<User> {
-        const response = await this.createUserRaw(requestParameters);
+    async createPollutant(requestParameters: CreatePollutantRequest): Promise<Pollutant> {
+        const response = await this.createPollutantRaw(requestParameters);
         return await response.value();
     }
 
     /**
-     * Deletes user who is logged in
+     * Deletes pollutant
      */
-    async deleteUserRaw(requestParameters: DeleteUserRequest): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.userId === null || requestParameters.userId === undefined) {
-            throw new runtime.RequiredError('userId','Required parameter requestParameters.userId was null or undefined when calling deleteUser.');
+    async deletePollutantRaw(requestParameters: DeletePollutantRequest): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.pollutantId === null || requestParameters.pollutantId === undefined) {
+            throw new runtime.RequiredError('pollutantId','Required parameter requestParameters.pollutantId was null or undefined when calling deletePollutant.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -104,7 +104,7 @@ export class UsersApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/v1/users/{userId}`.replace(`{${"userId"}}`, encodeURIComponent(String(requestParameters.userId))),
+            path: `/v1/pollutants/{pollutantId}`.replace(`{${"pollutantId"}}`, encodeURIComponent(String(requestParameters.pollutantId))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -114,52 +114,18 @@ export class UsersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Deletes user who is logged in
+     * Deletes pollutant
      */
-    async deleteUser(requestParameters: DeleteUserRequest): Promise<void> {
-        await this.deleteUserRaw(requestParameters);
+    async deletePollutant(requestParameters: DeletePollutantRequest): Promise<void> {
+        await this.deletePollutantRaw(requestParameters);
     }
 
     /**
-     * Downloads the data of the user who is logged in
+     * Finds a pollutant
      */
-    async downloadUserDataRaw(): Promise<runtime.ApiResponse<Blob>> {
-        const queryParameters: runtime.HTTPQuery = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = typeof token === 'function' ? token("bearerAuth", []) : token;
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-        const response = await this.request({
-            path: `/v1/users/data`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        });
-
-        return new runtime.BlobApiResponse(response);
-    }
-
-    /**
-     * Downloads the data of the user who is logged in
-     */
-    async downloadUserData(): Promise<Blob> {
-        const response = await this.downloadUserDataRaw();
-        return await response.value();
-    }
-
-    /**
-     * Gets user settings of the user who is logged in
-     */
-    async getUserRaw(requestParameters: GetUserRequest): Promise<runtime.ApiResponse<User>> {
-        if (requestParameters.userId === null || requestParameters.userId === undefined) {
-            throw new runtime.RequiredError('userId','Required parameter requestParameters.userId was null or undefined when calling getUser.');
+    async findPollutantRaw(requestParameters: FindPollutantRequest): Promise<runtime.ApiResponse<Pollutant>> {
+        if (requestParameters.pollutantId === null || requestParameters.pollutantId === undefined) {
+            throw new runtime.RequiredError('pollutantId','Required parameter requestParameters.pollutantId was null or undefined when calling findPollutant.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -175,33 +141,67 @@ export class UsersApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/v1/users/{userId}`.replace(`{${"userId"}}`, encodeURIComponent(String(requestParameters.userId))),
+            path: `/v1/pollutants/{pollutantId}`.replace(`{${"pollutantId"}}`, encodeURIComponent(String(requestParameters.pollutantId))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => UserFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => PollutantFromJSON(jsonValue));
     }
 
     /**
-     * Gets user settings of the user who is logged in
+     * Finds a pollutant
      */
-    async getUser(requestParameters: GetUserRequest): Promise<User> {
-        const response = await this.getUserRaw(requestParameters);
+    async findPollutant(requestParameters: FindPollutantRequest): Promise<Pollutant> {
+        const response = await this.findPollutantRaw(requestParameters);
         return await response.value();
     }
 
     /**
-     * Updates user data for the user who is logged in
+     * Lists all pollutants
      */
-    async updateUserRaw(requestParameters: UpdateUserRequest): Promise<runtime.ApiResponse<User>> {
-        if (requestParameters.user === null || requestParameters.user === undefined) {
-            throw new runtime.RequiredError('user','Required parameter requestParameters.user was null or undefined when calling updateUser.');
+    async getPollutantsRaw(): Promise<runtime.ApiResponse<Array<Pollutant>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = typeof token === 'function' ? token("bearerAuth", []) : token;
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/v1/pollutants`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(PollutantFromJSON));
+    }
+
+    /**
+     * Lists all pollutants
+     */
+    async getPollutants(): Promise<Array<Pollutant>> {
+        const response = await this.getPollutantsRaw();
+        return await response.value();
+    }
+
+    /**
+     * Updates pollutant
+     */
+    async updatePollutantRaw(requestParameters: UpdatePollutantRequest): Promise<runtime.ApiResponse<Pollutant>> {
+        if (requestParameters.pollutant === null || requestParameters.pollutant === undefined) {
+            throw new runtime.RequiredError('pollutant','Required parameter requestParameters.pollutant was null or undefined when calling updatePollutant.');
         }
 
-        if (requestParameters.userId === null || requestParameters.userId === undefined) {
-            throw new runtime.RequiredError('userId','Required parameter requestParameters.userId was null or undefined when calling updateUser.');
+        if (requestParameters.pollutantId === null || requestParameters.pollutantId === undefined) {
+            throw new runtime.RequiredError('pollutantId','Required parameter requestParameters.pollutantId was null or undefined when calling updatePollutant.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -219,21 +219,21 @@ export class UsersApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/v1/users/{userId}`.replace(`{${"userId"}}`, encodeURIComponent(String(requestParameters.userId))),
+            path: `/v1/pollutants/{pollutantId}`.replace(`{${"pollutantId"}}`, encodeURIComponent(String(requestParameters.pollutantId))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: UserToJSON(requestParameters.user),
+            body: PollutantToJSON(requestParameters.pollutant),
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => UserFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => PollutantFromJSON(jsonValue));
     }
 
     /**
-     * Updates user data for the user who is logged in
+     * Updates pollutant
      */
-    async updateUser(requestParameters: UpdateUserRequest): Promise<User> {
-        const response = await this.updateUserRaw(requestParameters);
+    async updatePollutant(requestParameters: UpdatePollutantRequest): Promise<Pollutant> {
+        const response = await this.updatePollutantRaw(requestParameters);
         return await response.value();
     }
 

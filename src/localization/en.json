@@ -3,7 +3,12 @@
     "login": "Login",
     "logout": "Log out",
     "register": "Register",
-    "guestUser": "Continue as a guest"
+    "guestUser": "Continue as a guest",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "repeatPassword": "Repeat password",
+    "passwordCheckFail": "Passwords don’t match..."
   },
 
   "welcome": {

@@ -21,8 +21,8 @@ import {
 } from '../models';
 
 export interface TotalExposureRequest {
-    exposedBefore?: string;
-    exposedAfter?: string;
+    exposedBefore?: Date;
+    exposedAfter?: Date;
 }
 
 /**
@@ -37,11 +37,11 @@ export class TotalExposureApi extends runtime.BaseAPI {
         const queryParameters: runtime.HTTPQuery = {};
 
         if (requestParameters.exposedBefore !== undefined) {
-            queryParameters['exposedBefore'] = requestParameters.exposedBefore;
+            queryParameters['exposedBefore'] = (requestParameters.exposedBefore as any).toISOString();
         }
 
         if (requestParameters.exposedAfter !== undefined) {
-            queryParameters['exposedAfter'] = requestParameters.exposedAfter;
+            queryParameters['exposedAfter'] = (requestParameters.exposedAfter as any).toISOString();
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -55,7 +55,7 @@ export class TotalExposureApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/totalExposure`,
+            path: `/v1/totalExposure`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

@@ -61,7 +61,7 @@ export class FavouriteLocationsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/favourites`,
+            path: `/v1/favourites`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -100,7 +100,7 @@ export class FavouriteLocationsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/favourites/{favouriteId}`.replace(`{${"favouriteId"}}`, encodeURIComponent(String(requestParameters.favouriteId))),
+            path: `/v1/favourites/{favouriteId}`.replace(`{${"favouriteId"}}`, encodeURIComponent(String(requestParameters.favouriteId))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -133,7 +133,7 @@ export class FavouriteLocationsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/favourites`,
+            path: `/v1/favourites`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -177,7 +177,7 @@ export class FavouriteLocationsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/favourites/{favouriteId}`.replace(`{${"favouriteId"}}`, encodeURIComponent(String(requestParameters.favouriteId))),
+            path: `/v1/favourites/{favouriteId}`.replace(`{${"favouriteId"}}`, encodeURIComponent(String(requestParameters.favouriteId))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,

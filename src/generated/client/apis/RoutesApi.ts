@@ -60,7 +60,7 @@ export class RoutesApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/routes`,
+            path: `/v1/routes`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -99,7 +99,7 @@ export class RoutesApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/routes/{routeId}`.replace(`{${"routeId"}}`, encodeURIComponent(String(requestParameters.routeId))),
+            path: `/v1/routes/{routeId}`.replace(`{${"routeId"}}`, encodeURIComponent(String(requestParameters.routeId))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -136,7 +136,7 @@ export class RoutesApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/routes/{routeId}`.replace(`{${"routeId"}}`, encodeURIComponent(String(requestParameters.routeId))),
+            path: `/v1/routes/{routeId}`.replace(`{${"routeId"}}`, encodeURIComponent(String(requestParameters.routeId))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -170,7 +170,7 @@ export class RoutesApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/routes`,
+            path: `/v1/routes`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

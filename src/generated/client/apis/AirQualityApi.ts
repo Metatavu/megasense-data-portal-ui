@@ -21,14 +21,15 @@ import {
 } from '../models';
 
 export interface GetAirQualityRequest {
-    pollutant: string;
-    boundingBoxCorner1: string;
-    boundingBoxCorner2: string;
+    pollutantId?: string;
+    boundingBoxCorner1?: string;
+    boundingBoxCorner2?: string;
+    coordinatesArray?: Array<string>;
 }
 
 export interface GetAirQualityForCoordinatesRequest {
     coordinates: string;
-    pollutant: string;
+    pollutantId: string;
 }
 
 /**
@@ -40,22 +41,10 @@ export class AirQualityApi extends runtime.BaseAPI {
      * Get air quality data
      */
     async getAirQualityRaw(requestParameters: GetAirQualityRequest): Promise<runtime.ApiResponse<Array<AirQuality>>> {
-        if (requestParameters.pollutant === null || requestParameters.pollutant === undefined) {
-            throw new runtime.RequiredError('pollutant','Required parameter requestParameters.pollutant was null or undefined when calling getAirQuality.');
-        }
-
-        if (requestParameters.boundingBoxCorner1 === null || requestParameters.boundingBoxCorner1 === undefined) {
-            throw new runtime.RequiredError('boundingBoxCorner1','Required parameter requestParameters.boundingBoxCorner1 was null or undefined when calling getAirQuality.');
-        }
-
-        if (requestParameters.boundingBoxCorner2 === null || requestParameters.boundingBoxCorner2 === undefined) {
-            throw new runtime.RequiredError('boundingBoxCorner2','Required parameter requestParameters.boundingBoxCorner2 was null or undefined when calling getAirQuality.');
-        }
-
         const queryParameters: runtime.HTTPQuery = {};
 
-        if (requestParameters.pollutant !== undefined) {
-            queryParameters['pollutant'] = requestParameters.pollutant;
+        if (requestParameters.pollutantId !== undefined) {
+            queryParameters['pollutantId'] = requestParameters.pollutantId;
         }
 
         if (requestParameters.boundingBoxCorner1 !== undefined) {
@@ -64,6 +53,10 @@ export class AirQualityApi extends runtime.BaseAPI {
 
         if (requestParameters.boundingBoxCorner2 !== undefined) {
             queryParameters['boundingBoxCorner2'] = requestParameters.boundingBoxCorner2;
+        }
+
+        if (requestParameters.coordinatesArray) {
+            queryParameters['coordinatesArray'] = requestParameters.coordinatesArray;
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -77,7 +70,7 @@ export class AirQualityApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/airQuality`,
+            path: `/v1/airQuality`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -102,8 +95,8 @@ export class AirQualityApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('coordinates','Required parameter requestParameters.coordinates was null or undefined when calling getAirQualityForCoordinates.');
         }
 
-        if (requestParameters.pollutant === null || requestParameters.pollutant === undefined) {
-            throw new runtime.RequiredError('pollutant','Required parameter requestParameters.pollutant was null or undefined when calling getAirQualityForCoordinates.');
+        if (requestParameters.pollutantId === null || requestParameters.pollutantId === undefined) {
+            throw new runtime.RequiredError('pollutantId','Required parameter requestParameters.pollutantId was null or undefined when calling getAirQualityForCoordinates.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -119,7 +112,7 @@ export class AirQualityApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/airQuality/{coordinates}/{pollutant}`.replace(`{${"coordinates"}}`, encodeURIComponent(String(requestParameters.coordinates))).replace(`{${"pollutant"}}`, encodeURIComponent(String(requestParameters.pollutant))),
+            path: `/v1/airQuality/{coordinates}/{pollutantId}`.replace(`{${"coordinates"}}`, encodeURIComponent(String(requestParameters.coordinates))).replace(`{${"pollutantId"}}`, encodeURIComponent(String(requestParameters.pollutantId))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

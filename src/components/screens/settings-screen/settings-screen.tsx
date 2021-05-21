@@ -76,8 +76,8 @@ class Settings extends React.Component<Props, State> {
     });
     try {
       const userSettingsApi = Api.getUsersApi(accessToken);
-      const userSettings = await userSettingsApi.getUserSettings();
-      const { homeAddress } = userSettings;
+      const user = await userSettingsApi.getUser({userId: accessToken?.userId || ""});
+      const { homeAddress } = user;
 
       if (homeAddress) {
         this.setState({ 
@@ -284,7 +284,7 @@ class Settings extends React.Component<Props, State> {
     }
 
     const usersApi = Api.getUsersApi(accessToken);
-    await usersApi.deleteUser();
+    await usersApi.deleteUser({ userId: accessToken.userId || "" });
     window.location.href = "/";
   }
 
@@ -379,18 +379,15 @@ class Settings extends React.Component<Props, State> {
     const userSettingsApi = Api.getUsersApi(accessToken);
     if (streetAddress === "" && postalCode === "" && city === "" && country === "") {
       try {
-        const userSettings = {
-          showMobileWelcomeScreen: false,
-          pollutantPenalties: {},
-          pollutantThresholds: {}
-        };
+        const existingUser = await userSettingsApi.getUser({userId: accessToken.userId || ""});
         if (userSettingsExist) {
-          await userSettingsApi.updateUserSettings({ 
-            userSettings: userSettings
-          });
-        } else {
-          await userSettingsApi.createUserSettings({ 
-            userSettings: userSettings
+          await userSettingsApi.updateUser({ 
+            user: {
+              ...existingUser,
+              showMobileWelcomeScreen: false,
+              pollutantPenalties: []
+            },
+            userId: accessToken.userId || ""
           });
         }
       } catch (error) {
@@ -405,20 +402,16 @@ class Settings extends React.Component<Props, State> {
       }
   
       try {
-        const userSettings = {
-          showMobileWelcomeScreen: false,
-          pollutantPenalties: {},
-          pollutantThresholds: {},
-          homeAddress: homeAddress
-        };
-
         if (userSettingsExist) {
-          await userSettingsApi.updateUserSettings({
-            userSettings: userSettings
-          });
-        } else {
-          await userSettingsApi.createUserSettings({
-            userSettings: userSettings
+          const existingUser = await userSettingsApi.getUser({userId: accessToken.userId || ""});
+          await userSettingsApi.updateUser({
+            user: {
+              ...existingUser,
+              showMobileWelcomeScreen: false,
+              pollutantPenalties: [],
+              homeAddress: homeAddress
+            },
+            userId: accessToken.userId || ""
           });
         }
       } catch (error) {

@@ -33,8 +33,8 @@ export interface FindExposureInstanceRequest {
 }
 
 export interface ListExposureInstancesRequest {
-    createdBefore?: string;
-    createdAfter?: string;
+    createdBefore?: Date;
+    createdAfter?: Date;
 }
 
 /**
@@ -65,7 +65,7 @@ export class ExposureInstancesApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/exposureInstances`,
+            path: `/v1/exposureInstances`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -104,7 +104,7 @@ export class ExposureInstancesApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/exposureInstances/{exposureInstanceId}`.replace(`{${"exposureInstanceId"}}`, encodeURIComponent(String(requestParameters.exposureInstanceId))),
+            path: `/v1/exposureInstances/{exposureInstanceId}`.replace(`{${"exposureInstanceId"}}`, encodeURIComponent(String(requestParameters.exposureInstanceId))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -141,7 +141,7 @@ export class ExposureInstancesApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/exposureInstances/{exposureInstanceId}`.replace(`{${"exposureInstanceId"}}`, encodeURIComponent(String(requestParameters.exposureInstanceId))),
+            path: `/v1/exposureInstances/{exposureInstanceId}`.replace(`{${"exposureInstanceId"}}`, encodeURIComponent(String(requestParameters.exposureInstanceId))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -165,11 +165,11 @@ export class ExposureInstancesApi extends runtime.BaseAPI {
         const queryParameters: runtime.HTTPQuery = {};
 
         if (requestParameters.createdBefore !== undefined) {
-            queryParameters['createdBefore'] = requestParameters.createdBefore;
+            queryParameters['createdBefore'] = (requestParameters.createdBefore as any).toISOString();
         }
 
         if (requestParameters.createdAfter !== undefined) {
-            queryParameters['createdAfter'] = requestParameters.createdAfter;
+            queryParameters['createdAfter'] = (requestParameters.createdAfter as any).toISOString();
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -183,7 +183,7 @@ export class ExposureInstancesApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/exposureInstances`,
+            path: `/v1/exposureInstances`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

@@ -98,6 +98,7 @@ class HomeScreen extends React.Component<Props, State> {
               variant="outlined" 
               className={ classes.logInButton }
               endIcon={ <ArrowIcon /> }
+              onClick={ () => this.onRegisterButtonClick() }
             >
               { strings.auth.register }
             </Button>
@@ -130,6 +131,15 @@ class HomeScreen extends React.Component<Props, State> {
   private onGuestButtonClick = () => {
     this.setState({ 
       redirectTo: "/map"
+    });
+  }
+
+  /**
+   * Method for registering a new user
+   */
+  private onRegisterButtonClick = () => {
+    this.setState({ 
+      redirectTo: "/registration"
     });
   }  
 }

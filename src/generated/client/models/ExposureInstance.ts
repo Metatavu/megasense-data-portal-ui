@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import {
+    PollutionEntry,
+    PollutionEntryFromJSON,
+    PollutionEntryFromJSONTyped,
+    PollutionEntryToJSON,
+} from './';
+
 /**
  * 
  * @export
@@ -45,40 +52,10 @@ export interface ExposureInstance {
     endedAt?: Date;
     /**
      * 
-     * @type {number}
+     * @type {Array<PollutionEntry>}
      * @memberof ExposureInstance
      */
-    carbonMonoxide?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ExposureInstance
-     */
-    nitrogenMonoxide?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ExposureInstance
-     */
-    nitrogenDioxide?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ExposureInstance
-     */
-    ozone?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ExposureInstance
-     */
-    sulfurDioxide?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ExposureInstance
-     */
-    harmfulMicroparticles?: number;
+    pollutionValues?: Array<PollutionEntry>;
 }
 
 export function ExposureInstanceFromJSON(json: any): ExposureInstance {
@@ -95,12 +72,7 @@ export function ExposureInstanceFromJSONTyped(json: any, ignoreDiscriminator: bo
         'routeId': !exists(json, 'routeId') ? undefined : json['routeId'],
         'startedAt': !exists(json, 'startedAt') ? undefined : (new Date(json['startedAt'])),
         'endedAt': !exists(json, 'endedAt') ? undefined : (new Date(json['endedAt'])),
-        'carbonMonoxide': !exists(json, 'carbonMonoxide') ? undefined : json['carbonMonoxide'],
-        'nitrogenMonoxide': !exists(json, 'nitrogenMonoxide') ? undefined : json['nitrogenMonoxide'],
-        'nitrogenDioxide': !exists(json, 'nitrogenDioxide') ? undefined : json['nitrogenDioxide'],
-        'ozone': !exists(json, 'ozone') ? undefined : json['ozone'],
-        'sulfurDioxide': !exists(json, 'sulfurDioxide') ? undefined : json['sulfurDioxide'],
-        'harmfulMicroparticles': !exists(json, 'harmfulMicroparticles') ? undefined : json['harmfulMicroparticles'],
+        'pollutionValues': !exists(json, 'pollutionValues') ? undefined : ((json['pollutionValues'] as Array<any>).map(PollutionEntryFromJSON)),
     };
 }
 
@@ -117,12 +89,7 @@ export function ExposureInstanceToJSON(value?: ExposureInstance | null): any {
         'routeId': value.routeId,
         'startedAt': value.startedAt === undefined ? undefined : (value.startedAt.toISOString()),
         'endedAt': value.endedAt === undefined ? undefined : (value.endedAt.toISOString()),
-        'carbonMonoxide': value.carbonMonoxide,
-        'nitrogenMonoxide': value.nitrogenMonoxide,
-        'nitrogenDioxide': value.nitrogenDioxide,
-        'ozone': value.ozone,
-        'sulfurDioxide': value.sulfurDioxide,
-        'harmfulMicroparticles': value.harmfulMicroparticles,
+        'pollutionValues': value.pollutionValues === undefined ? undefined : ((value.pollutionValues as Array<any>).map(PollutionEntryToJSON)),
     };
 }
 

@@ -23,7 +23,7 @@ export class SystemApi extends runtime.BaseAPI {
     /**
      * System ping endpoint
      */
-    async pingRaw(): Promise<runtime.ApiResponse<object>> {
+    async pingRaw(): Promise<runtime.ApiResponse<string>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -37,19 +37,19 @@ export class SystemApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/system/ping`,
+            path: `/v1/system/ping`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse<any>(response);
+        return new runtime.TextApiResponse(response) as any;
     }
 
     /**
      * System ping endpoint
      */
-    async ping(): Promise<object> {
+    async ping(): Promise<string> {
         const response = await this.pingRaw();
         return await response.value();
     }

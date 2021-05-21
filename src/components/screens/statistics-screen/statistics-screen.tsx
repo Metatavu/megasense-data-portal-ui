@@ -1,7 +1,6 @@
 import { Box, FormControl, InputLabel, Paper, Select, Typography, Toolbar, Button } from "@material-ui/core";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import { History } from "history";
-import moment from "moment";
 import React from "react";
 import { connect } from "react-redux";
 import { CartesianGrid, Legend, Tooltip, XAxis, YAxis, BarChart, Bar, ResponsiveContainer } from "recharts";
@@ -96,26 +95,28 @@ class StatisticsScreen extends React.Component<Props, State> {
       history.push("/");
     }
 
-    await this.getData();
-    let exposureData: ExposureData[] = [];
-    for (let i = 0; i < this.state.statisticsData.length; i++) {
-      const data = this.state.statisticsData[i];
-      exposureData.push ({
-        id: data.id,
-        harmfulMicroparticles: data.harmfulMicroparticles,
-        nitrogenDioxide: data.nitrogenDioxide,
-        nitrogenMonoxide: data.nitrogenMonoxide,
-        ozone: data.ozone,
-        routeId: data.routeId || "",
-        startedAt: moment(data.startedAt).format("L"),
-        endedAt: moment(data.endedAt).format("L"),
-        sulfurDioxide: data.sulfurDioxide
-      });
-    }
+    //TODO: fix this part
+
+    // await this.getData();
+    // let exposureData: ExposureData[] = [];
+    // for (let i = 0; i < this.state.statisticsData.length; i++) {
+    //   const data = this.state.statisticsData[i];
+    //   exposureData.push ({
+    //     id: data.id,
+    //     harmfulMicroparticles: data.harmfulMicroparticles,
+    //     nitrogenDioxide: data.nitrogenDioxide,
+    //     nitrogenMonoxide: data.nitrogenMonoxide,
+    //     ozone: data.ozone,
+    //     routeId: data.routeId || "",
+    //     startedAt: moment(data.startedAt).format("L"),
+    //     endedAt: moment(data.endedAt).format("L"),
+    //     sulfurDioxide: data.sulfurDioxide
+    //   });
+    // }
     
-    this.setState ({
-      exposureData: exposureData
-    })
+    // this.setState ({
+    //   exposureData: exposureData
+    // })
   }
 
   /**
