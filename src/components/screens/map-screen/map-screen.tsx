@@ -274,7 +274,7 @@ class MapScreen extends React.Component<Props, State> {
       if (homeAddress) {
         const { streetAddress, postalCode, city, country } = homeAddress;
         const addressString = `${streetAddress}, ${city}, ${country}, ${postalCode}`;
-        const geocodingResponse = await Geocode.fromAddress(addressString, "AIzaSyBRpUHKoLVq1AL1cJ1wwmR6fgVsMXTCA_I");
+        const geocodingResponse = await Geocode.fromAddress(addressString, process.env.REACT_APP_GOOGLE_API_KEY);
         
         if (geocodingResponse.length === 1) {
           const { lat, lng } = geocodingResponse.results[0].geometry.location;
@@ -921,7 +921,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private nominateCall = async (keyword: string): Promise<Location[]> => {
     try {
-      const geocodingResponse = await Geocode.fromAddress(keyword, "AIzaSyBRpUHKoLVq1AL1cJ1wwmR6fgVsMXTCA_I");
+      const geocodingResponse = await Geocode.fromAddress(keyword, process.env.REACT_APP_GOOGLE_API_KEY);
       return geocodingResponse.results.map((result: any) => {
         const { lat, lng } = result.geometry.location;
         const coordinates = lat + "," + lng;
@@ -1017,7 +1017,7 @@ class MapScreen extends React.Component<Props, State> {
     if (this.state.editingLocationFrom) {
       const locationFromOptions = [location];
       try {
-        geocodingResponse = await Geocode.fromLatLng(mouseEvent.latlng.lat.toString(), mouseEvent.latlng.lng.toString(), "AIzaSyBRpUHKoLVq1AL1cJ1wwmR6fgVsMXTCA_I");
+        geocodingResponse = await Geocode.fromLatLng(mouseEvent.latlng.lat.toString(), mouseEvent.latlng.lng.toString(), process.env.REACT_APP_GOOGLE_API_KEY);
       } catch (e) {
         console.warn("Geocoding error is ", e);
       }
@@ -1035,7 +1035,7 @@ class MapScreen extends React.Component<Props, State> {
       }
     } else {
       try {
-        geocodingResponse = await Geocode.fromLatLng(mouseEvent.latlng.lat.toString(), mouseEvent.latlng.lng.toString(), "AIzaSyBRpUHKoLVq1AL1cJ1wwmR6fgVsMXTCA_I");
+        geocodingResponse = await Geocode.fromLatLng(mouseEvent.latlng.lat.toString(), mouseEvent.latlng.lng.toString(), process.env.REACT_APP_GOOGLE_API_KEY);
       } catch (e) {
         console.warn("Geocoding error is ", e);
       }
@@ -1062,7 +1062,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private reverseGeocodeCoordinates = async (type: GeocodeCoordinate, lat: string, lon: string) => {
     try {
-      const geocodingResponse = await Geocode.fromLatLng(lat, lon, "AIzaSyBRpUHKoLVq1AL1cJ1wwmR6fgVsMXTCA_I");
+      const geocodingResponse = await Geocode.fromLatLng(lat, lon, process.env.REACT_APP_GOOGLE_API_KEY);
       const geocodedName = geocodingResponse.results[0].formatted_address || "";
       if (type === GeocodeCoordinate.To) {
         this.setState({
