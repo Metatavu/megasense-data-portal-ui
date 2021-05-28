@@ -4,7 +4,6 @@ import React from "react";
 import { Map, TileLayer } from "react-leaflet";
 import strings from "../../localization/strings";
 import { styles } from "./pollutant-control.styles";
-import HeatmapLayer from "react-leaflet-heatmap-layer";
 import { AirQuality } from "../../generated/client";
 
 /**
@@ -14,6 +13,7 @@ interface Props extends WithStyles<typeof styles> {
   parentMapRef: any;
   parentLayerRef: any;
   airQuality: AirQuality[];
+  pollutantControlMapCenter?: [number, number];
 }
 
 /**
@@ -46,7 +46,7 @@ class PollutantControl extends React.Component<Props, State> {
    * PollutantControl render method
    */
   public render = () => {
-    const { classes } = this.props;
+    const { classes, pollutantControlMapCenter } = this.props;
     const { showPollutantData } = this.state;
     
     return (
@@ -86,23 +86,15 @@ class PollutantControl extends React.Component<Props, State> {
           { this.props.parentMapRef.current &&
             <Map
               className={ classes.smallMap }
-              center={ this.props.parentMapRef.current?.leafletElement.getCenter() }
+              center={ pollutantControlMapCenter }
               zoom={ 8 }
               dragging={ true }
-              doubleClickZoom={ true }
-              scrollWheelZoom={ true }
+              doubleClickZoom={ false }
+              scrollWheelZoom={ false }
               attributionControl={ false }
               zoomControl={ false }
             >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              { !showPollutantData &&
-                <HeatmapLayer
-                  points={ this.props.airQuality }
-                  longitudeExtractor={ (airQuality: AirQuality) => airQuality.location.longitude }
-                  latitudeExtractor={ (airQuality: AirQuality) => airQuality.location.latitude }
-                  intensityExtractor={ (airQuality: AirQuality) => airQuality.pollutionValues }
-                />
-              }
             </Map>
           }
         </Paper>

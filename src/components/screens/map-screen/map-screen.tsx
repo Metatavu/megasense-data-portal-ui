@@ -73,6 +73,7 @@ interface State {
   savingLocationCoordinates: string;
   mapInteractive: boolean;
   selectedFavouriteLocation?: Location; 
+  pollutantControlMapCenter: [number, number];
 }
 
 /**
@@ -94,6 +95,7 @@ class MapScreen extends React.Component<Props, State> {
         zoom: 12 , 
         center: [60.1699, 24.9384]
       },
+      pollutantControlMapCenter: [60.1699, 24.9384],
       editingLocationFrom: true,
       loadingRoute: false,
       locationFromOptions: [],
@@ -564,6 +566,7 @@ class MapScreen extends React.Component<Props, State> {
         viewport={ this.state.mapViewport }
         scrollWheelZoom={ mapInteractive }
         dragging={ mapInteractive }
+        ondragend={ this.updatePollutantControl }
         >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -648,9 +651,8 @@ class MapScreen extends React.Component<Props, State> {
           parentMapRef={ this.mapRef }
           parentLayerRef={ this.overlayRef }
           airQuality={ this.state.airQuality }
-        >
-        </PollutantControl>
-
+          pollutantControlMapCenter={ this.state.pollutantControlMapCenter }
+        />
       </Map>
     );
   }
@@ -722,6 +724,21 @@ class MapScreen extends React.Component<Props, State> {
   private onSaveRouteClick = () => {
     this.setState({
       savingRoute: true
+    });
+  }
+
+  /**
+   * Matches pollutant control map center with the main map center
+   */
+  private updatePollutantControl = () => {
+    const { mapViewport } = this.state;
+
+    if (!mapViewport.center) {
+      return;
+    }
+
+    this.setState({
+      pollutantControlMapCenter: mapViewport.center
     });
   }
 
