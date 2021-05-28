@@ -14,6 +14,7 @@ interface Props extends WithStyles<typeof styles> {
   parentLayerRef: any;
   airQuality: AirQuality[];
   pollutantControlMapCenter?: [number, number];
+  changeHeatmapLayerVisibility: () => void;
 }
 
 /**
@@ -128,24 +129,12 @@ class PollutantControl extends React.Component<Props, State> {
   }
 
   /**
-   * toggle the layer status value and toggles data layer
+   * Toggle the layer status value and toggles data layer
    */
   private toggleMap = () => {
     const { showPollutantData } = this.state;
     this.setState({ showPollutantData: !showPollutantData });
-    this.toggleLayer(!showPollutantData);
-  }
-
-  /**
-   * Component constructor
-   *
-   * @param showPollutantData boolean
-   */
-  private toggleLayer = (showPollutantData: boolean) => {
-    const { parentMapRef, parentLayerRef } = this.props;
-    const map = parentMapRef.current?.leafletElement;
-    const layer = parentLayerRef.current?.leafletElement;
-    showPollutantData ? map.addLayer(layer) : map.removeLayer(layer);
+    this.props.changeHeatmapLayerVisibility();
   }
 }
 
