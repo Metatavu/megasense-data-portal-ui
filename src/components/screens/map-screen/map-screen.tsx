@@ -643,7 +643,6 @@ class MapScreen extends React.Component<Props, State> {
         }
         { heatmapLayerVisible &&
           <div>
-            { console.log("VISIBLE!") }
             <HeatmapLayer
               ref={ this.overlayRef } 
               id="heatmap"
@@ -755,6 +754,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private changeHeatmapLayerVisibility = () => {
     const { heatmapLayerVisible } = this.state;
+    
     this.setState({
       heatmapLayerVisible: !heatmapLayerVisible
     });
