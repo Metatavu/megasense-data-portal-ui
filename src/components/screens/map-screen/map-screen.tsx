@@ -73,6 +73,8 @@ interface State {
   savingLocationCoordinates: string;
   mapInteractive: boolean;
   selectedFavouriteLocation?: Location; 
+  pollutantControlMapCenter: [number, number];
+  heatmapLayerVisible: boolean;
 }
 
 /**
@@ -94,6 +96,7 @@ class MapScreen extends React.Component<Props, State> {
         zoom: 12 , 
         center: [60.1699, 24.9384]
       },
+      pollutantControlMapCenter: [60.1699, 24.9384],
       editingLocationFrom: true,
       loadingRoute: false,
       locationFromOptions: [],
@@ -109,6 +112,7 @@ class MapScreen extends React.Component<Props, State> {
       userFavouriteLocations: [],
       savingLocationCoordinates: "",
       mapInteractive: true,
+      heatmapLayerVisible: false
     };
 
     this.mapRef = React.createRef();
@@ -551,7 +555,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderMap = (): JSX.Element => {
     const { classes } = this.props;
-    const { route, locationFrom, locationTo, selectedFavouriteLocation, airQuality, mapInteractive, locationFromTextInput , locationToTextInput } = this.state;
+    const { route, locationFrom, locationTo, selectedFavouriteLocation, airQuality, mapInteractive, locationFromTextInput , locationToTextInput, heatmapLayerVisible } = this.state;
 
     return (
       <Map
@@ -564,6 +568,7 @@ class MapScreen extends React.Component<Props, State> {
         viewport={ this.state.mapViewport }
         scrollWheelZoom={ mapInteractive }
         dragging={ mapInteractive }
+        ondragend={ this.updatePollutantControl }
         >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -636,21 +641,25 @@ class MapScreen extends React.Component<Props, State> {
             </Popup>
           </Marker>
         }
-        <HeatmapLayer
-          ref={ this.overlayRef } 
-          id="heatmap"
-          points={ airQuality }
-          longitudeExtractor={ (airQualityElement: AirQuality) => airQualityElement.location.longitude }
-          latitudeExtractor={ (airQualityElement: AirQuality) => airQualityElement.location.latitude }
-          intensityExtractor={ (airQualityElement: AirQuality) => airQualityElement.pollutionValues }
-          />
+        { heatmapLayerVisible &&
+          <div>
+            <HeatmapLayer
+              ref={ this.overlayRef } 
+              id="heatmap"
+              points={ airQuality }
+              longitudeExtractor={ (airQualityElement: AirQuality) => airQualityElement.location.longitude }
+              latitudeExtractor={ (airQualityElement: AirQuality) => airQualityElement.location.latitude }
+              intensityExtractor={ (airQualityElement: AirQuality) => airQualityElement.pollutionValues }
+              />
+          </div>
+        }
         <PollutantControl
           parentMapRef={ this.mapRef }
           parentLayerRef={ this.overlayRef }
           airQuality={ this.state.airQuality }
-        >
-        </PollutantControl>
-
+          pollutantControlMapCenter={ this.state.pollutantControlMapCenter }
+          changeHeatmapLayerVisibility={ this.changeHeatmapLayerVisibility }
+        />
       </Map>
     );
   }
@@ -722,6 +731,32 @@ class MapScreen extends React.Component<Props, State> {
   private onSaveRouteClick = () => {
     this.setState({
       savingRoute: true
+    });
+  }
+
+  /**
+   * Matches pollutant control map center with the main map center
+   */
+  private updatePollutantControl = () => {
+    const { mapViewport } = this.state;
+
+    if (!mapViewport.center) {
+      return;
+    }
+
+    this.setState({
+      pollutantControlMapCenter: mapViewport.center
+    });
+  }
+
+  /**
+   * Changes heatmap layer visibility
+   */
+  private changeHeatmapLayerVisibility = () => {
+    const { heatmapLayerVisible } = this.state;
+    
+    this.setState({
+      heatmapLayerVisible: !heatmapLayerVisible
     });
   }
 
