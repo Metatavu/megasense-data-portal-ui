@@ -5,8 +5,8 @@
     "register": "Luo käyttäjätili",
     "guestUser": "Jatka kirjautumatta",
     "name": "Nimi",
-    "email": "Email",
-    "password": "Salsana",
+    "email": "Sähköposti",
+    "password": "Salasana",
     "repeatPassword": "Toista salasana",
     "passwordCheckFail": "Salasanat eivät täsmää..."
   },
@@ -38,7 +38,8 @@
     "url": "Osoite: {0}",
     "errorMessage": "Virheilmoitus: ",
     "close": "Sulje",
-    "reload": "Lataa uudelleen"
+    "reload": "Lataa uudelleen",
+    "notice": "Tämä verkkosivu on tarkoitettu vain Megasense-konsortion jäsenten käyttöön. Ole hyvä ja poistu sivulta, jos et kuulu Megasense-konsortioon."
   },
   
   "routes": {
