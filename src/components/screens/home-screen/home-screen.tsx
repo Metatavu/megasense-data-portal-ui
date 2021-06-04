@@ -68,7 +68,7 @@ class HomeScreen extends React.Component<Props, State> {
       return (
         <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
           <Grid container className={ classes.backgroundContainer }>
-            <Typography className={ classes.title } variant="h3">
+            <Typography className={ classes.title } variant="h2">
               { strings.welcome.hello } { userName }
             </Typography>
           </Grid>
@@ -83,7 +83,11 @@ class HomeScreen extends React.Component<Props, State> {
         hideHeader={ true }
         redirectTo={ redirectTo }>
         <Grid container className={ classes.backgroundContainer }>
-          <h1 style={{ color: "white" }}>This website is under development and is only for Megasense consortium members. Please leaave it if you are not a part of Megasense consortium</h1>
+          <Grid container className={ classes.noticeGrid }>
+            <Typography variant="h3" className={ classes.noticeText }>
+              { strings.errorDialog.notice }
+            </Typography>
+          </Grid>
           <Grid container className={ classes.loginGrid }>
             <img alt="logo" src={ Logo } className={ classes.logoBig } />
             <Button 

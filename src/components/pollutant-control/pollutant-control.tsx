@@ -1,4 +1,4 @@
-import { IconButton, Typography, Paper, withStyles, WithStyles } from "@material-ui/core";
+import { IconButton, Paper, withStyles, WithStyles, Button } from "@material-ui/core";
 import { MyLocation, Add, Remove } from "@material-ui/icons";
 import React from "react";
 import { Map, TileLayer } from "react-leaflet";
@@ -75,14 +75,6 @@ class PollutantControl extends React.Component<Props, State> {
           </IconButton>
         </div>
         <Paper className={ classes.mapContainer }>
-          <Typography
-            variant="h2"
-            color="primary"
-            className={ classes.toggleMap }
-            onClick={ this.toggleMap }
-          >
-            { showPollutantData ? strings.map.showMap : strings.map.showDataOverlay }
-          </Typography>
           { this.props.parentMapRef.current &&
             <Map
               className={ classes.smallMap }
@@ -105,6 +97,15 @@ class PollutantControl extends React.Component<Props, State> {
               }
             </Map>
           }
+          <Button
+            variant="text"
+            disableElevation
+            autoFocus
+            onClick={ this.toggleMap }
+            className={ classes.toggleMap }
+          >
+            { showPollutantData ? strings.map.showMap : strings.map.showDataOverlay }
+          </Button>
         </Paper>
       </div>
     );

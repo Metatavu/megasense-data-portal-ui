@@ -6,14 +6,16 @@ export const styles = createStyles({
   button: {
     color: theme.palette.primary.light,
     background: theme.palette.primary.main,
-    marginBottom: theme.spacing(2),
-    marginLeft: theme.spacing(2),
     zIndex: 1,
     pointerEvents: "auto",
   },
 
   buttonholder: {
+    display: "flex",
     width: "100%",
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    justifyContent: "space-between"
   },
 
   mapContainer: {
@@ -25,12 +27,20 @@ export const styles = createStyles({
 
   toggleMap: {
     pointerEvents: "auto",
+    padding: theme.spacing(1),
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.light,
+    width: "100%",
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main
+    }
   },
 
   smallMap: {
-    height: "80%",
-    width: "80%",
-    margin: theme.spacing(2),
+    height: "67%",
+    width: "100%%",
+    borderRadius: "4px",
+    marginBottom: theme.spacing(2)
   },
 
   controlText: {
