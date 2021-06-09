@@ -154,10 +154,10 @@ export interface IStrings extends LocalizedStringsMethods {
   savedRoutesTo: string;
   savedRoutesFrom: string;
   savedRoutesSavedText: string;
-  // todo
+  // todo Finnish
   savedLocations: string;
-  savedLocationsTo: string;
-  savedLocationsFrom: string;
+  savedLocationsLatitude: string;
+  savedLocationsLongtitude: string;
   savedLocationsSavedText: string;
   //todo
   deleteConfirm: string;
@@ -173,9 +173,9 @@ export interface IStrings extends LocalizedStringsMethods {
   walking: string;
   wheelerchair: string;
   viewRoute: string;
-  // todo add location string
   viewLocation: string;
   deleteRoute: string;
+  deleteLocation: string;
   collapseMenuText: string;
   user: string;
   showMore: string;

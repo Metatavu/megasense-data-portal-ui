@@ -1,4 +1,4 @@
-import { Location } from "../generated/client";
+import { FavouriteLocation } from "../generated/client";
 import * as ActionTypes from "../constants/action-types";
 
 /**
@@ -6,7 +6,7 @@ import * as ActionTypes from "../constants/action-types";
  */
 export interface SetDisplayedLocationAction {
   type: ActionTypes.SET_DISPLAYED_LOCATION,
-  displayedLocation?: Location
+  displayedLocation?: FavouriteLocation
 }
 
 /**
@@ -14,7 +14,7 @@ export interface SetDisplayedLocationAction {
  * 
  * @param displayedLocation a new location
  */
-export const setDisplayedLocation = (displayedLocation?: Location): SetDisplayedLocationAction => {
+export const setDisplayedLocation = (displayedLocation?: FavouriteLocation): SetDisplayedLocationAction => {
   return {
     type: ActionTypes.SET_DISPLAYED_LOCATION,
     displayedLocation: displayedLocation

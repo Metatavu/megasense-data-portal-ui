@@ -23,7 +23,7 @@ const initialState: LocationState = {
  * @param storeState store state of route
  * @param action action of route
  */
-export const locationReducer: Reducer<LocationState, LocationAction> = (state = initialState, action): RouteState => {
+export const locationReducer: Reducer<LocationState, LocationAction> = (state = initialState, action): LocationState => {
   switch (action.type) {
     case SET_DISPLAYED_LOCATION:
       return {

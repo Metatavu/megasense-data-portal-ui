@@ -5,7 +5,7 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { styles } from "./saved-locations.styles";
 import { NullableToken } from "../../../types";
-import { Location } from "../../../generated/client";
+import { FavouriteLocation } from "../../../generated/client";
 import * as actions from "../../../actions/location";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
@@ -22,7 +22,7 @@ interface Props extends WithStyles<typeof styles> {}
 interface Props {
   accessToken?: NullableToken;
   keycloak?: Keycloak.KeycloakInstance;
-  updateDisplayedLocation: (displayedLocation: Location) => void;
+  updateDisplayedLocation: (displayedLocation: FavouriteLocation) => void;
 }
 
 /**
@@ -30,8 +30,8 @@ interface Props {
  */
 interface State {
   deleteDialogVisible: boolean;
-  locations: Location[];
-  locationToDelete?: Location;
+  locations: FavouriteLocation[];
+  locationToDelete?: FavouriteLocation;
   deletingLocation: boolean;
   loadingLocations: boolean;
   redirect?: string;
@@ -126,24 +126,23 @@ class SavedLocationsScreen extends React.Component<Props, State> {
    * 
    * @returns a rendered card
    */
-  private renderLocationCard = (location: Location): JSX.Element => {
+  private renderLocationCard = (location: FavouriteLocation): JSX.Element => {
     const { classes } = this.props;
 
     return (
       <Card variant="outlined">
         <CardContent>
           <Typography variant="subtitle1" component="p">
-            {/* { strings.savedRoutesFrom }: { location.locationFromName }
+            { strings.savedLocationsLatitude }: { location.latitude }
               <br />
-            { strings.savedRoutesTo }: { location.locationToName } */}
-            {/* todo display location */}
-            { "working on it" }
-            </Typography>
+            { strings.savedLocationsLongtitude }: { location.longitude }
+          </Typography>
           <Typography variant="caption" component="p">
-            { strings.savedLocationsSavedText }: { this.dateToDMY(location.savedAt!) }
+            {/* { strings.savedLocationsSavedText }: { this.dateToDMY(location.savedAt!) } */}
             </Typography>
         </CardContent>
         <CardActions>
+          {/* todo delete location */}
           <Button variant="contained" color="primary" size="small" onClick={ () => this.displayLocation(location) }>{ strings.viewLocation }</Button>
           <Button variant="contained" className={ classes.errorButton } size="small" onClick={ () => this.openDeleteDialog(location) }>{ strings.deleteLocation }</Button>
         </CardActions>
@@ -156,7 +155,7 @@ class SavedLocationsScreen extends React.Component<Props, State> {
    *
    * @param location location to display
    */
-  private displayLocation = (location: Location) => {
+  private displayLocation = (location: FavouriteLocation) => {
     this.props.updateDisplayedLocation(location);
     this.setState({ redirect: "/map" });
   } 
@@ -187,7 +186,7 @@ class SavedLocationsScreen extends React.Component<Props, State> {
 
     try {
       const locationsApi = Api.getLocationsApi(accessToken);
-      await locationsApi.deleteLocation({ locationId: locationToDelete.id! });
+      await locationsApi.deleteUserFavouriteLocation({ favouriteId: locationToDelete.id! });
       await this.updateLocationsList();
       this.setState({ deleteDialogVisible: false });
     } catch (error) {
@@ -213,8 +212,8 @@ class SavedLocationsScreen extends React.Component<Props, State> {
 
     try {
       const locationsApi = Api.getLocationsApi(accessToken);
-      await locationsApi.listlocations();
-      this.setState({ location });
+      const locations = await locationsApi.listUserFavouriteLocations();
+      this.setState({ locations });
     } catch (error) {
       this.setState({
         error: error
@@ -240,7 +239,7 @@ class SavedLocationsScreen extends React.Component<Props, State> {
    * 
    * @param locationToDelete a location to delete
    */
-  private openDeleteDialog = (locationToDelete: Location) => {
+  private openDeleteDialog = (locationToDelete: FavouriteLocation) => {
     this.setState({
       deleteDialogVisible: true,
       locationToDelete
@@ -275,7 +274,7 @@ export function mapStateToProps(state: ReduxState) {
  */
 export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   return {
-    updateDisplayedLocation: (displayedLocation?: Location) => dispatch(actions.setDisplayedLocation(displayedLocation))
+    updateDisplayedLocation: (displayedLocation?: FavouriteLocation) => dispatch(actions.setDisplayedLocation(displayedLocation))
   };
 }
 
