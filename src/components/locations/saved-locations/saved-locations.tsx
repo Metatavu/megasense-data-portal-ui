@@ -191,8 +191,8 @@ class SavedLocations extends React.Component<Props, State> {
    */
   private onDeleteCancel = () => {
     this.setState({
-      routeDeleteInitiated: false,
-      routeToDelete: undefined
+      locationDeleteInitiated: false,
+      locationToDelete: undefined
     })
   }
 }

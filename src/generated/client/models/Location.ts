@@ -21,6 +21,12 @@ import { exists, mapValues } from '../runtime';
 export interface Location {
     /**
      * 
+     * @type {string}
+     * @memberof Route
+     */
+    id?: string;
+    /**
+     * 
      * @type {number}
      * @memberof Location
      */

@@ -5,8 +5,8 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { styles } from "./saved-locations.styles";
 import { NullableToken } from "../../../types";
-import { Route } from "../../../generated/client";
-import * as actions from "../../../actions/route";
+import { Location } from "../../../generated/client";
+import * as actions from "../../../actions/location";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import AppLayout from "../../layouts/app-layout/app-layout";
@@ -22,7 +22,7 @@ interface Props extends WithStyles<typeof styles> {}
 interface Props {
   accessToken?: NullableToken;
   keycloak?: Keycloak.KeycloakInstance;
-  updateDisplayedRoute: (displayedRoute: Route) => void;
+  updateDisplayedLocation: (displayedLocation: Location) => void;
 }
 
 /**
@@ -30,18 +30,18 @@ interface Props {
  */
 interface State {
   deleteDialogVisible: boolean;
-  routes: Route[];
-  routeToDelete?: Route;
-  deletingRoute: boolean;
-  loadingRoutes: boolean;
+  locations: Location[];
+  locationToDelete?: Location;
+  deletingLocation: boolean;
+  loadingLocations: boolean;
   redirect?: string;
   error?: string | Error | Response;
 }
 
 /**
- * Component for saved routes screen
+ * Component for saved locations screen
  */
-class SavedRoutesScreen extends React.Component<Props, State> {
+class SavedLocationsScreen extends React.Component<Props, State> {
 
   /**
    * Component constructor
@@ -52,9 +52,9 @@ class SavedRoutesScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       deleteDialogVisible: false,
-      routes: [],
-      deletingRoute: false,
-      loadingRoutes: false
+      locations: [],
+      deletingLocation: false,
+      loadingLocations: false
     };
   }
 
@@ -62,7 +62,7 @@ class SavedRoutesScreen extends React.Component<Props, State> {
    * Component life cycle method
    */
   public componentDidMount = async () => {
-    await this.updateRoutesList();
+    await this.updateLocationsList();
   }
 
   /**
@@ -81,17 +81,17 @@ class SavedRoutesScreen extends React.Component<Props, State> {
         redirectTo={ redirect }>
         <Container>
           <Typography className={ classes.title } variant="h3" component="h1">
-            { strings.savedRoutes }
+            { strings.savedLocations }
           </Typography>
           {
-            this.renderRouteCards()
+            this.renderLocationCards()
           }
           <ConfirmDialog 
             title={ strings.deleteConfirm } 
             positiveButtonText={ strings.common.yes } 
             cancelButtonText={ strings.common.cancel } 
             dialogVisible={ deleteDialogVisible } 
-            onDialogConfirm={ this.deleteRoute } 
+            onDialogConfirm={ this.deleteLocation } 
             onDialogCancel={ this.closeDeleteDialog } />
         </Container>
       </AppLayout>
@@ -99,17 +99,17 @@ class SavedRoutesScreen extends React.Component<Props, State> {
   }
 
   /**
-   * Renders route cards
+   * Renders location cards
    * 
-   * @returns a rendered route cards
+   * @returns a rendered location cards
    */
-  private renderRouteCards = () => {
+  private renderLocationCards = () => {
     const { classes } = this.props;
-    const { routes, loadingRoutes } = this.state;
-    if (!loadingRoutes) {
+    const { locations, loadingLocations } = this.state;
+    if (!loadingLocations) {
       return (
         <>
-          { routes.map(this.renderRouteCard) }
+          {locations.map(this.renderLocationCard) }
         </>
       );
     }
@@ -120,42 +120,44 @@ class SavedRoutesScreen extends React.Component<Props, State> {
   }
 
   /**
-   * Renders a card for a route
+   * Renders a card for a location
    * 
-   * @param route a route to render
+   * @param location a location to render
    * 
    * @returns a rendered card
    */
-  private renderRouteCard = (route: Route): JSX.Element => {
+  private renderLocationCard = (location: Location): JSX.Element => {
     const { classes } = this.props;
 
     return (
       <Card variant="outlined">
         <CardContent>
           <Typography variant="subtitle1" component="p">
-            { strings.savedRoutesFrom }: { route.locationFromName }
+            {/* { strings.savedRoutesFrom }: { location.locationFromName }
               <br />
-            { strings.savedRoutesTo }: { route.locationToName }
+            { strings.savedRoutesTo }: { location.locationToName } */}
+            {/* todo display location */}
+            { "working on it" }
             </Typography>
           <Typography variant="caption" component="p">
-            { strings.savedRoutesSavedText }: { this.dateToDMY(route.savedAt!) }
+            { strings.savedLocationsSavedText }: { this.dateToDMY(location.savedAt!) }
             </Typography>
         </CardContent>
         <CardActions>
-          <Button variant="contained" color="primary" size="small" onClick={ () => this.displayRoute(route) }>{ strings.viewRoute }</Button>
-          <Button variant="contained" className={ classes.errorButton } size="small" onClick={ () => this.openDeleteDialog(route) }>{ strings.deleteRoute }</Button>
+          <Button variant="contained" color="primary" size="small" onClick={ () => this.displayLocation(location) }>{ strings.viewLocation }</Button>
+          <Button variant="contained" className={ classes.errorButton } size="small" onClick={ () => this.openDeleteDialog(location) }>{ strings.deleteLocation }</Button>
         </CardActions>
       </Card>
     );
   }
 
   /**
-   * Display route method
+   * Display location method
    *
-   * @param route route to display
+   * @param location location to display
    */
-  private displayRoute = (route: Route) => {
-    this.props.updateDisplayedRoute(route);
+  private displayLocation = (location: Location) => {
+    this.props.updateDisplayedLocation(location);
     this.setState({ redirect: "/map" });
   } 
 
@@ -171,22 +173,22 @@ class SavedRoutesScreen extends React.Component<Props, State> {
   }
 
   /**
-   * Deletes a route
+   * Deletes a location
    */
-  private deleteRoute = async () => {
+  private deleteLocation = async () => {
     const { accessToken } = this.props;
-    const { routeToDelete } = this.state;
+    const { locationToDelete } = this.state;
 
-    if (!accessToken || !routeToDelete) {
+    if (!accessToken || !locationToDelete) {
       return;
     }
 
-    this.setState({ deletingRoute: true });
+    this.setState({ deletingLocation: true });
 
     try {
-      const routesApi = Api.getRoutesApi(accessToken);
-      await routesApi.deleteRoute({ routeId: routeToDelete.id! });
-      await this.updateRoutesList();
+      const locationsApi = Api.getLocationsApi(accessToken);
+      await locationsApi.deleteLocation({ locationId: locationToDelete.id! });
+      await this.updateLocationsList();
       this.setState({ deleteDialogVisible: false });
     } catch (error) {
       this.setState({
@@ -194,32 +196,32 @@ class SavedRoutesScreen extends React.Component<Props, State> {
       });
     }
 
-    this.setState({ deletingRoute: false });
+    this.setState({ deletingLocation: false });
   }
 
   /**
-   * Updates the list for routes
+   * Updates the list for locations
    */
-  private updateRoutesList = async () => {
+  private updateLocationsList = async () => {
     const { accessToken } = this.props;
 
     if (!accessToken) {
       return;
     }
 
-    this.setState({ loadingRoutes: true });
+    this.setState({ loadingLocations: true });
 
     try {
-      const routesApi = Api.getRoutesApi(accessToken);
-      const routes = await routesApi.listRoutes();
-      this.setState({ routes });
+      const locationsApi = Api.getLocationsApi(accessToken);
+      await locationsApi.listlocations();
+      this.setState({ location });
     } catch (error) {
       this.setState({
         error: error
       });
     }
 
-    this.setState({ loadingRoutes: false });
+    this.setState({ loadingLocations: false });
   }
 
   /**
@@ -229,19 +231,19 @@ class SavedRoutesScreen extends React.Component<Props, State> {
   private closeDeleteDialog = () => {
     this.setState({
       deleteDialogVisible: false,
-      routeToDelete: undefined
+      locationToDelete: undefined
     });
   }
 
   /**
    * Opens the delete dialog
    * 
-   * @param routeToDelete a route to delete
+   * @param locationToDelete a location to delete
    */
-  private openDeleteDialog = (routeToDelete: Route) => {
+  private openDeleteDialog = (locationToDelete: Location) => {
     this.setState({
       deleteDialogVisible: true,
-      routeToDelete
+      locationToDelete
     });
   }
 
@@ -273,8 +275,8 @@ export function mapStateToProps(state: ReduxState) {
  */
 export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   return {
-    updateDisplayedRoute: (displayedRoute?: Route) => dispatch(actions.setDisplayedRoute(displayedRoute))
+    updateDisplayedLocation: (displayedLocation?: Location) => dispatch(actions.setDisplayedLocation(displayedLocation))
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SavedRoutesScreen));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SavedLocationsScreen));
