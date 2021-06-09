@@ -21,7 +21,7 @@ export interface IStrings extends LocalizedStringsMethods {
   };
 
   /**
-   * Translations for authentication
+   * Translations for welcome screen
    */
   welcome: {
     hello: string;
@@ -60,6 +60,7 @@ export interface IStrings extends LocalizedStringsMethods {
     errorMessage: string;
     close: string;
     reload: string;
+    notice: string;
   };
 
   /**

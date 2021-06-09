@@ -62,12 +62,22 @@ class ConfirmDialog extends React.Component<Props, State> {
             userInput()
           }
         </DialogContent>
-        <DialogActions>
-          <Button variant="contained" className={ classes.errorButton } onClick={ onDialogConfirm }>
-            { positiveButtonText }
-          </Button>
-          <Button variant="contained" className={ classes.warningButton } onClick={ onDialogCancel } color="primary" autoFocus>
+        <DialogActions className={ classes.dialogButtonRow }>
+          <Button 
+            variant="text"
+            className={ classes.warningButton }
+            onClick={ onDialogCancel }
+            color="primary" 
+            autoFocus
+          >
             { cancelButtonText }
+          </Button>
+          <Button
+            variant="contained"
+            className={ classes.primaryButton }
+            onClick={ onDialogConfirm }
+          >
+            { positiveButtonText }
           </Button>
         </DialogActions>
       </Dialog>

@@ -38,7 +38,8 @@
     "url": "URL: {0}",
     "errorMessage": "Error message: ",
     "close": "Close",
-    "reload": "Reload"
+    "reload": "Reload",
+    "notice": "This website is under development and is only for Megasense consortium members. Please leave it if you are not a part of Megasense consortium"
   },
 
   "routes": {
