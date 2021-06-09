@@ -26,9 +26,9 @@ interface Props extends WithStyles<typeof styles> {
  */
 interface State {
   redirectTo?: string;
-  morining: Number,
-  noon: Number,
-  evening: Number
+  moriningHour: Number,
+  noonHour: Number,
+  eveningHour: Number
 }
 
 /**
@@ -44,9 +44,9 @@ class HomeScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      morining: 6,
-      noon: 12,
-      evening: 19
+      moriningHour: 6,
+      noonHour: 12,
+      eveningHour: 19
     };
   }
 
@@ -130,9 +130,9 @@ class HomeScreen extends React.Component<Props, State> {
    */
   private greeting = () =>{
     const hour = new Date().getHours();
-    if(hour >= this.state.morining && hour < this.state.noon){
+    if(hour >= this.state.moriningHour && hour < this.state.noonHour){
       return strings.welcome.goodMorning;
-    }else if (hour >= this.state.noon && hour < this.state.evening){
+    }else if (hour >= this.state.noonHour && hour < this.state.eveningHour){
       return strings.welcome.goodAfternoon;
     }else{
       return strings.welcome.goodEvening;
