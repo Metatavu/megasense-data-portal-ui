@@ -12,7 +12,10 @@
   },
 
   "welcome": {
-    "hello": "Hei,"
+    "hello": "Hei",
+    "goodMorning": "Hyvää huomenta",
+    "goodAfternoon": "hyvää iltapäivää",
+    "goodEvening": "hyvää iltaa"
   },
 
   "header": {

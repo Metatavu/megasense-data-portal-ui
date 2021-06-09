@@ -69,7 +69,7 @@ class HomeScreen extends React.Component<Props, State> {
         <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
           <Grid container className={ classes.backgroundContainer }>
             <Typography className={ classes.title } variant="h2">
-              { strings.welcome.hello } { userName }
+              { this.greeting()  + ", " + userName  }
             </Typography>
           </Grid>
         </AppLayout>
@@ -117,6 +117,17 @@ class HomeScreen extends React.Component<Props, State> {
         </Grid>
       </AppLayout>
     );
+  }
+
+  private greeting = () =>{
+    const hour = new Date().getHours();
+    if(hour >= 6 && hour < 11){
+      return strings.welcome.goodMorning;
+    }else if (hour >= 12 && hour < 19){
+      return strings.welcome.goodAfternoon;
+    }else{
+      return strings.welcome.goodEvening;
+    }
   }
 
   /**

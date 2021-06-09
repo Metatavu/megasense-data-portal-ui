@@ -142,7 +142,7 @@ class AccessTokenProvider extends React.Component<Props, State> {
       expires_in: tokenParsed.exp,
       refresh_token: refreshToken,
       refresh_expires_in: refreshTokenParsed?.exp,
-      userName: userDisplayName,
+      userName: profile?.username,
       firstName: profile?.firstName,
       lastName: profile?.lastName,
       userId: tokenParsed.sub,

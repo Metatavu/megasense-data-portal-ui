@@ -39,10 +39,10 @@ export interface User {
      */
     name: string;
     /**
-     * User email
-     * @type {string}
-     * @memberof User
-     */
+      * User name
+      * @type {string}
+      * @memberof User
+      */
     email: string;
     /**
      * 

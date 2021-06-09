@@ -25,6 +25,9 @@ export interface IStrings extends LocalizedStringsMethods {
    */
   welcome: {
     hello: string;
+    goodMorning: string;
+    goodAfternoon: string;
+    goodEvening: string;
   };
 
   /**
