@@ -10,7 +10,7 @@ import * as actions from "../../../actions/location";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import AppLayout from "../../layouts/app-layout/app-layout";
-import { Container, Card, CardContent, CardActions, withStyles, Button, Typography, WithStyles, CircularProgress } from "@material-ui/core";
+import { Container, Card, CardContent, CardActions, withStyles, Button, Typography, WithStyles, CircularProgress, CardHeader } from "@material-ui/core";
 import ConfirmDialog from "../../generic/dialogs/confirm-dialog";
 import moment from "moment";
 
@@ -129,9 +129,15 @@ class SavedLocationsScreen extends React.Component<Props, State> {
   private renderLocationCard = (location: FavouriteLocation): JSX.Element => {
     const { classes } = this.props;
 
+    console.log(location);
+
     return (
       <Card variant="outlined">
         <CardContent>
+          <Typography variant="h3">
+              { location.name }
+          </Typography>
+            <br />
           <Typography variant="subtitle1" component="p">
             { strings.savedLocationsLatitude }: { location.latitude }
               <br />

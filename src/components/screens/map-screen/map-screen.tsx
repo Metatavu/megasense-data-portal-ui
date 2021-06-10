@@ -269,9 +269,9 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
-   * Displays already saved route
+   * Displays already saved location
    * 
-   * @param routeToDisplay route to display
+   * @param locationToDisplay location to display
    */
   private displayFavouriteLocation = (locationToDisplay: FavouriteLocation) => {
     if (!locationToDisplay) {

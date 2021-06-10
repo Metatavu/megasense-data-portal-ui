@@ -154,12 +154,10 @@ export interface IStrings extends LocalizedStringsMethods {
   savedRoutesTo: string;
   savedRoutesFrom: string;
   savedRoutesSavedText: string;
-  // todo Finnish
   savedLocations: string;
   savedLocationsLatitude: string;
   savedLocationsLongtitude: string;
   savedLocationsSavedText: string;
-  //todo
   deleteConfirm: string;
   confirmTimeRange: string;
   selectPollution: string;
