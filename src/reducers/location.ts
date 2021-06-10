@@ -7,14 +7,14 @@ import { Reducer } from "redux";
  * Location state
  */
 interface LocationState {
-  displayedLocation?: Location;
+  displayedFavouriteLocation?: Location;
 }
 
 /**
  * Initial locale state
  */
 const initialState: LocationState = {
-  displayedLocation: undefined
+  displayedFavouriteLocation: undefined
 };
 
 /**
@@ -28,7 +28,7 @@ export const locationReducer: Reducer<LocationState, LocationAction> = (state = 
     case SET_DISPLAYED_LOCATION:
       return {
         ...state,
-        displayedLocation: action.displayedLocation
+        displayedFavouriteLocation: action.displayedFavouriteLocation
       };
     default:
       return state;

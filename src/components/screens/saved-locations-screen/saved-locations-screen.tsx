@@ -137,12 +137,8 @@ class SavedLocationsScreen extends React.Component<Props, State> {
               <br />
             { strings.savedLocationsLongtitude }: { location.longitude }
           </Typography>
-          <Typography variant="caption" component="p">
-            {/* { strings.savedLocationsSavedText }: { this.dateToDMY(location.savedAt!) } */}
-            </Typography>
         </CardContent>
         <CardActions>
-          {/* todo delete location */}
           <Button variant="contained" color="primary" size="small" onClick={ () => this.displayLocation(location) }>{ strings.viewLocation }</Button>
           <Button variant="contained" className={ classes.errorButton } size="small" onClick={ () => this.openDeleteDialog(location) }>{ strings.deleteLocation }</Button>
         </CardActions>
@@ -159,17 +155,6 @@ class SavedLocationsScreen extends React.Component<Props, State> {
     this.props.updateDisplayedLocation(location);
     this.setState({ redirect: "/map" });
   } 
-
-  /**
-   * Converts Date to a localized string in DD-MMMM-YYYY format
-   * 
-   * @param date A date to convert
-   * 
-   * @returns A localized string in DD-MMMM-YYYY format
-   */
-  private dateToDMY = (date: Date): string => {
-    return moment(date).format("LL");
-  }
 
   /**
    * Deletes a location
@@ -274,7 +259,7 @@ export function mapStateToProps(state: ReduxState) {
  */
 export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   return {
-    updateDisplayedLocation: (displayedLocation?: FavouriteLocation) => dispatch(actions.setDisplayedLocation(displayedLocation))
+    updateDisplayedLocation: (displayedLocation?: FavouriteLocation) => dispatch(actions.setDisplayedFavouriteLocation(displayedLocation))
   };
 }
 

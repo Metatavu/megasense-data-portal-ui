@@ -4,21 +4,21 @@ import * as ActionTypes from "../constants/action-types";
 /**
  * Interface desicribing displayed route update action
  */
-export interface SetDisplayedLocationAction {
+export interface SetDisplayedFavouriteLocationAction {
   type: ActionTypes.SET_DISPLAYED_LOCATION,
-  displayedLocation?: FavouriteLocation
+  displayedFavouriteLocation?: FavouriteLocation
 }
 
 /**
  * Redux displayed location update action
  * 
- * @param displayedLocation a new location
+ * @param displayedFavouriteLocation a new location
  */
-export const setDisplayedLocation = (displayedLocation?: FavouriteLocation): SetDisplayedLocationAction => {
+export const setDisplayedFavouriteLocation = (displayedFavouriteLocation?: FavouriteLocation): SetDisplayedFavouriteLocationAction => {
   return {
     type: ActionTypes.SET_DISPLAYED_LOCATION,
-    displayedLocation: displayedLocation
+    displayedFavouriteLocation: displayedFavouriteLocation
   };
 }
 
-export type LocationAction = SetDisplayedLocationAction;
+export type LocationAction = SetDisplayedFavouriteLocationAction;

@@ -53,6 +53,7 @@ export function FavouriteLocationFromJSONTyped(json: any, ignoreDiscriminator: b
     if ((json === undefined) || (json === null)) {
         return json;
     }
+
     return {
         
         'id': !exists(json, 'id') ? undefined : json['id'],

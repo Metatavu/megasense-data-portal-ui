@@ -16,7 +16,7 @@ export const rootReducer = combineReducers({
   auth: authReducer,
   locale: localeReducer,
   displayedRoute: routeReducer,
-  displayedLocation: locationReducer
+  displayedFavouriteLocation: locationReducer
 });
 
 /**
