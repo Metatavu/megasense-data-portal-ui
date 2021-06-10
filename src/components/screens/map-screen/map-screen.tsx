@@ -18,11 +18,11 @@ import { Dispatch } from "redux";
 import { setDisplayedRoute } from "../../../actions/route";
 import { setDisplayedFavouriteLocation } from "../../../actions/location";
 import Api from "../../../api";
-import { AirQuality, Route, FavouriteLocation, Location } from "../../../generated/client";
+import { AirQuality, Route, FavouriteLocation } from "../../../generated/client";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
-import { NullableToken, GeocodeCoordinate } from "../../../types";
+import { Location, NullableToken, GeocodeCoordinate } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
 import FavouriteLocations from "../../favourite-locations/favourite-locations";
@@ -139,7 +139,7 @@ class MapScreen extends React.Component<Props, State> {
     }
 
     if (displayedFavouriteLocation) {
-      this.displaySavedFavouriteLocation(displayedFavouriteLocation);
+      this.displayFavouriteLocation(displayedFavouriteLocation);
     } else {
       this.loadUserSettings();
     }
@@ -273,28 +273,7 @@ class MapScreen extends React.Component<Props, State> {
    * 
    * @param routeToDisplay route to display
    */
-  private displaySavedLocation = (locationToDisplay: Location) => {
-    if (!locationToDisplay) {
-      return;
-    }
-
-    const coordinates = `${locationToDisplay.latitude},${locationToDisplay.longitude}`;
-    const locationObject = { name: locationToDisplay.name, coordinates };
-    this.setState({
-      mapViewport: {
-        center: [locationToDisplay.latitude, locationToDisplay.longitude],
-        zoom: 15
-      },
-      selectedFavouriteLocation: locationObject
-    });
-  }
-
-  /**
-   * Displays already saved route
-   * 
-   * @param routeToDisplay route to display
-   */
-  private displaySavedFavouriteLocation = (locationToDisplay: FavouriteLocation) => {
+  private displayFavouriteLocation = (locationToDisplay: FavouriteLocation) => {
     if (!locationToDisplay) {
       return;
     }
@@ -1185,7 +1164,7 @@ class MapScreen extends React.Component<Props, State> {
    * @param location location to display
    */
   private onUserLocationSelect = (location: FavouriteLocation) => {
-    this.displaySavedLocation(location);
+    this.displayFavouriteLocation(location);
   }
 
   /**
