@@ -1007,7 +1007,7 @@ class MapScreen extends React.Component<Props, State> {
         locationTo.coordinates = locationTo.name;
       }
 
-      const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=${moment(departureTime).format("h:mma")}&date=${moment(departureTime).format("MM-DD-yyyy")}&maxWalkDistance=100000&sulfurDioxideThreshold=1&sulfurDioxidePenalty=20&pm25Threshold=1&pm25Penalty=20`);
+      const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=${moment(departureTime).format("h:mma")}&date=${moment(departureTime).format("MM-DD-yyyy")}&maxWalkDistance=100000&sulfur_dioxide_threshold=1&sulfur_dioxide_penalty=20&pm25Threshold=1&pm25Penalty=20`);
       const jsonResponse = await routingResponse.json();
       const polyline = jsonResponse.plan.itineraries[0].legs[0].legGeometry.points;
       const route = PolyUtil.decode(polyline);
