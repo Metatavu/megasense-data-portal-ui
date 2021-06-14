@@ -17,7 +17,7 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { setDisplayedRoute } from "../../../actions/route";
 import Api from "../../../api";
-import { AirQuality, Route, FavouriteLocation } from "../../../generated/client";
+import { AirQuality, Route, FavouriteLocation, RouteAirQuality } from "../../../generated/client";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
@@ -34,6 +34,8 @@ import moment from "moment";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import { NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES } from "../../../constants/map"
 import PollutantControl from "../../pollutant-control/pollutant-control";
+import PollutantExposures from "../../pollutant-exposures/pollutant-exposures";
+import RouteTotalExposure from "../../pollutant-exposures/route-total-exposure";
 
 /**
  * Interface describing component props
@@ -75,6 +77,7 @@ interface State {
   selectedFavouriteLocation?: Location; 
   pollutantControlMapCenter: [number, number];
   heatmapLayerVisible: boolean;
+  routeTotalExposures: RouteTotalExposure[];
 }
 
 /**
@@ -112,7 +115,8 @@ class MapScreen extends React.Component<Props, State> {
       userFavouriteLocations: [],
       savingLocationCoordinates: "",
       mapInteractive: true,
-      heatmapLayerVisible: false
+      heatmapLayerVisible: false,
+      routeTotalExposures: []
     };
 
     this.mapRef = React.createRef();
@@ -186,7 +190,10 @@ class MapScreen extends React.Component<Props, State> {
         error={ error }
         clearError={ this.onClearError }
       >
+        
         { this.renderMap() }
+        { this.renderRouteAirQualityDialog() }
+
         { this.renderSaveRouteConfirmDialog() }
         { this.renderSaveLocationConfirmDialog() }
       </AppLayout>
@@ -699,6 +706,18 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
+   * Renders the list of air pollution data 
+   */
+  private renderRouteAirQualityDialog = () => {
+    const { routeTotalExposures } = this.state;
+    return (
+      <PollutantExposures
+        routeTotalExposures = { routeTotalExposures }
+      />
+    )
+  }
+
+  /**
    * Renders user input field for dialog
    */
   private renderDialogNameInput = () => {
@@ -995,6 +1014,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private updateRoute = async () => {
     this.setState({ loadingRoute: true });
+    const { accessToken } = this.props;
 
     try {
       const { locationTo, locationFrom, mapViewport, departureTime } = this.state;
@@ -1019,7 +1039,43 @@ class MapScreen extends React.Component<Props, State> {
         newCenter[1] = newCenterCoordinates[1];
       }
 
-      this.setState({ route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13, polyline }); 
+      let formattedRoute: string[] = []
+      for (var index in route) {
+        const coordinates = route[index]
+        console.log("checking "+coordinates)
+
+        formattedRoute.push(coordinates[0]+','+coordinates[1])
+      }
+      const airQualityApi = Api.getAirQualityApi(accessToken);
+      const routeAirQuality = await airQualityApi.getAirQualityForCoordinatesArray({ 
+        requestBody: formattedRoute
+      }
+    );
+      const routePollutionTotals = routeAirQuality.pollutionDataTotals
+      const pollutantsApi = Api.getPollutantsApi(accessToken);
+
+     // const airQuality: AirQuality = {location: {latitude: 12, longitude: 21}, pollutionValues : []}
+      console.log("received air quality of "+ routePollutionTotals[0].value);
+      var routeTotalExposures: RouteTotalExposure[] = [];
+      for (var totalEntryIndex in routePollutionTotals) {
+        let value:number = routePollutionTotals[totalEntryIndex].value || 0;
+        let providedPollId: string = routePollutionTotals[totalEntryIndex].pollutantId || '';
+        if (providedPollId === '') {
+          break;
+        }
+        let pollutantName = await pollutantsApi.findPollutant({
+          pollutantId: providedPollId
+        })
+
+        var a: RouteTotalExposure = {
+          pollutantName: pollutantName.displayName,
+          pollutionValue: value
+        };
+        routeTotalExposures.push(a);
+      
+    }
+      
+      this.setState({ routeTotalExposures, route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13, polyline }); 
     } catch (error) {
       this.setState({
         locationFrom: undefined,

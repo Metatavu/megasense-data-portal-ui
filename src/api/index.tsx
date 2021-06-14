@@ -1,5 +1,6 @@
 import { AirQualityApi, Configuration, ExposureInstancesApi, FavouriteLocationsApi, RoutesApi, TotalExposureApi, UsersApi } from "../generated/client";
 import { NullableToken } from "../types";
+import { PollutantsApi } from '../generated/client/apis/PollutantsApi';
 
 /**
  * Utility class for loading api with predefined configuration
@@ -57,6 +58,15 @@ export default class Api {
    */
   public static getUsersApi (accessToken?: NullableToken): UsersApi {
     return new UsersApi(this.getConfiguration(accessToken));
+  }
+
+  /**
+   * Gets initialized pollutants API
+   * 
+   * @param accessToken access token
+   */
+  public static getPollutantsApi (accessToken?: NullableToken): PollutantsApi {
+    return new PollutantsApi(this.getConfiguration(accessToken));
   }
 
   /**

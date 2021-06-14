@@ -18,18 +18,25 @@ import {
     AirQuality,
     AirQualityFromJSON,
     AirQualityToJSON,
+    RouteAirQuality,
+    RouteAirQualityFromJSON,
+    RouteAirQualityToJSON,
 } from '../models';
 
 export interface GetAirQualityRequest {
     pollutantId?: string;
     boundingBoxCorner1?: string;
     boundingBoxCorner2?: string;
-    coordinatesArray?: Array<string>;
 }
 
 export interface GetAirQualityForCoordinatesRequest {
     coordinates: string;
     pollutantId: string;
+}
+
+export interface GetAirQualityForCoordinatesArrayRequest {
+    requestBody: Array<string>;
+    pollutantId?: string;
 }
 
 /**
@@ -53,10 +60,6 @@ export class AirQualityApi extends runtime.BaseAPI {
 
         if (requestParameters.boundingBoxCorner2 !== undefined) {
             queryParameters['boundingBoxCorner2'] = requestParameters.boundingBoxCorner2;
-        }
-
-        if (requestParameters.coordinatesArray) {
-            queryParameters['coordinatesArray'] = requestParameters.coordinatesArray;
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -126,6 +129,51 @@ export class AirQualityApi extends runtime.BaseAPI {
      */
     async getAirQualityForCoordinates(requestParameters: GetAirQualityForCoordinatesRequest): Promise<AirQuality> {
         const response = await this.getAirQualityForCoordinatesRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Get air quality for array of coordinates
+     */
+    async getAirQualityForCoordinatesArrayRaw(requestParameters: GetAirQualityForCoordinatesArrayRequest): Promise<runtime.ApiResponse<RouteAirQuality>> {
+        if (requestParameters.requestBody === null || requestParameters.requestBody === undefined) {
+            throw new runtime.RequiredError('requestBody','Required parameter requestParameters.requestBody was null or undefined when calling getAirQualityForCoordinatesArray.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.pollutantId !== undefined) {
+            queryParameters['pollutantId'] = requestParameters.pollutantId;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = typeof token === 'function' ? token("bearerAuth", []) : token;
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/v1/airQuality`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters.requestBody,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => RouteAirQualityFromJSON(jsonValue));
+    }
+
+    /**
+     * Get air quality for array of coordinates
+     */
+    async getAirQualityForCoordinatesArray(requestParameters: GetAirQualityForCoordinatesArrayRequest): Promise<RouteAirQuality> {
+        const response = await this.getAirQualityForCoordinatesArrayRaw(requestParameters);
         return await response.value();
     }
 
