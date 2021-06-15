@@ -128,7 +128,7 @@ class HomeScreen extends React.Component<Props, State> {
   /**
    * Method for generating a correct greeting message
    */
-  private greeting = () =>{
+  private generateGreeting = () => {
     const hour = new Date().getHours();
     if(hour >= this.state.moriningHour && hour < this.state.noonHour){
       return strings.welcome.goodMorning;
