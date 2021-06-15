@@ -26,9 +26,9 @@ interface Props extends WithStyles<typeof styles> {
  */
 interface State {
   redirectTo?: string;
-  moriningHour: Number,
-  noonHour: Number,
-  eveningHour: Number
+  moriningHour: number,
+  noonHour: number,
+  eveningHour: number
 }
 
 /**
