@@ -16,6 +16,7 @@ import HeatmapLayer from "react-leaflet-heatmap-layer";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { setDisplayedRoute } from "../../../actions/route";
+import { setDisplayedFavouriteLocation } from "../../../actions/location";
 import Api from "../../../api";
 import { AirQuality, Route, FavouriteLocation } from "../../../generated/client";
 import strings from "../../../localization/strings";
@@ -42,7 +43,9 @@ interface Props extends WithStyles<typeof styles>{
   accessToken?: NullableToken;
   keycloak?: Keycloak.KeycloakInstance;
   displayedRoute?: Route;
+  displayedFavouriteLocation?: FavouriteLocation;
   setDisplayedRoute: typeof setDisplayedRoute;
+  setDisplayedFavouriteLocation: typeof setDisplayedFavouriteLocation;
 }
 
 /**
@@ -123,7 +126,7 @@ class MapScreen extends React.Component<Props, State> {
    * Component life cycle method
    */
   public componentDidMount = async () => {
-    const { displayedRoute, accessToken } = this.props;
+    const { displayedFavouriteLocation, displayedRoute, accessToken } = this.props;
 
     if (!accessToken) {
       return;
@@ -131,6 +134,12 @@ class MapScreen extends React.Component<Props, State> {
 
     if (displayedRoute) {
       this.displaySavedRoute(displayedRoute);
+    } else {
+      this.loadUserSettings();
+    }
+
+    if (displayedFavouriteLocation) {
+      this.displayFavouriteLocation(displayedFavouriteLocation);
     } else {
       this.loadUserSettings();
     }
@@ -257,6 +266,27 @@ class MapScreen extends React.Component<Props, State> {
       mapViewport: { center: [ newCenterCoordinates[0], newCenterCoordinates[1] ] as [number, number], zoom: 13 }
     }
     this.setState(newState);
+  }
+
+  /**
+   * Displays already saved location
+   * 
+   * @param locationToDisplay location to display
+   */
+  private displayFavouriteLocation = (locationToDisplay: FavouriteLocation) => {
+    if (!locationToDisplay) {
+      return;
+    }
+
+    const coordinates = `${locationToDisplay.latitude},${locationToDisplay.longitude}`;
+    const locationObject = { name: locationToDisplay.name, coordinates };
+    this.setState({
+      mapViewport: {
+        center: [locationToDisplay.latitude, locationToDisplay.longitude],
+        zoom: 15
+      },
+      selectedFavouriteLocation: locationObject
+    });
   }
 
   /**
@@ -1134,19 +1164,7 @@ class MapScreen extends React.Component<Props, State> {
    * @param location location to display
    */
   private onUserLocationSelect = (location: FavouriteLocation) => {
-    if (!location) {
-      return;
-    }
-
-    const coordinates = `${location.latitude},${location.longitude}`;
-    const locationObject = { name: location.name, coordinates };
-    this.setState({
-      mapViewport: {
-        center: [location.latitude, location.longitude],
-        zoom: 15
-      },
-      selectedFavouriteLocation: locationObject
-    });
+    this.displayFavouriteLocation(location);
   }
 
   /**
@@ -1218,7 +1236,8 @@ export function mapStateToProps(state: ReduxState) {
   return {
     accessToken: state.auth.accessToken,
     keycloak: state.auth.keycloak,
-    displayedRoute: state.displayedRoute.displayedRoute
+    displayedRoute: state.displayedRoute.displayedRoute,
+    displayedFavouriteLocation: state.displayedFavouriteLocation.displayedFavouriteLocation
   };
 }
 
@@ -1229,7 +1248,8 @@ export function mapStateToProps(state: ReduxState) {
  */
 export function mapDispatchToProps(dispatch: Dispatch<ReduxActions>) {
   return {
-    setDisplayedRoute: (displayedRoute?: Route) => dispatch(setDisplayedRoute(displayedRoute))
+    setDisplayedRoute: (displayedRoute?: Route) => dispatch(setDisplayedRoute(displayedRoute)),
+    setDisplayedFavouriteLocation: (displayedFavouriteLocation?: FavouriteLocation) => dispatch(setDisplayedFavouriteLocation(displayedFavouriteLocation))
   };
 }
 

@@ -12,6 +12,7 @@ import Settings from "./screens/settings-screen/settings-screen";
 import { ReduxActions, ReduxState, rootReducer } from "../store";
 import AccessTokenRefresh from "./containers/access-token-refresh";
 import SavedRoutesScreen from "./screens/saved-routes-screen/saved-routes-screen";
+import SavedLocationsScreen from "./screens/saved-locations-screen/saved-locations-screen";
 import AboutScreen from "./screens/about-screen/about-screen";
 import 'moment/locale/fi';
 import moment from "moment";
@@ -78,6 +79,13 @@ class App extends React.Component<Props, State> {
                   path="/saved-routes"
                   render={() => (
                     <SavedRoutesScreen />
+                  )}
+                />
+                <Route
+                  exact
+                  path="/saved-locations"
+                  render={() => (
+                    <SavedLocationsScreen />
                   )}
                 />
                 <Route
