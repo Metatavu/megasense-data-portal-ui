@@ -75,7 +75,7 @@ class HomeScreen extends React.Component<Props, State> {
         <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
           <Grid container className={ classes.backgroundContainer }>
             <Typography className={ classes.title } variant="h2">
-              { this.greeting()  + ", " + userName  }
+              { `${ this.generateGreeting() }, ${ userName }`  }
             </Typography>
           </Grid>
         </AppLayout>
