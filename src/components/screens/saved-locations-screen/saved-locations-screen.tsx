@@ -109,7 +109,7 @@ class SavedLocationsScreen extends React.Component<Props, State> {
     if (!loadingLocations) {
       return (
         <>
-          {locations.map(this.renderLocationCard) }
+          { locations.map(this.renderLocationCard) }
         </>
       );
     }
