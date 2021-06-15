@@ -132,11 +132,13 @@ class HomeScreen extends React.Component<Props, State> {
     const { moriningHour, noonHour, eveningHour } = this.state;
     
     const hour = new Date().getHours();
-    if(hour >= this.state.moriningHour && hour < this.state.noonHour){
+    if (hour >= moriningHour && hour < noonHour) {
       return strings.welcome.goodMorning;
-    }else if (hour >= this.state.noonHour && hour < this.state.eveningHour){
+    }
+    else if (hour >= noonHour && hour < eveningHour) {
       return strings.welcome.goodAfternoon;
-    }else{
+    }
+    else {
       return strings.welcome.goodEvening;
     }
   }
