@@ -2,7 +2,7 @@ import { FavouriteLocation } from "../generated/client";
 import * as ActionTypes from "../constants/action-types";
 
 /**
- * Interface desicribing displayed route update action
+ * Interface desicribing displayed location update action
  */
 export interface SetDisplayedFavouriteLocationAction {
   type: ActionTypes.SET_DISPLAYED_LOCATION,
