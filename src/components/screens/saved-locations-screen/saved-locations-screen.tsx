@@ -135,10 +135,10 @@ class SavedLocationsScreen extends React.Component<Props, State> {
           <Typography variant="h3">
               { location.name }
           </Typography>
-            <br />
+          <br />
           <Typography variant="subtitle1" component="p">
             { strings.savedLocationsLatitude }: { location.latitude }
-              <br />
+            <br />
             { strings.savedLocationsLongtitude }: { location.longitude }
           </Typography>
         </CardContent>
