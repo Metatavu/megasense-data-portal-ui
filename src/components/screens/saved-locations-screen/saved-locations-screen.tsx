@@ -129,8 +129,6 @@ class SavedLocationsScreen extends React.Component<Props, State> {
   private renderLocationCard = (location: FavouriteLocation): JSX.Element => {
     const { classes } = this.props;
 
-    console.log(location);
-
     return (
       <Card variant="outlined">
         <CardContent>
