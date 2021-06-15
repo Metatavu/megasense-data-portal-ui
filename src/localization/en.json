@@ -12,7 +12,10 @@
   },
 
   "welcome": {
-    "hello": "Hello,"
+    "hello": "Hello",
+    "goodMorning": "Good morning",
+    "goodAfternoon": "Good afternoon",
+    "goodEvening": "Good evening"
   },
 
   "header": {
