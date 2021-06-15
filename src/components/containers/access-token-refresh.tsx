@@ -133,7 +133,6 @@ class AccessTokenProvider extends React.Component<Props, State> {
       return null;
     }
 
-    const userDisplayName: string = (this.keycloak.idTokenParsed as any).name;
     const created = new Date();
 
     return {
