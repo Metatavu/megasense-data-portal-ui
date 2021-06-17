@@ -102,7 +102,6 @@ class Header extends React.Component<Props, State> {
    */
   private renderStatistics = () => {
     const { accessToken } = this.props;
-    const { classes } = this.props;
 
     if (!accessToken) {
       return null;
