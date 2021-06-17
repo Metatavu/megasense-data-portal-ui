@@ -1,11 +1,5 @@
 import { Box, Button, CircularProgress, Divider, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
-import AccessibleIcon from "@material-ui/icons/Accessible";
-import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
-import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
-import DestinationIcon from "@material-ui/icons/LocationOn";
-import MyLocationIcon from "@material-ui/icons/MyLocation";
-import SaveIcon from "@material-ui/icons/Save";
-import SearchIcon from "@material-ui/icons/Search";
+import { Eco, Timer, StarBorder, Timeline, DirectionsBike, DirectionsWalk, Accessible, LocationOn, MyLocation, Save, Search } from '@material-ui/icons';
 import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab/Autocomplete";
 import { LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
 import Geocode from "react-geocode";
@@ -21,7 +15,7 @@ import { AirQuality, Route, FavouriteLocation } from "../../../generated/client"
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
-import { Location, NullableToken, GeocodeCoordinate } from "../../../types";
+import { Location, NullableToken, GeocodeCoordinate, RoutingModes, RoutingModeIcons, PointCoordinates } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
 import FavouriteLocations from "../../favourite-locations/favourite-locations";
@@ -53,6 +47,9 @@ interface State {
   locationTo?: Location;
   departureTime: Date;
   route?: LatLng[];
+  routeAltOne: LatLng[];
+  routeAltTwo: LatLng[];
+  routeAltThree: LatLng[];
   mapViewport: Viewport;
   editingLocationFrom: boolean;
   loadingRoute: boolean;
@@ -75,6 +72,7 @@ interface State {
   selectedFavouriteLocation?: Location; 
   pollutantControlMapCenter: [number, number];
   heatmapLayerVisible: boolean;
+  selectedRoutingMode: RoutingModes;
 }
 
 /**
@@ -92,6 +90,9 @@ class MapScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       departureTime: new Date(),
+      routeAltOne: [],
+      routeAltTwo: [],
+      routeAltThree: [],
       mapViewport: {
         zoom: 12 , 
         center: [60.1699, 24.9384]
@@ -112,7 +113,8 @@ class MapScreen extends React.Component<Props, State> {
       userFavouriteLocations: [],
       savingLocationCoordinates: "",
       mapInteractive: true,
-      heatmapLayerVisible: false
+      heatmapLayerVisible: false,
+      selectedRoutingMode: "strict",
     };
 
     this.mapRef = React.createRef();
@@ -202,17 +204,21 @@ class MapScreen extends React.Component<Props, State> {
     const { userSavedRoutes, userFavouriteLocations } = this.state;
     return (
       <>
+        {/* //TODO: make transportation selector similar to routing mode selector */}
         <Toolbar />
         <Toolbar className={ classes.toolbar }>
           <IconButton>
-            <DirectionsWalkIcon htmlColor="#fff" />
+            <DirectionsWalk htmlColor="#fff" />
           </IconButton>
           <IconButton>
-            <AccessibleIcon htmlColor="#fff" />
+            <Accessible htmlColor="#fff" />
           </IconButton>
           <IconButton>
-            <DirectionsBikeIcon htmlColor="#fff" />
+            <DirectionsBike htmlColor="#fff" />
           </IconButton>
+          <div className={ classes.secondToggleGroup }>
+            { this.renderRoutingModeSelector() }
+          </div>
         </Toolbar>
         { this.renderRoutingForm() }
         <SavedRoutes 
@@ -229,6 +235,49 @@ class MapScreen extends React.Component<Props, State> {
         />
       </>
     );
+  }
+
+  /**
+   * Renders air quality routing mode selector
+   */
+   private renderRoutingModeSelector = () => {
+    const routingModeIcons: RoutingModeIcons = {
+      relaxed: <Timer htmlColor="#fff" />,
+      efficient: <Timeline htmlColor="#fff" />,
+      strict: <Eco htmlColor="#fff" />,
+      custom: <StarBorder htmlColor="#fff" />
+    }
+
+    if (!routingModeIcons) {
+      return;
+    }
+
+    return Object.keys(routingModeIcons).map((key, index) => {
+      const valueKey = key as keyof RoutingModeIcons;
+
+      const opacity = key !== this.state.selectedRoutingMode ? 0.6 : 1; 
+
+      return (
+        <IconButton
+          style={{ opacity }}
+          onClick={ () => this.onRoutingModeClick(valueKey) }
+        >
+          { routingModeIcons[valueKey]}
+        </IconButton>
+      );
+    });
+  }
+
+  /**
+   * Event handler for selecting the air quality routing mode
+   * 
+   * @param key clicked button identifier key
+   */
+   private onRoutingModeClick = (key: keyof RoutingModeIcons) => {
+
+    this.setState({
+      selectedRoutingMode: key
+    });
   }
 
   /**
@@ -439,7 +488,7 @@ class MapScreen extends React.Component<Props, State> {
             value={ locationFrom }
             renderInput={ (params) => 
               <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
-                <MyLocationIcon fontSize="small" htmlColor="#FFF" />
+                <MyLocation fontSize="small" htmlColor="#FFF" />
                 <TextField
                   variant="standard"
                   className={ classes.routingFormInput }
@@ -462,7 +511,7 @@ class MapScreen extends React.Component<Props, State> {
             style={{ marginTop: theme.spacing(2) }}
             renderInput={ (params) => 
               <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
-                <DestinationIcon fontSize="small" htmlColor="#FFF" />
+                <LocationOn fontSize="small" htmlColor="#FFF" />
                 <TextField
                   variant="standard"
                   className={ classes.routingFormInput }
@@ -523,7 +572,7 @@ class MapScreen extends React.Component<Props, State> {
               loadingRoute ?
               <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
               :
-              <SearchIcon htmlColor="#fff"
+              <Search htmlColor="#fff"
               />
             }
           >
@@ -538,7 +587,7 @@ class MapScreen extends React.Component<Props, State> {
                 savingRoute ?
                 <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
                 :
-                <SaveIcon htmlColor="#fff"
+                <Save htmlColor="#fff"
                 />
               }
               >
@@ -555,7 +604,21 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderMap = (): JSX.Element => {
     const { classes } = this.props;
-    const { route, locationFrom, locationTo, selectedFavouriteLocation, airQuality, mapInteractive, locationFromTextInput , locationToTextInput, heatmapLayerVisible } = this.state;
+    const { 
+      route,
+      locationFrom,
+      locationTo,
+      selectedFavouriteLocation,
+      airQuality,
+      mapInteractive,
+      locationFromTextInput ,
+      locationToTextInput,
+      heatmapLayerVisible,
+      routeAltOne,
+      routeAltTwo,
+      routeAltThree,
+      selectedRoutingMode
+    } = this.state;
 
     return (
       <Map
@@ -574,9 +637,17 @@ class MapScreen extends React.Component<Props, State> {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
         />
-        {
-          route && 
+        { route && 
           <Polyline positions={ route }/>
+        }
+        { routeAltOne && 
+          <Polyline positions={ routeAltOne } color="green" lineCap="round" lineJoin="bevel" weight={ selectedRoutingMode === "strict" ? 6 : 2 }/>
+        }
+        { routeAltTwo && 
+          <Polyline positions={ routeAltTwo } color="yellow" lineCap="round" lineJoin="bevel" weight={ selectedRoutingMode === "efficient" ? 6 : 2 }/>
+        }
+        { routeAltThree && 
+          <Polyline positions={ routeAltThree } color="red" lineCap="round" lineJoin="bevel" weight={ selectedRoutingMode === "relaxed" ? 5 : 2 }/>
         }
 
         { selectedFavouriteLocation?.coordinates &&
@@ -872,6 +943,52 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
+   * Creates a route line offset
+   * 
+   * @param routeLine the route line as array of points
+   * @param offsetDistance coordinates offset distance
+   * @returns modified route line
+   */
+  private routeOffset = (routeLine: LatLng[], offsetDistance: number): LatLng[] => {
+
+    if (!routeLine.length) {
+      return [];
+    }
+
+    const firstPoint = this.convertPointToCoordinates(routeLine[0]);
+    const lastPoint = this.convertPointToCoordinates(routeLine[routeLine.length - 1]);
+    const segmentAngle = Math.atan2(firstPoint.lat - lastPoint.lat, firstPoint.lng - lastPoint.lng);
+    const offsetAngle = segmentAngle - Math.PI/2;
+
+    console.log("Route line is ", routeLine);
+
+    const newLine = routeLine.map( p => {
+      const point = this.convertPointToCoordinates(p);
+      let x = point.lng + offsetDistance * Math.cos(offsetAngle);
+      let y = point.lat + offsetDistance * Math.sin(offsetAngle);
+      return new LatLng(y, x);
+    });
+
+    console.log("New line is ", newLine);
+    return newLine;
+  }
+
+  /**
+   * Converts point to coordinates
+   * 
+   * @param point point
+   * @returns custom formatted point
+   */
+  private convertPointToCoordinates = (point: LatLng): PointCoordinates => {
+    const pointString = point.toString().split(",");
+
+    return {
+      lat: parseFloat(pointString[0]),
+      lng: parseFloat(pointString[1])
+    }
+  }
+
+  /**
    * Converts coordinates from string to LatLngTuple
    *
    * @param stringCoordinates coordinates to convert
@@ -1007,10 +1124,9 @@ class MapScreen extends React.Component<Props, State> {
         locationTo.coordinates = locationTo.name;
       }
 
-      const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=${moment(departureTime).format("h:mma")}&date=${moment(departureTime).format("MM-DD-yyyy")}&maxWalkDistance=100000&sulfurDioxideThreshold=1&sulfurDioxidePenalty=20&pm25Threshold=1&pm25Penalty=20`);
-      const jsonResponse = await routingResponse.json();
-      const polyline = jsonResponse.plan.itineraries[0].legs[0].legGeometry.points;
-      const route = PolyUtil.decode(polyline);
+      const routeAltOne = this.routeOffset(await this.fetchRouteLine("20", "1"), -0.00003);
+      const routeAltTwo = this.routeOffset(await this.fetchRouteLine("8", "1"), 0);
+      const routeAltThree = this.routeOffset(await this.fetchRouteLine("1", "1"), 0.00003);
 
       const newCenter = [mapViewport.center![0], mapViewport.center![1]];
       if (locationFrom && locationFrom.coordinates) {
@@ -1019,7 +1135,8 @@ class MapScreen extends React.Component<Props, State> {
         newCenter[1] = newCenterCoordinates[1];
       }
 
-      this.setState({ route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13, polyline }); 
+      //TODO: set polyline state when the route is selected
+      this.setState({ routeAltOne, routeAltTwo, routeAltThree, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13 }); 
     } catch (error) {
       this.setState({
         locationFrom: undefined,
@@ -1029,6 +1146,22 @@ class MapScreen extends React.Component<Props, State> {
         error: error
       });
     }
+  }
+  
+  /**
+   * Returnes a route line represented by array of coordinates 
+   *
+   * @param sulfurDioxidePenalty sulfur dioxide penalty
+   * @param sulfurDioxideThreshold sulfur dioxide threshold
+   * @returns array of coordinates
+   */
+  private fetchRouteLine = async (sulfurDioxidePenalty: string, sulfurDioxideThreshold: string) => {
+    const { locationTo, locationFrom, departureTime } = this.state;
+
+    const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=${moment(departureTime).format("h:mma")}&date=${moment(departureTime).format("MM-DD-yyyy")}&maxWalkDistance=100000&sulfur_dioxide_threshold=${sulfurDioxideThreshold}&sulfur_dioxide_penalty=${sulfurDioxidePenalty}`);
+    const jsonResponse = await routingResponse.json();
+    const polyline = jsonResponse.plan.itineraries[0].legs[0].legGeometry.points;
+    return PolyUtil.decode(polyline);
   }
 
   /**

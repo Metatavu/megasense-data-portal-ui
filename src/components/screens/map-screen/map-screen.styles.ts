@@ -16,6 +16,12 @@ export const styles = createStyles({
     backgroundColor: theme.palette.primary.main
   },
 
+  secondToggleGroup: {
+    display: "flex",
+    flexDirection: "row",
+    marginLeft: "10%"
+  },
+
   mapComponent: {
     height: "100%"
   },
