@@ -71,16 +71,18 @@ export default createMuiTheme({
           textDecoration: "none"
         },
         "::-webkit-scrollbar-track": {
-          backgroundColor: "#C2C9CF"
+          backgroundColor: "#DCE2E9"
         },
         "::-webkit-scrollbar": {
           height: 5,
-          width: 5
+          width: 10
         },
         "::-webkit-scrollbar-thumb": {
-          backgroundColor: "#51575C",
-          border: "none",
-          borderRadius: 1
+          backgroundColor: "#277B90",
+          borderColor: "#DCE2E9",
+          borderStyle: "solid",
+          borderWidth: 1,
+          borderRadius: 10
         }
       }
     },
