@@ -39,13 +39,17 @@ class Header extends React.Component<Props, State> {
     const { classes } = this.props;
     return (
       <>
-        <AppBar position="fixed" className={ classes.appBar }>
+        <AppBar className={ classes.appBar }>
           <Toolbar>
             <Box display="flex" flexGrow={ 1 }>
-              <LogoIcon color="primary" />
-              <Box ml={ 2 } mr={ 2 }>
-                <Typography variant="h1" color="primary">Green paths</Typography>
-              </Box>
+              <Link to="/">
+                <Box className={ classes.logoBox }>
+                  <LogoIcon className={ classes.logoIcon }/>
+                  <Typography className={ classes.logoText } >
+                    { strings.header.logoText }
+                  </Typography>
+                </Box>
+              </Link>
               <Box ml={ 2 } mr={ 2 }>
                 <Link to="/map">
                   <Button

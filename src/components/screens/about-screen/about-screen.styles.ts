@@ -1,30 +1,38 @@
 import { createStyles } from "@material-ui/core";
 import theme from "../../../theme/theme";
+import backgroundImage from "../../../resources/images/main.jpg";
 
 export default createStyles({
 
   title: {
-    color: "#000",
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(2),
+    color: "#fff",
+    fontSize: 36,
     marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(6),
+    textAlign: "center",
+    fontWeight: "bold"
   },
-
+  
   subTitle: {
-    color: "#000",
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(3),
+    color: "#fff",
+    textAlign: "center",
+    lineHeight: "1.6em"
   },
 
-  descriptionText: {
-    color: "#000",
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(3),
+  backgroundContainer: {
+    backgroundImage: `url(${ backgroundImage })`,
+    backgroundPosition: "center",
+    backgroundSize: "cover",
+    backgroundAttachment: "fixed",
+    height: "100%",
+    justifyContent: "center",
+    alignContent: "space-evenly"
+  },
+
+  infoTexts: {
+    display: "flex",
+    flexDirection: "column",
+    alignContent: "center",
+    width: "30%",
   }
 
 });
