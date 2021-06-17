@@ -38,6 +38,7 @@ export interface IStrings extends LocalizedStringsMethods {
     map: string;
     settings: string;
     about: string;
+    logoText: string;
   };
 
   /**
