@@ -4,7 +4,7 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { NullableToken } from "../../../types";
 import strings from "../../../localization/strings";
-import { Container, Typography, WithStyles, withStyles } from "@material-ui/core";
+import { Typography, WithStyles, withStyles, Grid } from "@material-ui/core";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import { ReduxActions, ReduxState } from "../../../store";
 import styles from "./about-screen.styles";
@@ -14,6 +14,7 @@ import styles from "./about-screen.styles";
  */
 interface Props extends WithStyles<typeof styles> {
   accessToken?: NullableToken;
+  keycloak?: Keycloak.KeycloakInstance;
 }
 
 /**
@@ -42,20 +43,23 @@ class AboutScreen extends React.Component<Props, State> {
    * Component render method
    */
   public render() {
-    const { classes } = this.props;
+    const { classes, accessToken, keycloak } = this.props;
     return (
-      <AppLayout>
-        <Container>
-          <Typography className={ classes.title } variant="h3">
-            { strings.aboutScreen.title }
-          </Typography>
-          <Typography className={ classes.subTitle } variant="subtitle2">
-            { strings.aboutScreen.subTitle }
-          </Typography>
-          <Typography className={ classes.descriptionText } variant="body2">
-            { strings.aboutScreen.descriptionText }
-          </Typography>
-        </Container>
+      <AppLayout
+        accessToken={ accessToken }
+        keycloak={ keycloak }
+      >
+        <Grid container className={ classes.backgroundContainer }>
+          <Grid container className={ classes.infoTexts }>
+            <Typography className={ classes.title } variant="h1">
+              { strings.aboutScreen.title }
+            </Typography>
+            <Typography className={ classes.subTitle } variant="h2">
+              { strings.aboutScreen.subTitle }
+              { strings.aboutScreen.descriptionText }
+            </Typography>
+          </Grid>
+        </Grid>
       </AppLayout>
     );
   }
@@ -68,7 +72,8 @@ class AboutScreen extends React.Component<Props, State> {
  */
 export function mapStateToProps(state: ReduxState) {
   return {
-    accessToken: state.auth.accessToken
+    accessToken: state.auth.accessToken,
+    keycloak: state.auth.keycloak
   };
 }
 
