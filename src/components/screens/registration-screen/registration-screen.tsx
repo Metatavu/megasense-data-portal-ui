@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ChangeEventHandler } from "react";
 
 import { Dispatch } from "redux";
 import { History } from "history";
@@ -21,16 +21,20 @@ interface Props extends WithStyles<typeof styles> {
   history: History<History.LocationState>;
 }
 
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+  passwordCheck: string;
+}
+
 /**
  * Interface describing component state
  */
 interface State {
   redirectTo?: string;
-  name: string;
-  email: string;
-  password: string;
-  passwordCheck: string;
   passwordLabel: string;
+  formData: FormData;
 }
 
 /**
@@ -46,10 +50,12 @@ class RegistrationScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      name: "",
-      email: "",
-      password: "",
-      passwordCheck: "",
+      formData: {
+        name: "",
+        email: "",
+        password: "",
+        passwordCheck: "",
+      },
       passwordLabel: ""
     };
   }
@@ -69,9 +75,9 @@ class RegistrationScreen extends React.Component<Props, State> {
    * Component render method
    */
   public render() {
-    const { classes } = this.props;
-    const { accessToken, keycloak } = this.props;
-    const { redirectTo, name, email, password, passwordCheck, passwordLabel } = this.state;
+    const { classes, accessToken, keycloak } = this.props;
+    const { redirectTo, passwordLabel, formData } = this.state;
+    const { name, email, password, passwordCheck } = formData;
 
     return (
       <AppLayout
@@ -80,38 +86,22 @@ class RegistrationScreen extends React.Component<Props, State> {
         hideHeader={ true }
         redirectTo={ redirectTo }>
         <Grid container className={ classes.backgroundContainer }>
-          <h1 style={{ color: "white" }}>This website is under development and is only for Megasense consortium members. Please leaave it if you are not a part of Megasense consortium</h1>
+          <Grid container className={ classes.noticeGrid }>
+            <Typography variant="h3" className={ classes.noticeText }>
+              { strings.errorDialog.notice }
+            </Typography>
+          </Grid>
           <Grid container className={ classes.registerGrid }>
-            <img alt="logo" src={ Logo } className={ classes.logoBig } />
-            <div>
-              <Typography variant="caption" component="p">
-                { strings.auth.name }
-              </Typography>
-              <Input aria-label="Test" value={ name } onChange={ event => this.setState({ name: event.target.value }) }></Input>
-            </div>
-            <div>
-              <Typography variant="caption" component="p">
-                { strings.auth.email }
-              </Typography>
-              <Input type="email" value={ email } onChange={ event => this.setState({ email: event.target.value }) }></Input>
-            </div>
-            <div>
-              <Typography variant="caption" component="p">
-                { strings.auth.password }
-              </Typography>
-              <Input type="password" value={ password } onChange={ event => this.setState({ password: event.target.value }) }></Input>
-            </div>
-            <div>
-              <Typography variant="caption" component="p">
-                { strings.auth.repeatPassword }
-              </Typography>
-              <Input type="password" value={ passwordCheck } onChange={ event => this.setState({ passwordCheck: event.target.value }) }></Input>
-            </div>
-            <InputLabel htmlFor="input-with-icon-adornment">{ passwordLabel }</InputLabel>
+            <img alt="logo" src={ Logo }/>
+            { this.inputBox(strings.auth.name, name, "name") }
+            { this.inputBox(strings.auth.email, email, "email", "email") }
+            { this.inputBox(strings.auth.password, password, "password", "password") }
+            { this.inputBox(strings.auth.repeatPassword, passwordCheck, "passwordCheck", "password") }
+            <InputLabel className={ classes.registerWarning} htmlFor="input-with-icon-adornment">{ passwordLabel }</InputLabel>
             <Button 
               variant="outlined" 
               className={ classes.registerButton }
-              onClick={ () => this.onRegisterButtonClick() }
+              onClick={ this.onRegisterButtonClick }
             >
               { strings.auth.register }
             </Button>
@@ -122,11 +112,58 @@ class RegistrationScreen extends React.Component<Props, State> {
   }
 
   /**
+   * Renders input box
+   * 
+   * @param inputCaption input caption
+   * @param inputValue input value
+   * @param inputName input name
+   * @param inputType input type
+   */
+  private inputBox= (inputCaption: string, inputValue: string, inputName: string, inputType?: string) => {
+    const { classes } = this.props;
+
+    return (
+      <Grid container className={ classes.registerGridInput }>
+        <Typography 
+          variant="caption" 
+          component="p" 
+          className={ classes.registerGrid }
+        >
+          { inputCaption }
+        </Typography>
+        <Input
+          className={ classes.registerGrid }
+          value={ inputValue }
+          name={ inputName }
+          type={ inputType }
+          onChange={ this.handleInputChange }
+        />
+      </Grid>
+    )
+  }
+
+  /**
+   * Event handler for input change
+   */
+  private handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { formData } = this.state;
+    const { name, value } = event.target;
+
+    if (!name) {
+      return;
+    }
+
+    this.setState({
+      formData: { ...formData, [name]: value }
+    });
+  }
+
+  /**
    * Method for registering a new user
    */
   private onRegisterButtonClick = async () => {
     const { accessToken } = this.props;
-    const { name, email, password, passwordCheck } = this.state;
+    const { name, email, password, passwordCheck } = this.state.formData;
 
     if (password !== passwordCheck) {
       this.setState({

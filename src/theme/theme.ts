@@ -12,7 +12,7 @@ export default createMuiTheme({
       light: "#fff"
     },
     secondary: {
-      main: "#00a2ff"
+      main: "#7BD4F0"
     },
     background: {
       default: "#DCE2E9",
@@ -41,7 +41,7 @@ export default createMuiTheme({
       main: "#7BD4F0"
     },
     warning: {
-      main: "#F6D46C"
+      main: "#E25353"
     }
   },
 
@@ -55,6 +55,12 @@ export default createMuiTheme({
       fontWeight: 300,
       fontSize: 20
     },
+
+    h3: {
+      fontSize: 16,
+      fontWeight: 800,
+      lineHeight: 1.5
+    }
   },
 
   overrides: {
@@ -157,6 +163,46 @@ export default createMuiTheme({
       },
       label: {
         marginRight: "auto"
+      }
+    },
+    MuiInput: {
+      underline: {
+        '&:before': {
+            borderBottom: "1px solid #FFF"
+        },
+        '&:hover': {
+            borderBottom: "1px solid #FFF"
+        },
+        '&:after': {
+            borderBottom: "2px solid #FFF"
+          }
+      }
+    },
+    MuiIconButton: {
+      root: {
+        '&:hover': {
+          backgroundColor: "#277B90"
+        }
+      }
+    },
+    MuiDialog: {
+      paper: {
+        padding: theme.spacing(2)
+      }
+    },
+    MuiDialogActions: {
+      root: {
+        padding: theme.spacing(1)
+      }
+    },
+    MuiDialogContent: {
+      root: {
+        padding: theme.spacing(1)
+      }
+    },
+    MuiDialogTitle: {
+      root: {
+        padding: theme.spacing(1)
       }
     }
   },

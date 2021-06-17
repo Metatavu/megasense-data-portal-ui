@@ -21,10 +21,13 @@ export interface IStrings extends LocalizedStringsMethods {
   };
 
   /**
-   * Translations for authentication
+   * Translations for welcome screen
    */
   welcome: {
     hello: string;
+    goodMorning: string;
+    goodAfternoon: string;
+    goodEvening: string;
   };
 
   /**
@@ -60,6 +63,7 @@ export interface IStrings extends LocalizedStringsMethods {
     errorMessage: string;
     close: string;
     reload: string;
+    notice: string;
   };
 
   /**
@@ -153,6 +157,10 @@ export interface IStrings extends LocalizedStringsMethods {
   savedRoutesTo: string;
   savedRoutesFrom: string;
   savedRoutesSavedText: string;
+  savedLocations: string;
+  savedLocationsLatitude: string;
+  savedLocationsLongtitude: string;
+  savedLocationsSavedText: string;
   deleteConfirm: string;
   confirmTimeRange: string;
   selectPollution: string;
@@ -166,7 +174,9 @@ export interface IStrings extends LocalizedStringsMethods {
   walking: string;
   wheelerchair: string;
   viewRoute: string;
+  viewLocation: string;
   deleteRoute: string;
+  deleteLocation: string;
   collapseMenuText: string;
   user: string;
   showMore: string;

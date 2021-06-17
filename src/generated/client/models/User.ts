@@ -39,10 +39,10 @@ export interface User {
      */
     name: string;
     /**
-     * User email
-     * @type {string}
-     * @memberof User
-     */
+      * User email
+      * @type {string}
+      * @memberof User
+      */
     email: string;
     /**
      * 
@@ -115,5 +115,4 @@ export function UserToJSON(value?: User | null): any {
         'medicalConditions': value.medicalConditions,
     };
 }
-
 

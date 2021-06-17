@@ -59,7 +59,12 @@ class FavouriteLocations extends React.Component<Props, State> {
           { this.renderListItems() }
         </List>
         <div className={ classes.showMoreButtonContainer }>
-          <Button color="secondary" fullWidth variant="contained" onClick={ this.onShowMoreClick }>
+          <Button
+            className={ classes.primaryButton }
+            fullWidth
+            variant="contained"
+            onClick={ this.onShowMoreClick }
+          >
             { this.state.showAllFavouriteLocations ? strings.showLess : strings.showMore }
           </Button>
         </div>

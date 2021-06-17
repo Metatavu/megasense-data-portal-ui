@@ -1,29 +1,37 @@
 import { createStyles } from "@material-ui/core";
+import theme from "../theme/theme";
 
 export const globalStyles = createStyles({
   /** Buttons */
   primaryButton: {
-    backgroundColor: "#8FCFD1"
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.light,
+    flex: 1,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main
+    }
   },
 
   secondaryButton: {
-    backgroundColor: "#F6AB6C"
+    backgroundColor: theme.palette.secondary.main
   },
   successButton: {
-    backgroundColor: "#ADE498"
+    backgroundColor: theme.palette.success.main
   },
   warningButton: {
-    backgroundColor: "#F3D175"
+    backgroundColor: "transparent",
+    color: theme.palette.warning.main,
+    flex: 1
   },
   errorButton: {
-    backgroundColor: "#F66C6C"
+    backgroundColor: theme.palette.error.main
   },
 
   /** Loaders */
   errorLoader: {
-    color: "#F66C6C"
+    color: theme.palette.error.main
   },
   primaryLoader: {
-    color: "#8FCFD1"
+    color: theme.palette.primary.main
   },
 });

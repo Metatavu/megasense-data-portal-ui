@@ -26,6 +26,9 @@ interface Props extends WithStyles<typeof styles> {
  */
 interface State {
   redirectTo?: string;
+  moriningHour: number,
+  noonHour: number,
+  eveningHour: number
 }
 
 /**
@@ -41,6 +44,9 @@ class HomeScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      moriningHour: 6,
+      noonHour: 12,
+      eveningHour: 19
     };
   }
 
@@ -68,8 +74,8 @@ class HomeScreen extends React.Component<Props, State> {
       return (
         <AppLayout accessToken={ accessToken } keycloak={ keycloak }>
           <Grid container className={ classes.backgroundContainer }>
-            <Typography className={ classes.title } variant="h3">
-              { strings.welcome.hello } { userName }
+            <Typography className={ classes.title } variant="h2">
+              { `${ this.generateGreeting() }, ${ userName }`  }
             </Typography>
           </Grid>
         </AppLayout>
@@ -83,7 +89,11 @@ class HomeScreen extends React.Component<Props, State> {
         hideHeader={ true }
         redirectTo={ redirectTo }>
         <Grid container className={ classes.backgroundContainer }>
-          <h1 style={{ color: "white" }}>This website is under development and is only for Megasense consortium members. Please leaave it if you are not a part of Megasense consortium</h1>
+          <Grid container className={ classes.noticeGrid }>
+            <Typography variant="h3" className={ classes.noticeText }>
+              { strings.errorDialog.notice }
+            </Typography>
+          </Grid>
           <Grid container className={ classes.loginGrid }>
             <img alt="logo" src={ Logo } className={ classes.logoBig } />
             <Button 
@@ -113,6 +123,24 @@ class HomeScreen extends React.Component<Props, State> {
         </Grid>
       </AppLayout>
     );
+  }
+
+  /**
+   * Method for generating a correct greeting message
+   */
+  private generateGreeting = () => {
+    const { moriningHour, noonHour, eveningHour } = this.state;
+    
+    const hour = new Date().getHours();
+    if (hour >= moriningHour && hour < noonHour) {
+      return strings.welcome.goodMorning;
+    }
+    else if (hour >= noonHour && hour < eveningHour) {
+      return strings.welcome.goodAfternoon;
+    }
+    else {
+      return strings.welcome.goodEvening;
+    }
   }
 
   /**

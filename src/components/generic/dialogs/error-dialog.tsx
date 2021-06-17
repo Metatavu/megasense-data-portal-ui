@@ -2,12 +2,13 @@ import * as React from "react";
 
 import strings from "../../../localization/strings";
 import * as moment from "moment";
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@material-ui/core";
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, WithStyles, withStyles } from "@material-ui/core";
+import { styles } from "./dialog.styles";
 
 /**
  * Interface representing component properties
  */
-interface Props {
+interface Props extends WithStyles<typeof styles> {
   error?: string | Error | Response;
   onClose: () => void;
 }
@@ -22,7 +23,7 @@ interface State {
 /**
  * React component displaying error dialogs
  */
-export default class ErrorDialog extends React.Component<Props, State> {
+class ErrorDialog extends React.Component<Props, State> {
 
   /**
    * Constructor
@@ -48,6 +49,7 @@ export default class ErrorDialog extends React.Component<Props, State> {
    */
   public render() {
     const { onClose } = this.props;
+    const { classes } = this.props;
 
     return (
       <Dialog
@@ -73,21 +75,21 @@ export default class ErrorDialog extends React.Component<Props, State> {
             </p>
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button 
-            color="primary"
-            onClick={ this.onReloadClick }
-          >
-            { strings.errorDialog.reload }
-          </Button>
+        <DialogActions className={ classes.dialogButtonRow }>
           <Button
-            color="secondary"
-            variant="contained"
+            variant="text"
             disableElevation
             autoFocus
             onClick={ onClose }
+            className={ classes.warningButton }
           >
             { strings.errorDialog.close }
+          </Button>
+          <Button 
+            onClick={ this.onReloadClick }
+            className={ classes.primaryButton }
+          >
+            { strings.errorDialog.reload }
           </Button>
         </DialogActions>
       </Dialog>
@@ -135,3 +137,5 @@ export default class ErrorDialog extends React.Component<Props, State> {
   }
 
 }
+
+export default withStyles(styles)(ErrorDialog);
