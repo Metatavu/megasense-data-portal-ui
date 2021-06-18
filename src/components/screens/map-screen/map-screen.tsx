@@ -35,8 +35,9 @@ import moment from "moment";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import { NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES } from "../../../constants/map"
 import PollutantControl from "../../pollutant-control/pollutant-control";
-import PollutantExposures from "../../pollutant-exposures/pollutant-exposures";
+import AirQualitySlider from "../../pollutant-exposures/air-quality-slider";
 import RouteTotalExposure from "../../pollutant-exposures/route-total-exposure";
+import airQualitySlider from "../../pollutant-exposures/air-quality-slider";
 
 /**
  * Interface describing component props
@@ -199,10 +200,8 @@ class MapScreen extends React.Component<Props, State> {
         error={ error }
         clearError={ this.onClearError }
       >
-        
+                        
         { this.renderMap() }
-        { this.renderRouteAirQualityDialog() }
-
         { this.renderSaveRouteConfirmDialog() }
         { this.renderSaveLocationConfirmDialog() }
       </AppLayout>
@@ -215,7 +214,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderDrawerContent = () => {
     const { accessToken, classes } = this.props;
-    const { userSavedRoutes, userFavouriteLocations } = this.state;
+    const { userSavedRoutes, userFavouriteLocations, routeTotalExposures } = this.state;
     return (
       <>
         <Toolbar />
@@ -231,6 +230,9 @@ class MapScreen extends React.Component<Props, State> {
           </IconButton>
         </Toolbar>
         { this.renderRoutingForm() }
+        <AirQualitySlider
+          routeTotalExposures = { routeTotalExposures }
+        />
         <SavedRoutes 
           savedRoutes={ userSavedRoutes } 
           showSavedRoutes={ !!accessToken } 
@@ -736,18 +738,6 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
-   * Renders the list of air pollution data 
-   */
-  private renderRouteAirQualityDialog = () => {
-    const { routeTotalExposures } = this.state;
-    return (
-      <PollutantExposures
-        routeTotalExposures = { routeTotalExposures }
-      />
-    )
-  }
-
-  /**
    * Renders user input field for dialog
    */
   private renderDialogNameInput = () => {
@@ -1072,10 +1062,9 @@ class MapScreen extends React.Component<Props, State> {
       let formattedRoute: string[] = []
       for (var index in route) {
         const coordinates = route[index]
-        console.log("checking "+coordinates)
-
         formattedRoute.push(coordinates[0]+','+coordinates[1])
       }
+
       const airQualityApi = Api.getAirQualityApi(accessToken);
       const routeAirQuality = await airQualityApi.getAirQualityForCoordinatesArray({ 
         requestBody: formattedRoute
@@ -1084,8 +1073,6 @@ class MapScreen extends React.Component<Props, State> {
       const routePollutionTotals = routeAirQuality.pollutionDataTotals
       const pollutantsApi = Api.getPollutantsApi(accessToken);
 
-     // const airQuality: AirQuality = {location: {latitude: 12, longitude: 21}, pollutionValues : []}
-      console.log("received air quality of "+ routePollutionTotals[0].value);
       var routeTotalExposures: RouteTotalExposure[] = [];
       for (var totalEntryIndex in routePollutionTotals) {
         let value:number = routePollutionTotals[totalEntryIndex].value || 0;
