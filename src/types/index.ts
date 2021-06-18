@@ -1,3 +1,5 @@
+import { LatLng } from "leaflet";
+
 export type Locale = "fi" | "en";
 
 /**
@@ -39,7 +41,7 @@ export interface AccessToken {
  */
 export interface Location {
   name: string;
-  coordinates: string;
+  coordinates: LatLng;
 }
 
 /**

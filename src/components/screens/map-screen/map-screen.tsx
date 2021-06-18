@@ -1,7 +1,7 @@
 import { Box, Button, CircularProgress, Divider, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
-import { Eco, Timer, StarBorder, Timeline, DirectionsBike, DirectionsWalk, Accessible, LocationOn, MyLocation, Save, Search } from '@material-ui/icons';
+import { Eco, Timer, StarBorder, Timeline, DirectionsBike, DirectionsWalk, Accessible, LocationOn, MyLocation, Save, Search, TripOrigin } from '@material-ui/icons';
 import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab/Autocomplete";
-import { LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
+import { Icon, LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
 import Geocode from "react-geocode";
 import * as PolyUtil from "polyline-encoded";
 import React, { ChangeEvent } from "react";
@@ -29,6 +29,8 @@ import moment from "moment";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import { NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES } from "../../../constants/map"
 import PollutantControl from "../../pollutant-control/pollutant-control";
+import { sourceIcon } from "../../../resources/images/svg/map-marker-source";
+import { destinationIcon } from "../../../resources/images/svg/map-marker-destination";
 
 /**
  * Interface describing component props
@@ -70,7 +72,7 @@ interface State {
   userFavouriteLocations: FavouriteLocation[];
   userDialogInput?: string;
   error?: string | Error | Response;
-  savingLocationCoordinates: string;
+  savingLocationCoordinates?: LatLng;
   mapInteractive: boolean;
   selectedFavouriteLocation?: Location; 
   pollutantControlMapCenter: [number, number];
@@ -114,7 +116,6 @@ class MapScreen extends React.Component<Props, State> {
       loadingUserSettings: false,
       userSavedRoutes: [],
       userFavouriteLocations: [],
-      savingLocationCoordinates: "",
       mapInteractive: true,
       heatmapLayerVisible: false,
       selectedRoutingMode: "strict",
@@ -296,23 +297,22 @@ class MapScreen extends React.Component<Props, State> {
    */
   private displaySavedRoute = (routeToDisplay: Route) => {
     const route = PolyUtil.decode(routeToDisplay.routePoints);
-    const firstItem = route[0];
-    const lastItem = route[ route.length - 1 ];
+    const firstRoutePoint = route[0];
+    const lastRoutePoint = route[ route.length - 1 ];
 
-    const locationFromCoordinates = `${ firstItem[0] },${ firstItem[1] }`;
+    const locationFromCoordinates = new LatLng(firstRoutePoint[0], firstRoutePoint[1]);
     const locationFrom = { coordinates: locationFromCoordinates, name: routeToDisplay.locationFromName };
     
-    const locationToCoordinates = `${ lastItem[0] },${ lastItem[1] }`;
+    const locationToCoordinates = new LatLng(lastRoutePoint[0], lastRoutePoint[1]);
     const locationTo = { coordinates: locationToCoordinates, name: routeToDisplay.locationToName };
     
-    const newCenterCoordinates = this.coordinatesFromString(locationFromCoordinates);
     const newState = {
       route, 
       locationFrom, 
       locationTo, 
       locationFromTextInput: routeToDisplay.locationFromName, 
       locationToTextInput: routeToDisplay.locationToName,
-      mapViewport: { center: [ newCenterCoordinates[0], newCenterCoordinates[1] ] as [number, number], zoom: 13 }
+      mapViewport: { center: [ firstRoutePoint[0], firstRoutePoint[1] ] as [number, number], zoom: 13 }
     }
     this.setState(newState);
   }
@@ -327,7 +327,7 @@ class MapScreen extends React.Component<Props, State> {
       return;
     }
 
-    const coordinates = `${locationToDisplay.latitude},${locationToDisplay.longitude}`;
+    const coordinates = new LatLng(locationToDisplay.latitude, locationToDisplay.longitude);
     const locationObject = { name: locationToDisplay.name, coordinates };
     this.setState({
       mapViewport: {
@@ -378,7 +378,7 @@ class MapScreen extends React.Component<Props, State> {
   private mapLocationsFromFavouriteLocations = (favouriteLocations: FavouriteLocation[]) => {
     return favouriteLocations.map((element) => {
       const name = element.name;
-      const coordinates = element.latitude + "," + element.longitude;
+      const coordinates = new LatLng(element.latitude, element.longitude);
       return { name, coordinates } as Location;
     }).slice(
       0,
@@ -671,19 +671,19 @@ class MapScreen extends React.Component<Props, State> {
           <Polyline positions={ route }/>
         }
         { routeAltOne && 
-          <Polyline positions={ routeAltOne } color="green" lineCap="round" lineJoin="bevel" weight={ selectedRoutingMode === "strict" ? 6 : 2 }/>
+          <Polyline positions={ routeAltOne } color="green" lineCap="round" lineJoin="bevel" weight={ selectedRoutingMode === "strict" ? 6 : 4 } onclick={ () => this.onRouteOptionSelected("strict") }/>
         }
         { routeAltTwo && 
-          <Polyline positions={ routeAltTwo } color="yellow" lineCap="round" lineJoin="bevel" weight={ selectedRoutingMode === "efficient" ? 6 : 2 }/>
+          <Polyline positions={ routeAltTwo } color="yellow" lineCap="round" lineJoin="bevel" weight={ selectedRoutingMode === "efficient" ? 6 : 4 } onclick={ () => this.onRouteOptionSelected("efficient") }/>
         }
         { routeAltThree && 
-          <Polyline positions={ routeAltThree } color="red" lineCap="round" lineJoin="bevel" weight={ selectedRoutingMode === "relaxed" ? 5 : 2 }/>
+          <Polyline positions={ routeAltThree } color="red" lineCap="round" lineJoin="bevel" weight={ selectedRoutingMode === "relaxed" ? 5 : 3 } onclick={ () => this.onRouteOptionSelected("relaxed") }/>
         }
 
         { selectedFavouriteLocation?.coordinates &&
           <Marker
             ref={ this.openPopup }
-            position={ this.coordinatesFromString(selectedFavouriteLocation.coordinates) }
+            position={ selectedFavouriteLocation.coordinates }
           >
             <Popup
               onOpen={ this.switchMapInteraction }
@@ -704,7 +704,7 @@ class MapScreen extends React.Component<Props, State> {
         }
 
         { locationFrom?.coordinates &&
-          <Marker position={ this.coordinatesFromString(locationFrom.coordinates) }>
+          <Marker position={ locationFrom.coordinates } icon={ sourceIcon }>
             <Popup
               onOpen={ this.switchMapInteraction }
               onClose={ this.switchMapInteraction }
@@ -724,7 +724,7 @@ class MapScreen extends React.Component<Props, State> {
         }
 
         { locationTo?.coordinates &&
-          <Marker position={ this.coordinatesFromString(locationTo.coordinates) }>
+          <Marker position={ locationTo.coordinates } icon={ destinationIcon }>
             <Popup
               onOpen={ this.switchMapInteraction }
               onClose={ this.switchMapInteraction }
@@ -836,6 +836,37 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
+   * Handles one route option selection action
+   * 
+   * @param routingMode routing mode 
+   */
+  private onRouteOptionSelected = (routingMode: RoutingModes) => {
+    const { routeAltOne, routeAltTwo, routeAltThree } = this.state;
+    let polyline = "";
+    switch (routingMode) {
+      case "strict":
+        this.setState({ route: routeAltOne });
+        polyline = PolyUtil.encode(routeAltOne) as string;
+        break;
+      case "efficient":
+        this.setState({ route: routeAltTwo });
+        polyline = PolyUtil.encode(routeAltTwo) as string;
+        break;
+      case "relaxed":
+        this.setState({ route: routeAltThree });
+        polyline = PolyUtil.encode(routeAltThree) as string;
+        break;
+    }
+
+    this.setState({
+      routeAltOne: [],
+      routeAltTwo: [],
+      routeAltThree: [],
+      polyline
+    });
+  }
+
+  /**
    * Matches pollutant control map center with the main map center
    */
   private updatePollutantControl = () => {
@@ -920,7 +951,7 @@ class MapScreen extends React.Component<Props, State> {
    *
    * @param coordinates coordinates string
    */
-  private onSaveLocationClick = (coordinates: string) => {
+  private onSaveLocationClick = (coordinates: LatLng) => {
     this.setState({
       savingLocation: true,
       savingLocationCoordinates: coordinates
@@ -940,17 +971,16 @@ class MapScreen extends React.Component<Props, State> {
 
     try {
       const locationsApi = Api.getLocationsApi(accessToken);
-      const [latitude, longitude] = this.coordinatesFromString(savingLocationCoordinates);
       const createdLocation = await locationsApi.createUserFavouriteLocation({
         favouriteLocation: {
           name: userDialogInput,
-          latitude: latitude,
-          longitude: longitude
+          latitude: savingLocationCoordinates.lat,
+          longitude: savingLocationCoordinates.lng
         }
       });
       this.setState({
         userFavouriteLocations: userFavouriteLocations.concat(createdLocation),
-        savingLocationCoordinates: "",
+        savingLocationCoordinates: undefined,
         savingLocation: false,
         userDialogInput: ""
       });
@@ -1016,18 +1046,6 @@ class MapScreen extends React.Component<Props, State> {
       lat: parseFloat(pointString[0]),
       lng: parseFloat(pointString[1])
     }
-  }
-
-  /**
-   * Converts coordinates from string to LatLngTuple
-   *
-   * @param stringCoordinates coordinates to convert
-   *
-   * @returns coordinates in LatLngTuple format
-   */
-  private coordinatesFromString = (stringCoordinates: string): LatLngTuple => {
-    const coordinates = stringCoordinates.split(",");
-    return [ Number.parseFloat(coordinates[0]), Number.parseFloat(coordinates[1]) ];
   }
 
   /**
@@ -1141,32 +1159,33 @@ class MapScreen extends React.Component<Props, State> {
    * Requests a route from Open Trip Planner
    */
   private updateRoute = async () => {
-    this.setState({ loadingRoute: true });
+    this.setState({ loadingRoute: true, route: [] });
 
     try {
       const { locationTo, locationFrom, mapViewport, departureTime } = this.state;
 
-      if (locationFrom && !locationFrom.coordinates) {
-        locationFrom.coordinates = locationFrom.name;
+      if (! locationFrom || !locationFrom?.coordinates || !locationTo || !locationTo?.coordinates) {
+        return;
       }
 
-      if (locationTo && !locationTo.coordinates) {
-        locationTo.coordinates = locationTo.name;
-      }
+      const locationFromCoordinates = locationFrom.coordinates;
+      const locationToCoordinates = locationTo.coordinates;
 
-      const routeAltOne = this.routeOffset(await this.fetchRouteLine("20", "1"), -0.00003);
-      const routeAltTwo = this.routeOffset(await this.fetchRouteLine("8", "1"), 0);
-      const routeAltThree = this.routeOffset(await this.fetchRouteLine("1", "1"), 0.00003);
+      let routeAltOne = this.routeOffset(await this.fetchRouteLine("20", "1"), -0.00003);
+      let routeAltTwo = this.routeOffset(await this.fetchRouteLine("8", "1"), 0);
+      let routeAltThree = this.routeOffset(await this.fetchRouteLine("1", "1"), 0.00003);
 
-      const newCenter = [mapViewport.center![0], mapViewport.center![1]];
-      if (locationFrom && locationFrom.coordinates) {
-        const newCenterCoordinates = this.coordinatesFromString(locationFrom.coordinates);
-        newCenter[0] = newCenterCoordinates[0];
-        newCenter[1] = newCenterCoordinates[1];
-      }
+      routeAltOne.unshift(locationFromCoordinates);
+      routeAltTwo.unshift(locationFromCoordinates);
+      routeAltThree.unshift(locationFromCoordinates);
+
+      routeAltOne.push(locationToCoordinates);
+      routeAltTwo.push(locationToCoordinates);
+      routeAltThree.push(locationToCoordinates);
+
 
       //TODO: set polyline state when the route is selected
-      this.setState({ routeAltOne, routeAltTwo, routeAltThree, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13 }); 
+      this.setState({ routeAltOne, routeAltTwo, routeAltThree, locationFrom, locationTo, loadingRoute: false, mapViewport: { ... mapViewport, center: [locationFromCoordinates.lat, locationFromCoordinates.lng] }, previousZoom: 13 }); 
     } catch (error) {
       this.setState({
         locationFrom: undefined,
@@ -1209,8 +1228,8 @@ class MapScreen extends React.Component<Props, State> {
    * @param mouseEvent mouse event
    */
   private addRoutePoint = async (mouseEvent: LeafletMouseEvent) => {
-    const position = mouseEvent.latlng.lat.toString() + "," + mouseEvent.latlng.lng.toString();
-    const location = { name: position, coordinates: position };
+    const position = mouseEvent.latlng;
+    const location = { name: position.toString(), coordinates: position };
     let geocodingResponse = null;
     if (this.state.editingLocationFrom) {
       const locationFromOptions = [location];
@@ -1303,13 +1322,12 @@ class MapScreen extends React.Component<Props, State> {
   /**
    * Turns selected favourite location to source location 
    */
-  private onSetSourceClick = (coordinates: string, name: string) => () => {
+  private onSetSourceClick = (coordinates: LatLng, name: string) => () => {
     this.setState({
       locationFrom: {coordinates, name}
     });
 
-    const sourceCoordinates = coordinates.split(",");
-    this.reverseGeocodeCoordinates(GeocodeCoordinate.From, sourceCoordinates[0], sourceCoordinates[1]);
+    this.reverseGeocodeCoordinates(GeocodeCoordinate.From, coordinates.lat.toString(), coordinates.lng.toString());
     this.exitSelectedFavouriteLocation();
   }
 
@@ -1319,13 +1337,12 @@ class MapScreen extends React.Component<Props, State> {
    * @param coordinates coordinates string
    * @param name name string
    */
-  private onSetDestinationClick = (coordinates: string, name: string) => () => {
+  private onSetDestinationClick = (coordinates: LatLng, name: string) => () => {
     this.setState({
       locationTo: {coordinates, name}
     });
 
-    const destCoordinates = coordinates.split(",");
-    this.reverseGeocodeCoordinates(GeocodeCoordinate.To, destCoordinates[0], destCoordinates[1]);
+    this.reverseGeocodeCoordinates(GeocodeCoordinate.To, coordinates.lat.toString(), coordinates.lng.toString());
     this.exitSelectedFavouriteLocation();
   }
 
