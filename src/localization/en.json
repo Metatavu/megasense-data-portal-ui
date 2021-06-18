@@ -12,14 +12,18 @@
   },
 
   "welcome": {
-    "hello": "Hello,"
+    "hello": "Hello",
+    "goodMorning": "Good morning",
+    "goodAfternoon": "Good afternoon",
+    "goodEvening": "Good evening"
   },
 
   "header": {
     "statistics": "Statistics",
     "map": "Map",
     "settings": "Settings",
-    "about": "About"
+    "about": "About",
+    "logoText": "GREEN PATHS"
   },
 
   "timePicker": {
@@ -116,6 +120,10 @@
   "savedRoutesFrom": "From",
   "savedRoutesTo": "To",
   "savedRoutesSavedText": "Saved",
+  "savedLocations": "Saved locations",
+  "savedLocationsLatitude": "Latitude",
+  "savedLocationsLongtitude": "Longtitude",
+  "savedLocationsSavedText": "Saved",
   "deleteConfirm": "Are you sure you want to delete this?",
   "confirmTimeRange": "Confirm time range",
   "selectPollution": "Select pollution",
@@ -129,7 +137,9 @@
   "walking": "Walking",
   "wheelerchair": "Wheelerchair",
   "viewRoute": "View route",
+  "viewLocation": "View location",
   "deleteRoute": "Delete route",
+  "deleteLocation": "Delete location",
   "collapseMenuText": "Collapse menu",
   "user": "User",
   "showMore": "Show all",

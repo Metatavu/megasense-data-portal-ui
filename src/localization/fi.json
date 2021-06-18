@@ -12,14 +12,18 @@
   },
 
   "welcome": {
-    "hello": "Hei,"
+    "hello": "Hei",
+    "goodMorning": "Hyvää huomenta",
+    "goodAfternoon": "hyvää iltapäivää",
+    "goodEvening": "hyvää iltaa"
   },
 
   "header": {
     "statistics": "Statistiikka",
     "map": "Kartta",
     "settings": "Asetukset",
-    "about": "Tietoa projektista"
+    "about": "Tietoa projektista",
+    "logoText": "GREEN PATHS"
   },
 
   "timePicker": {
@@ -116,6 +120,10 @@
   "savedRoutesFrom": "Mistä",
   "savedRoutesTo": "Minne",
   "savedRoutesSavedText": "Tallennettu",
+  "savedLocations": "Tallennetut sijainnit",
+  "savedLocationsLatitude": "Leveysaste",
+  "savedLocationsLongtitude": "Pituusaste",
+  "savedLocationsSavedText": "Tallennettu",
   "deleteConfirm": "Oletko varma että haluat poistaa tämän?",
   "confirmTimeRange": "Valitse aikaväli",
   "selectPollution": "Valitse ilmansaaste",
@@ -129,7 +137,9 @@
   "walking": "Kävely",
   "wheelerchair": "Pyörätuoli",
   "viewRoute": "Näytä reitti",
+  "viewLocation": "Näytä sijainti",
   "deleteRoute": "Poista reitti",
+  "deleteLocation": "Poista sijainti",
   "collapseMenuText": "Piilota menu",
   "user": "Käyttäjä",
   "showMore": "Näytä kaikki",

@@ -25,6 +25,9 @@ export interface IStrings extends LocalizedStringsMethods {
    */
   welcome: {
     hello: string;
+    goodMorning: string;
+    goodAfternoon: string;
+    goodEvening: string;
   };
 
   /**
@@ -35,6 +38,7 @@ export interface IStrings extends LocalizedStringsMethods {
     map: string;
     settings: string;
     about: string;
+    logoText: string;
   };
 
   /**
@@ -154,6 +158,10 @@ export interface IStrings extends LocalizedStringsMethods {
   savedRoutesTo: string;
   savedRoutesFrom: string;
   savedRoutesSavedText: string;
+  savedLocations: string;
+  savedLocationsLatitude: string;
+  savedLocationsLongtitude: string;
+  savedLocationsSavedText: string;
   deleteConfirm: string;
   confirmTimeRange: string;
   selectPollution: string;
@@ -167,7 +175,9 @@ export interface IStrings extends LocalizedStringsMethods {
   walking: string;
   wheelerchair: string;
   viewRoute: string;
+  viewLocation: string;
   deleteRoute: string;
+  deleteLocation: string;
   collapseMenuText: string;
   user: string;
   showMore: string;

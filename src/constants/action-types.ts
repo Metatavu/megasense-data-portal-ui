@@ -27,3 +27,9 @@ export type SET_LOCALE = typeof SET_LOCALE;
  */
 export const SET_DISPLAYED_ROUTE = "SET_DISPLAYED_ROUTE";
 export type SET_DISPLAYED_ROUTE = typeof SET_DISPLAYED_ROUTE;
+
+/**
+ * Set displayed location update
+ */
+export const SET_DISPLAYED_LOCATION = "SET_DISPLAYED_LOCATION";
+export type SET_DISPLAYED_LOCATION = typeof SET_DISPLAYED_LOCATION;
