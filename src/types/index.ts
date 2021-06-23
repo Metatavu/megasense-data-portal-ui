@@ -18,7 +18,12 @@ export type NullableToken = AccessToken | null;
 /**
  * Type for possible routing modes
  */
- export type RoutingModes = "strict" | "efficient" | "relaxed" | "custom";
+ export type RoutingModes = "Strict" | "Efficient" | "Relaxed" | "Custom";
+
+/**
+ * Type for popup options
+ */
+ export type PopupOptions = "source" | "destination" | "options";
 
 /**
  * Interface describing an access token
@@ -48,10 +53,10 @@ export interface Location {
  * Interface describing routing modes
  */
 export interface RoutingModeIcons {
-  strict: JSX.Element;
-  efficient: JSX.Element;
-  relaxed: JSX.Element;
-  custom?: JSX.Element;
+  Strict: JSX.Element;
+  Efficient: JSX.Element;
+  Relaxed: JSX.Element;
+  Custom?: JSX.Element;
 }
 
 /**

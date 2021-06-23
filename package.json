@@ -21,6 +21,7 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/recharts": "^1.8.16",
     "@types/redux": "^3.6.0",
+    "classnames": "^2.2.6",
     "keycloak-js": "^11.0.2",
     "leaflet": "^1.7.1",
     "leaflet-control-geocoder": "^2.2.0",

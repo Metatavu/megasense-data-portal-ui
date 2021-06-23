@@ -13,5 +13,5 @@ export const sourceIcon = new DivIcon({
   html: htmlString,
   className: "",
   iconSize: [28, 28],
-  iconAnchor: [18, 18],
+  iconAnchor: [15, 16],
 });

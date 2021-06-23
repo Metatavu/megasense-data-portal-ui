@@ -1,7 +1,7 @@
 import { Box, Button, CircularProgress, Divider, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
-import { Eco, Timer, StarBorder, Timeline, DirectionsBike, DirectionsWalk, Accessible, LocationOn, MyLocation, Save, Search, TripOrigin } from '@material-ui/icons';
+import { Eco, Timer, StarBorder, Timeline, DirectionsBike, DirectionsWalk, Accessible, LocationOn, MyLocation, Save, Search } from '@material-ui/icons';
 import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab/Autocomplete";
-import { Icon, LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
+import { LatLng, LeafletMouseEvent } from "leaflet";
 import Geocode from "react-geocode";
 import * as PolyUtil from "polyline-encoded";
 import React, { ChangeEvent } from "react";
@@ -52,9 +52,9 @@ interface State {
   locationTo?: Location;
   departureTime: Date;
   route?: LatLng[];
-  routeAltOne: LatLng[];
-  routeAltTwo: LatLng[];
-  routeAltThree: LatLng[];
+  routeAltOne?: LatLng[];
+  routeAltTwo?: LatLng[];
+  routeAltThree?: LatLng[];
   mapViewport: Viewport;
   editingLocationFrom: boolean;
   loadingRoute: boolean;
@@ -86,6 +86,7 @@ interface State {
 class MapScreen extends React.Component<Props, State> {
   mapRef: React.RefObject<Map>;
   overlayRef: any;
+  sourceMarkerRef: React.RefObject<Marker>;
   /**
    * Component constructor
    *
@@ -95,9 +96,6 @@ class MapScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       departureTime: new Date(),
-      routeAltOne: [],
-      routeAltTwo: [],
-      routeAltThree: [],
       mapViewport: {
         zoom: 12 , 
         center: [60.1699, 24.9384]
@@ -118,11 +116,12 @@ class MapScreen extends React.Component<Props, State> {
       userFavouriteLocations: [],
       mapInteractive: true,
       heatmapLayerVisible: false,
-      selectedRoutingMode: "strict",
+      selectedRoutingMode: "Strict",
     };
 
     this.mapRef = React.createRef();
     this.overlayRef = React.createRef();
+    this.sourceMarkerRef = React.createRef();
   }
 
   /**
@@ -226,7 +225,7 @@ class MapScreen extends React.Component<Props, State> {
           <IconButton>
             <DirectionsBike htmlColor="#fff" />
           </IconButton>
-          <div className={ classes.secondToggleGroup }>
+          <div className={ classes.modeToggleGroup }>
             { this.renderRoutingModeSelector() }
           </div>
         </Toolbar>
@@ -250,12 +249,12 @@ class MapScreen extends React.Component<Props, State> {
   /**
    * Renders air quality routing mode selector
    */
-   private renderRoutingModeSelector = () => {
+   private renderRoutingModeSelector = (size?: number) => {
     const routingModeIcons: RoutingModeIcons = {
-      relaxed: <Timer htmlColor="#fff" />,
-      efficient: <Timeline htmlColor="#fff" />,
-      strict: <Eco htmlColor="#fff" />,
-      custom: <StarBorder htmlColor="#fff" />
+      Relaxed: <Timer htmlColor="#fff" />,
+      Efficient: <Timeline htmlColor="#fff" />,
+      Strict: <Eco htmlColor="#fff" />,
+      Custom: <StarBorder htmlColor="#fff" />
     }
 
     if (!routingModeIcons) {
@@ -269,7 +268,13 @@ class MapScreen extends React.Component<Props, State> {
 
       return (
         <IconButton
-          style={{ opacity }}
+          style={{
+            opacity,
+            width: size,
+            height: size,
+            marginLeft: size && size / 4,
+            marginRight: size && size / 4
+          }}
           onClick={ () => this.onRoutingModeClick(valueKey) }
         >
           { routingModeIcons[valueKey]}
@@ -284,6 +289,12 @@ class MapScreen extends React.Component<Props, State> {
    * @param key clicked button identifier key
    */
    private onRoutingModeClick = (key: keyof RoutingModeIcons) => {
+    const { selectedRoutingMode } = this.state;
+    
+    if (selectedRoutingMode === key) {
+      this.onRouteOptionSelected(key);
+      return;
+    }
 
     this.setState({
       selectedRoutingMode: key
@@ -650,9 +661,13 @@ class MapScreen extends React.Component<Props, State> {
       selectedRoutingMode
     } = this.state;
 
+    var classNames = require('classnames');
+
     return (
       <Map
-        className={ classes.mapComponent }
+        className={
+          classNames(classes.mapComponent, routeAltOne?.length && routeAltTwo?.length && routeAltThree?.length && classes.markerPopupBottom)
+        }
         ref={ this.mapRef }
         zoomControl={ false } 
         ondblclick={ this.addRoutePoint } 
@@ -671,13 +686,34 @@ class MapScreen extends React.Component<Props, State> {
           <Polyline positions={ route }/>
         }
         { routeAltOne && 
-          <Polyline positions={ routeAltOne } color="green" lineCap="round" lineJoin="bevel" weight={ selectedRoutingMode === "strict" ? 6 : 4 } onclick={ () => this.onRouteOptionSelected("strict") }/>
+          <Polyline
+            positions={ routeAltOne }
+            color="green"
+            lineCap="round"
+            lineJoin="bevel"
+            weight={ selectedRoutingMode === "Strict" ? 6 : 4 }
+            onclick={ () => this.onRouteOptionSelected("Strict") }
+          />
         }
         { routeAltTwo && 
-          <Polyline positions={ routeAltTwo } color="yellow" lineCap="round" lineJoin="bevel" weight={ selectedRoutingMode === "efficient" ? 6 : 4 } onclick={ () => this.onRouteOptionSelected("efficient") }/>
+          <Polyline
+            positions={ routeAltTwo }
+            color="yellow"
+            lineCap="round"
+            lineJoin="bevel"
+            weight={ selectedRoutingMode === "Efficient" ? 6 : 4 }
+            onclick={ () => this.onRouteOptionSelected("Efficient") }
+          />
         }
         { routeAltThree && 
-          <Polyline positions={ routeAltThree } color="red" lineCap="round" lineJoin="bevel" weight={ selectedRoutingMode === "relaxed" ? 5 : 3 } onclick={ () => this.onRouteOptionSelected("relaxed") }/>
+          <Polyline
+            positions={ routeAltThree }
+            color="red"
+            lineCap="round"
+            lineJoin="bevel"
+            weight={ selectedRoutingMode === "Relaxed" ? 5 : 3 }
+            onclick={ () => this.onRouteOptionSelected("Relaxed") }
+          />
         }
 
         { selectedFavouriteLocation?.coordinates &&
@@ -704,21 +740,13 @@ class MapScreen extends React.Component<Props, State> {
         }
 
         { locationFrom?.coordinates &&
-          <Marker position={ locationFrom.coordinates } icon={ sourceIcon }>
+          <Marker ref={ this.sourceMarkerRef } position={ locationFrom.coordinates } icon={ sourceIcon }>
             <Popup
               onOpen={ this.switchMapInteraction }
               onClose={ this.switchMapInteraction }
               autoPan={ false }
             >
-              <h3>
-                { `${strings.from}:` }
-              </h3>
-              <p>
-                { locationFromTextInput || "" }
-              </p>
-              <Button onClick={ () => this.onSaveLocationClick(locationFrom.coordinates) }>
-                { strings.locations.saveLocation }
-              </Button>
+              { this.renderLocationFromPopupContents() }
             </Popup>
           </Marker>
         }
@@ -814,6 +842,60 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
+   * Renders popup context for location from marker
+   * 
+   * @returns popup contents
+   */
+  private renderLocationFromPopupContents = () => {
+    const { classes } = this.props;
+    const {
+      locationFrom,
+      locationFromTextInput,
+      routeAltOne,
+      routeAltTwo,
+      routeAltThree,
+      selectedRoutingMode
+    } = this.state;
+
+    if (routeAltOne?.length && routeAltTwo?.length && routeAltThree?.length) {
+      return (
+        <div>
+          <div className={ classes.markerPopupInfoText }>
+            <h4 className={ classes.markerPopupRouteInfoText }>
+              {/* TODO: change to the real route time value */}
+              { "16min" }
+            </h4>
+            <h4>
+              {/* TODO: change to the real route exposure value */}
+              { "72pi" }
+            </h4>
+          </div>
+          <div className={ classes.popupRoutingMode }>
+            { this.renderRoutingModeSelector(20) }
+          </div>
+          <h3 className={ classes.markerPopupRoutingModeText }>
+            { selectedRoutingMode }
+          </h3>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <h3>
+          { `${strings.from}:` }
+        </h3>
+        <p>
+          { locationFromTextInput || "" }
+        </p>
+        <Button onClick={ () => this.onSaveLocationClick(locationFrom!.coordinates) }>
+          { strings.locations.saveLocation }
+        </Button>
+      </div>
+    );
+  }
+
+  /**
    * Opens popup when component renders
    *
    * @param marker marker
@@ -842,17 +924,20 @@ class MapScreen extends React.Component<Props, State> {
    */
   private onRouteOptionSelected = (routingMode: RoutingModes) => {
     const { routeAltOne, routeAltTwo, routeAltThree } = this.state;
+
+    this.sourceMarkerRef.current?.leafletElement.closePopup();
+    
     let polyline = "";
     switch (routingMode) {
-      case "strict":
+      case "Strict":
         this.setState({ route: routeAltOne });
         polyline = PolyUtil.encode(routeAltOne) as string;
         break;
-      case "efficient":
+      case "Efficient":
         this.setState({ route: routeAltTwo });
         polyline = PolyUtil.encode(routeAltTwo) as string;
         break;
-      case "relaxed":
+      case "Relaxed":
         this.setState({ route: routeAltThree });
         polyline = PolyUtil.encode(routeAltThree) as string;
         break;
@@ -1183,15 +1268,13 @@ class MapScreen extends React.Component<Props, State> {
       routeAltTwo.push(locationToCoordinates);
       routeAltThree.push(locationToCoordinates);
 
+      this.sourceMarkerRef.current?.leafletElement.openPopup();
 
-      //TODO: set polyline state when the route is selected
       this.setState({ routeAltOne, routeAltTwo, routeAltThree, locationFrom, locationTo, loadingRoute: false, mapViewport: { ... mapViewport, center: [locationFromCoordinates.lat, locationFromCoordinates.lng] }, previousZoom: 13 }); 
     } catch (error) {
+      this.clearRoutingDetails();
+
       this.setState({
-        locationFrom: undefined,
-        locationTo: undefined,
-        route: undefined,
-        loadingRoute: false,
         error: error
       });
     }
@@ -1239,6 +1322,8 @@ class MapScreen extends React.Component<Props, State> {
         console.warn("Geocoding error is ", e);
       }
 
+      this.clearRoutingDetails();
+
       this.setState({
         locationFromOptions,
         locationFrom: location,
@@ -1268,6 +1353,22 @@ class MapScreen extends React.Component<Props, State> {
         });
       }
     }
+  }
+
+  /**
+   * Clears routing details
+   */
+  private clearRoutingDetails = () => {
+
+    this.setState({
+      locationFrom: undefined,
+      locationTo: undefined,
+      route: undefined,
+      routeAltOne: undefined,
+      routeAltTwo: undefined,
+      routeAltThree: undefined,
+      loadingRoute: false,
+    })
   }
 
   /**

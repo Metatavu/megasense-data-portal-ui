@@ -16,14 +16,14 @@ export const styles = createStyles({
     backgroundColor: theme.palette.primary.main
   },
 
-  secondToggleGroup: {
+  modeToggleGroup: {
     display: "flex",
     flexDirection: "row",
     marginLeft: "10%"
   },
 
   mapComponent: {
-    height: "100%"
+    height: "100%",
   },
 
   routingForm: {
@@ -106,6 +106,40 @@ export const styles = createStyles({
     "& .MuiIconButton-root": {
       color: "rgba(255,255,255,0.8)"
     }
+  },
+
+  markerPopupBottom: {
+    "& .leaflet-popup-pane": {
+      marginTop: "150px",
+      zIndex: "inherit"
+    },
+    "& .leaflet-popup-tip-container": {
+      visibility: "hidden"
+    },
+    "& .leaflet-popup-content-wrapper": {
+      backgroundColor: theme.palette.primary.main,
+      color: "#fff",
+      opacity: 0.8
+    }
+  },
+
+  popupRoutingMode: {
+    display: "flex",
+    flexDirection: "row",
+    opacity: 1
+  },
+
+  markerPopupInfoText: {
+    display: "flex",
+    flexDirection: "row"
+  },
+
+  markerPopupRouteInfoText: {
+    marginRight: "58%"
+  },
+
+  markerPopupRoutingModeText: {
+    textAlign: "center"
   },
 
 });
