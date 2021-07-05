@@ -1128,14 +1128,12 @@ class MapScreen extends React.Component<Props, State> {
     const lastPoint = this.convertPointToCoordinates(routeLine[routeLine.length - 1]);
     const segmentAngle = Math.atan2(firstPoint.lat - lastPoint.lat, firstPoint.lng - lastPoint.lng);
     const offsetAngle = segmentAngle - Math.PI/2;
-    const newLine = routeLine.map( p => {
+    return routeLine.map( p => {
       const point = this.convertPointToCoordinates(p);
       let x = point.lng + offsetDistance * Math.cos(offsetAngle);
       let y = point.lat + offsetDistance * Math.sin(offsetAngle);
       return new LatLng(y, x);
     });
-
-    return newLine;
   }
 
   /**
@@ -1210,8 +1208,6 @@ class MapScreen extends React.Component<Props, State> {
     if (!date) {
       return null;
     }
-
-    const selectedTime = date.format("h.mma");
 
     this.setState({
       departureTime: date.toDate()
