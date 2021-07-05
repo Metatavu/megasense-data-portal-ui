@@ -1128,9 +1128,6 @@ class MapScreen extends React.Component<Props, State> {
     const lastPoint = this.convertPointToCoordinates(routeLine[routeLine.length - 1]);
     const segmentAngle = Math.atan2(firstPoint.lat - lastPoint.lat, firstPoint.lng - lastPoint.lng);
     const offsetAngle = segmentAngle - Math.PI/2;
-
-    console.log("Route line is ", routeLine);
-
     const newLine = routeLine.map( p => {
       const point = this.convertPointToCoordinates(p);
       let x = point.lng + offsetDistance * Math.cos(offsetAngle);
@@ -1213,9 +1210,8 @@ class MapScreen extends React.Component<Props, State> {
     if (!date) {
       return null;
     }
-    console.log("Current time was ", this.state.departureTime);
+
     const selectedTime = date.format("h.mma");
-    console.log("Selected time is ", new Date(selectedTime));
 
     this.setState({
       departureTime: date.toDate()
@@ -1374,7 +1370,6 @@ class MapScreen extends React.Component<Props, State> {
 
     const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=${moment(departureTime).format("h:mma")}&date=${moment(departureTime).format("MM-DD-yyyy")}&maxWalkDistance=100000&sulfur_dioxide_threshold=${sulfurDioxideThreshold}&sulfur_dioxide_penalty=${sulfurDioxidePenalty}`);
     const jsonResponse = await routingResponse.json();
-    console.log("Routing response is ", jsonResponse);
     const polyline = jsonResponse.plan.itineraries[0].legs[0].legGeometry.points;
     const duration = new Date(jsonResponse.plan.itineraries[0].duration * 1000).toISOString().substr(11, 5) + strings.units.hours;
 
