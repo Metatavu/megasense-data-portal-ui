@@ -257,7 +257,7 @@ class MapScreen extends React.Component<Props, State> {
       Efficient: <Timeline htmlColor="#fff" />,
       Strict: <Eco htmlColor="#fff" />,
       Custom: <StarBorder htmlColor="#fff" />
-    }
+    };
 
     if (!routingModeIcons) {
       return;
