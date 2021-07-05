@@ -1138,7 +1138,6 @@ class MapScreen extends React.Component<Props, State> {
       return new LatLng(y, x);
     });
 
-    console.log("New line is ", newLine);
     return newLine;
   }
 
