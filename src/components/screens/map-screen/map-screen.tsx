@@ -802,7 +802,7 @@ class MapScreen extends React.Component<Props, State> {
               />
           </div>
         }
-        
+
         <PollutantControl
           parentMapRef={ this.mapRef }
           parentLayerRef={ this.overlayRef }
@@ -878,12 +878,15 @@ class MapScreen extends React.Component<Props, State> {
       selectedRoutingMode
     } = this.state;
 
+    if (!locationFrom) {
+      return;
+    }
+
     if (routeAltStrict?.lineCoordinates.length && routeAltEfficient?.lineCoordinates.length && routeAltRelaxed?.lineCoordinates.length && selectedRoutingMode) {
       return (
         <div>
           <div className={ classes.markerPopupInfoText }>
             <h4 className={ classes.markerPopupRouteDuration }>
-              {/* TODO: change to the real route time value */}
               { selectedRoutingMode.associatedRouteData?.duration || "" }
             </h4>
             <h4 className={ classes.markerPopupRoutePollution }>
@@ -909,7 +912,7 @@ class MapScreen extends React.Component<Props, State> {
         <p>
           { locationFromTextInput || "" }
         </p>
-        <Button onClick={ () => this.onSaveLocationClick(locationFrom!.coordinates) }>
+        <Button onClick={ () => this.onSaveLocationClick(locationFrom.coordinates) }>
           { strings.locations.saveLocation }
         </Button>
       </div>
@@ -1268,7 +1271,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ loadingRoute: true, route: undefined });
 
     try {
-      const { locationTo, locationFrom, mapViewport, selectedRoutingMode } = this.state;
+      const { locationTo, locationFrom, mapViewport } = this.state;
 
       if (! locationFrom || !locationFrom?.coordinates || !locationTo || !locationTo?.coordinates) {
         return;
