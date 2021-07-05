@@ -1,13 +1,6 @@
-import { IconButton, Typography, Paper, withStyles, Slider, Box, Toolbar, Dialog, Button, ListItem, List, WithStyles } from "@material-ui/core";
-import { MyLocation, Add, Remove, PeopleTwoTone } from "@material-ui/icons";
+import { Typography, withStyles, Slider, Toolbar, ListItem, List, WithStyles } from "@material-ui/core";
 import React from "react";
-import { Map, TileLayer } from "react-leaflet";
-import strings from "../../localization/strings";
-import { AirQuality } from "../../generated/client";
 import { styles } from "./air-quality-slider.styles";
-import { Pollutant } from '../../generated/client/models/Pollutant';
-import { PollutionEntry } from '../../generated/client/models/PollutionEntry';
-import { RouteAirQuality } from '../../generated/client/models/RouteAirQuality';
 import RouteTotalExposure from "./route-total-exposure";
 
 

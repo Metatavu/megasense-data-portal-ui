@@ -18,7 +18,7 @@ import { Dispatch } from "redux";
 import { setDisplayedRoute } from "../../../actions/route";
 import { setDisplayedFavouriteLocation } from "../../../actions/location";
 import Api from "../../../api";
-import { AirQuality, Route, FavouriteLocation, RouteAirQuality } from "../../../generated/client";
+import { AirQuality, Route, FavouriteLocation } from "../../../generated/client";
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
@@ -37,7 +37,6 @@ import { NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES } from "../../../constants/map"
 import PollutantControl from "../../pollutant-control/pollutant-control";
 import AirQualitySlider from "../../pollutant-exposures/air-quality-slider";
 import RouteTotalExposure from "../../pollutant-exposures/route-total-exposure";
-import airQualitySlider from "../../pollutant-exposures/air-quality-slider";
 
 /**
  * Interface describing component props
