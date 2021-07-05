@@ -1064,19 +1064,20 @@ class MapScreen extends React.Component<Props, State> {
         const coordinates = route[index]
         formattedRoute.push(coordinates[0]+','+coordinates[1])
       }
-
+      
       const airQualityApi = Api.getAirQualityApi(accessToken);
       const routeAirQuality = await airQualityApi.getAirQualityForCoordinatesArray({ 
-        requestBody: formattedRoute
+        requestBody: formattedRoute,
+        routingTime: departureTime
       }
     );
       const routePollutionTotals = routeAirQuality.pollutionDataTotals
       const pollutantsApi = Api.getPollutantsApi(accessToken);
 
       var routeTotalExposures: RouteTotalExposure[] = [];
-      for (var totalEntryIndex in routePollutionTotals) {
-        let value:number = routePollutionTotals[totalEntryIndex].value || 0;
-        let providedPollId: string = routePollutionTotals[totalEntryIndex].pollutantId || '';
+      for (var routePollutionIndex in routePollutionTotals) {
+        let value:number = routePollutionTotals[routePollutionIndex].value || 0;
+        let providedPollId: string = routePollutionTotals[routePollutionIndex].pollutantId || '';
         if (providedPollId === '') {
           break;
         }
@@ -1084,12 +1085,10 @@ class MapScreen extends React.Component<Props, State> {
           pollutantId: providedPollId
         })
 
-        var a: RouteTotalExposure = {
+        routeTotalExposures.push({
           pollutantName: pollutantName.displayName,
           pollutionValue: value
-        };
-        routeTotalExposures.push(a);
-      
+        });      
     }
       
       this.setState({ routeTotalExposures, route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13, polyline }); 

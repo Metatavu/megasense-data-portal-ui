@@ -40,7 +40,7 @@ class AirQualitySlider extends React.Component<Props, State> {
   }
   
   /**
-   * PollutantControl render method
+   * Render method to display air quality for route sliders
    */
   public render = () => {
     const { classes, routeTotalExposures } = this.props;
