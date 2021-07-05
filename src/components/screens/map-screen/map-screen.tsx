@@ -16,7 +16,7 @@ import { AirQuality, Route, FavouriteLocation } from "../../../generated/client"
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
-import { Location, NullableToken, GeocodeCoordinate, RoutingModes, RoutingModeIcons, PointCoordinates } from "../../../types";
+import { Location, NullableToken, GeocodeCoordinate, RoutingModes, RoutingModeIcons, PointCoordinates, RouteData, RoutingModeData } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
 import FavouriteLocations from "../../favourite-locations/favourite-locations";
@@ -51,10 +51,10 @@ interface State {
   locationFrom?: Location;
   locationTo?: Location;
   departureTime: Date;
-  route?: LatLng[];
-  routeAltOne?: LatLng[];
-  routeAltTwo?: LatLng[];
-  routeAltThree?: LatLng[];
+  route?: RouteData;
+  routeAltStrict?: RouteData;
+  routeAltEfficient?: RouteData;
+  routeAltRelaxed?: RouteData;
   mapViewport: Viewport;
   editingLocationFrom: boolean;
   loadingRoute: boolean;
@@ -77,7 +77,7 @@ interface State {
   selectedFavouriteLocation?: Location; 
   pollutantControlMapCenter: [number, number];
   heatmapLayerVisible: boolean;
-  selectedRoutingMode: RoutingModes;
+  selectedRoutingMode?: RoutingModeData;
 }
 
 /**
@@ -115,8 +115,7 @@ class MapScreen extends React.Component<Props, State> {
       userSavedRoutes: [],
       userFavouriteLocations: [],
       mapInteractive: true,
-      heatmapLayerVisible: false,
-      selectedRoutingMode: "Strict",
+      heatmapLayerVisible: false
     };
 
     this.mapRef = React.createRef();
@@ -248,8 +247,11 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Renders air quality routing mode selector
+   * 
+   * @param size component size
    */
-   private renderRoutingModeSelector = (size?: number) => {
+  private renderRoutingModeSelector = (size?: number) => {
+    const { selectedRoutingMode } = this.state;
     const routingModeIcons: RoutingModeIcons = {
       Relaxed: <Timer htmlColor="#fff" />,
       Efficient: <Timeline htmlColor="#fff" />,
@@ -264,7 +266,7 @@ class MapScreen extends React.Component<Props, State> {
     return Object.keys(routingModeIcons).map((key, index) => {
       const valueKey = key as keyof RoutingModeIcons;
 
-      const opacity = key !== this.state.selectedRoutingMode ? 0.6 : 1; 
+      const opacity = key !== selectedRoutingMode?.name ? 0.6 : 1; 
 
       return (
         <IconButton
@@ -277,7 +279,7 @@ class MapScreen extends React.Component<Props, State> {
           }}
           onClick={ () => this.onRoutingModeClick(valueKey) }
         >
-          { routingModeIcons[valueKey]}
+          { routingModeIcons[valueKey] }
         </IconButton>
       );
     });
@@ -289,15 +291,31 @@ class MapScreen extends React.Component<Props, State> {
    * @param key clicked button identifier key
    */
    private onRoutingModeClick = (key: keyof RoutingModeIcons) => {
-    const { selectedRoutingMode } = this.state;
+    const { selectedRoutingMode, routeAltStrict, routeAltEfficient, routeAltRelaxed } = this.state;
     
-    if (selectedRoutingMode === key) {
+    if (selectedRoutingMode?.name === key) {
       this.onRouteOptionSelected(key);
       return;
     }
 
+    let routeData: RouteData | undefined;
+    switch (key) {
+      case "Strict":
+        routeData = routeAltStrict;
+        break;
+      case "Efficient":
+        routeData = routeAltEfficient;
+        break;
+      case "Relaxed":
+        routeData = routeAltRelaxed;
+        break;
+    }
+
     this.setState({
-      selectedRoutingMode: key
+      selectedRoutingMode: {
+        name: key,
+        associatedRouteData: routeData
+      }
     });
   }
 
@@ -652,12 +670,11 @@ class MapScreen extends React.Component<Props, State> {
       selectedFavouriteLocation,
       airQuality,
       mapInteractive,
-      locationFromTextInput ,
       locationToTextInput,
       heatmapLayerVisible,
-      routeAltOne,
-      routeAltTwo,
-      routeAltThree,
+      routeAltStrict,
+      routeAltEfficient,
+      routeAltRelaxed,
       selectedRoutingMode
     } = this.state;
 
@@ -666,7 +683,7 @@ class MapScreen extends React.Component<Props, State> {
     return (
       <Map
         className={
-          classNames(classes.mapComponent, routeAltOne?.length && routeAltTwo?.length && routeAltThree?.length && classes.markerPopupBottom)
+          classNames(classes.mapComponent, routeAltStrict?.lineCoordinates.length && routeAltEfficient?.lineCoordinates.length && routeAltRelaxed?.lineCoordinates.length && classes.markerPopupBottom)
         }
         ref={ this.mapRef }
         zoomControl={ false } 
@@ -683,35 +700,35 @@ class MapScreen extends React.Component<Props, State> {
           attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
         />
         { route && 
-          <Polyline positions={ route }/>
+          <Polyline positions={ route.lineCoordinates }/>
         }
-        { routeAltOne && 
+        { routeAltStrict && 
           <Polyline
-            positions={ routeAltOne }
+            positions={ routeAltStrict.lineCoordinates }
             color="green"
             lineCap="round"
             lineJoin="bevel"
-            weight={ selectedRoutingMode === "Strict" ? 6 : 4 }
+            weight={ selectedRoutingMode?.name === "Strict" ? 6 : 4 }
             onclick={ () => this.onRouteOptionSelected("Strict") }
           />
         }
-        { routeAltTwo && 
+        { routeAltEfficient && 
           <Polyline
-            positions={ routeAltTwo }
+            positions={ routeAltEfficient.lineCoordinates }
             color="yellow"
             lineCap="round"
             lineJoin="bevel"
-            weight={ selectedRoutingMode === "Efficient" ? 6 : 4 }
+            weight={ selectedRoutingMode?.name === "Efficient" ? 6 : 4 }
             onclick={ () => this.onRouteOptionSelected("Efficient") }
           />
         }
-        { routeAltThree && 
+        { routeAltRelaxed && 
           <Polyline
-            positions={ routeAltThree }
+            positions={ routeAltRelaxed.lineCoordinates }
             color="red"
             lineCap="round"
             lineJoin="bevel"
-            weight={ selectedRoutingMode === "Relaxed" ? 5 : 3 }
+            weight={ selectedRoutingMode?.name === "Relaxed" ? 5 : 3 }
             onclick={ () => this.onRouteOptionSelected("Relaxed") }
           />
         }
@@ -753,23 +770,26 @@ class MapScreen extends React.Component<Props, State> {
 
         { locationTo?.coordinates &&
           <Marker position={ locationTo.coordinates } icon={ destinationIcon }>
-            <Popup
-              onOpen={ this.switchMapInteraction }
-              onClose={ this.switchMapInteraction }
-              autoPan={ false }
-            >
-              <h3>
-                { `${strings.to}:` }
-              </h3>
-              <p>
-                { locationToTextInput || "" }
-              </p>
-              <Button onClick={ () => this.onSaveLocationClick(locationTo.coordinates) }>
-                { strings.locations.saveLocation }
-              </Button>
-            </Popup>
+            { !routeAltStrict || !routeAltEfficient || !routeAltRelaxed &&
+              <Popup
+                onOpen={ this.switchMapInteraction }
+                onClose={ this.switchMapInteraction }
+                autoPan={ false }
+              >
+                <h3>
+                  { `${strings.to}:` }
+                </h3>
+                <p>
+                  { locationToTextInput || "" }
+                </p>
+                <Button onClick={ () => this.onSaveLocationClick(locationTo.coordinates) }>
+                  { strings.locations.saveLocation }
+                </Button>
+              </Popup>
+            }
           </Marker>
         }
+
         { heatmapLayerVisible &&
           <div>
             <HeatmapLayer
@@ -782,6 +802,7 @@ class MapScreen extends React.Component<Props, State> {
               />
           </div>
         }
+        
         <PollutantControl
           parentMapRef={ this.mapRef }
           parentLayerRef={ this.overlayRef }
@@ -851,21 +872,21 @@ class MapScreen extends React.Component<Props, State> {
     const {
       locationFrom,
       locationFromTextInput,
-      routeAltOne,
-      routeAltTwo,
-      routeAltThree,
+      routeAltStrict,
+      routeAltEfficient,
+      routeAltRelaxed,
       selectedRoutingMode
     } = this.state;
 
-    if (routeAltOne?.length && routeAltTwo?.length && routeAltThree?.length) {
+    if (routeAltStrict?.lineCoordinates.length && routeAltEfficient?.lineCoordinates.length && routeAltRelaxed?.lineCoordinates.length && selectedRoutingMode) {
       return (
         <div>
           <div className={ classes.markerPopupInfoText }>
-            <h4 className={ classes.markerPopupRouteInfoText }>
+            <h4 className={ classes.markerPopupRouteDuration }>
               {/* TODO: change to the real route time value */}
-              { "16min" }
+              { selectedRoutingMode.associatedRouteData?.duration || "" }
             </h4>
-            <h4>
+            <h4 className={ classes.markerPopupRoutePollution }>
               {/* TODO: change to the real route exposure value */}
               { "72pi" }
             </h4>
@@ -874,7 +895,7 @@ class MapScreen extends React.Component<Props, State> {
             { this.renderRoutingModeSelector(20) }
           </div>
           <h3 className={ classes.markerPopupRoutingModeText }>
-            { selectedRoutingMode }
+            { selectedRoutingMode.name }
           </h3>
         </div>
       );
@@ -923,30 +944,30 @@ class MapScreen extends React.Component<Props, State> {
    * @param routingMode routing mode 
    */
   private onRouteOptionSelected = (routingMode: RoutingModes) => {
-    const { routeAltOne, routeAltTwo, routeAltThree } = this.state;
+    const { routeAltStrict, routeAltEfficient, routeAltRelaxed } = this.state;
 
     this.sourceMarkerRef.current?.leafletElement.closePopup();
     
     let polyline = "";
     switch (routingMode) {
       case "Strict":
-        this.setState({ route: routeAltOne });
-        polyline = PolyUtil.encode(routeAltOne) as string;
+        this.setState({ route: routeAltStrict });
+        polyline = PolyUtil.encode(routeAltStrict) as string;
         break;
       case "Efficient":
-        this.setState({ route: routeAltTwo });
-        polyline = PolyUtil.encode(routeAltTwo) as string;
+        this.setState({ route: routeAltEfficient });
+        polyline = PolyUtil.encode(routeAltEfficient) as string;
         break;
       case "Relaxed":
-        this.setState({ route: routeAltThree });
-        polyline = PolyUtil.encode(routeAltThree) as string;
+        this.setState({ route: routeAltRelaxed });
+        polyline = PolyUtil.encode(routeAltRelaxed) as string;
         break;
     }
 
     this.setState({
-      routeAltOne: [],
-      routeAltTwo: [],
-      routeAltThree: [],
+      routeAltStrict: undefined,
+      routeAltEfficient: undefined,
+      routeAltRelaxed: undefined,
       polyline
     });
   }
@@ -1244,10 +1265,10 @@ class MapScreen extends React.Component<Props, State> {
    * Requests a route from Open Trip Planner
    */
   private updateRoute = async () => {
-    this.setState({ loadingRoute: true, route: [] });
+    this.setState({ loadingRoute: true, route: undefined });
 
     try {
-      const { locationTo, locationFrom, mapViewport, departureTime } = this.state;
+      const { locationTo, locationFrom, mapViewport, selectedRoutingMode } = this.state;
 
       if (! locationFrom || !locationFrom?.coordinates || !locationTo || !locationTo?.coordinates) {
         return;
@@ -1256,21 +1277,45 @@ class MapScreen extends React.Component<Props, State> {
       const locationFromCoordinates = locationFrom.coordinates;
       const locationToCoordinates = locationTo.coordinates;
 
-      let routeAltOne = this.routeOffset(await this.fetchRouteLine("20", "1"), -0.00003);
-      let routeAltTwo = this.routeOffset(await this.fetchRouteLine("8", "1"), 0);
-      let routeAltThree = this.routeOffset(await this.fetchRouteLine("1", "1"), 0.00003);
+      const routeAltStrict = await this.fetchRouteLine("20", "1");
+      const routeAltEfficient = await this.fetchRouteLine("8", "1");
+      const routeAltRelaxed = await this.fetchRouteLine("1", "1");
 
-      routeAltOne.unshift(locationFromCoordinates);
-      routeAltTwo.unshift(locationFromCoordinates);
-      routeAltThree.unshift(locationFromCoordinates);
+      let routeAltOneCoordinates = this.routeOffset(routeAltStrict.lineCoordinates, -0.00003);
+      let routeAltTwoCoordinates = this.routeOffset(routeAltEfficient.lineCoordinates, 0);
+      let routeAltThreeCoordinates = this.routeOffset(routeAltRelaxed.lineCoordinates, 0.00003);
 
-      routeAltOne.push(locationToCoordinates);
-      routeAltTwo.push(locationToCoordinates);
-      routeAltThree.push(locationToCoordinates);
+      routeAltOneCoordinates.unshift(locationFromCoordinates);
+      routeAltTwoCoordinates.unshift(locationFromCoordinates);
+      routeAltThreeCoordinates.unshift(locationFromCoordinates);
+
+      routeAltOneCoordinates.push(locationToCoordinates);
+      routeAltTwoCoordinates.push(locationToCoordinates);
+      routeAltThreeCoordinates.push(locationToCoordinates);
 
       this.sourceMarkerRef.current?.leafletElement.openPopup();
 
-      this.setState({ routeAltOne, routeAltTwo, routeAltThree, locationFrom, locationTo, loadingRoute: false, mapViewport: { ... mapViewport, center: [locationFromCoordinates.lat, locationFromCoordinates.lng] }, previousZoom: 13 }); 
+      this.setState({
+        routeAltStrict: {
+          lineCoordinates: routeAltOneCoordinates,
+          duration: routeAltStrict.duration
+        },
+        routeAltEfficient: {
+          lineCoordinates: routeAltTwoCoordinates,
+          duration: routeAltEfficient.duration
+        },
+        routeAltRelaxed: {
+          lineCoordinates: routeAltThreeCoordinates,
+          duration: routeAltRelaxed.duration
+        },
+        locationFrom,
+        locationTo,
+        loadingRoute: false,
+        previousZoom: 13,
+        mapViewport: { ...mapViewport, center: [locationFromCoordinates.lat, locationFromCoordinates.lng] }
+      });
+
+      this.defaultSelectedRoutingMode();
     } catch (error) {
       this.clearRoutingDetails();
 
@@ -1278,6 +1323,41 @@ class MapScreen extends React.Component<Props, State> {
         error: error
       });
     }
+  }
+
+  /**
+   * Sets default selected routing mode
+   */
+  private defaultSelectedRoutingMode = () => {
+    const { routeAltStrict, routeAltEfficient, routeAltRelaxed } = this.state;
+    const defaultMode = process.env.REACT_APP_DEFAULT_ROUTING_MODE || "Strict";
+
+    if (defaultMode === "Strict") {
+      this.setState({
+        selectedRoutingMode: {
+          name: "Strict",
+          associatedRouteData: routeAltStrict
+        }
+      });
+    }
+    
+    if (defaultMode === "Efficient") {
+      this.setState({
+        selectedRoutingMode: {
+          name: "Efficient",
+          associatedRouteData: routeAltEfficient
+        }
+      });
+    }
+
+    if (defaultMode === "Relaxed") {
+      this.setState({
+        selectedRoutingMode: {
+          name: "Relaxed",
+          associatedRouteData: routeAltRelaxed
+        }
+      });
+    } 
   }
   
   /**
@@ -1287,13 +1367,19 @@ class MapScreen extends React.Component<Props, State> {
    * @param sulfurDioxideThreshold sulfur dioxide threshold
    * @returns array of coordinates
    */
-  private fetchRouteLine = async (sulfurDioxidePenalty: string, sulfurDioxideThreshold: string) => {
+  private fetchRouteLine = async (sulfurDioxidePenalty: string, sulfurDioxideThreshold: string): Promise<RouteData> => {
     const { locationTo, locationFrom, departureTime } = this.state;
 
     const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=${moment(departureTime).format("h:mma")}&date=${moment(departureTime).format("MM-DD-yyyy")}&maxWalkDistance=100000&sulfur_dioxide_threshold=${sulfurDioxideThreshold}&sulfur_dioxide_penalty=${sulfurDioxidePenalty}`);
     const jsonResponse = await routingResponse.json();
+    console.log("Routing response is ", jsonResponse);
     const polyline = jsonResponse.plan.itineraries[0].legs[0].legGeometry.points;
-    return PolyUtil.decode(polyline);
+    const duration = new Date(jsonResponse.plan.itineraries[0].duration * 1000).toISOString().substr(11, 5) + strings.units.hours;
+
+    return {
+      lineCoordinates: PolyUtil.decode(polyline),
+      duration: duration
+    };
   }
 
   /**
@@ -1364,9 +1450,9 @@ class MapScreen extends React.Component<Props, State> {
       locationFrom: undefined,
       locationTo: undefined,
       route: undefined,
-      routeAltOne: undefined,
-      routeAltTwo: undefined,
-      routeAltThree: undefined,
+      routeAltStrict: undefined,
+      routeAltEfficient: undefined,
+      routeAltRelaxed: undefined,
       loadingRoute: false,
     })
   }

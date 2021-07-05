@@ -119,7 +119,8 @@ export const styles = createStyles({
     "& .leaflet-popup-content-wrapper": {
       backgroundColor: theme.palette.primary.main,
       color: "#fff",
-      opacity: 0.8
+      opacity: 0.8,
+      height: "138px"
     }
   },
 
@@ -131,11 +132,19 @@ export const styles = createStyles({
 
   markerPopupInfoText: {
     display: "flex",
-    flexDirection: "row"
+    flexDirection: "row",
+    marginBottom: "50px"
   },
 
-  markerPopupRouteInfoText: {
-    marginRight: "58%"
+  markerPopupRouteDuration: {
+    position: "absolute",
+    left: 16
+  },
+
+  markerPopupRoutePollution: {
+    position: "absolute",
+    right: 0,
+    marginInlineEnd: "16px"
   },
 
   markerPopupRoutingModeText: {

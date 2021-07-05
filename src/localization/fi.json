@@ -174,5 +174,9 @@
     "asthma": "Asthma",
     "ischaemicHeartDisease": "Sepelvaltimotauti",
     "copd": "Keuhkoahtaumatauti"
+  },
+
+  "units": {
+    "hours": "t"
   }
 }

@@ -215,7 +215,11 @@ export interface IStrings extends LocalizedStringsMethods {
     asthma: string;
     ischaemicHeartDisease: string;
     copd: string;
-  }
+  };
+
+  units: {
+    hours: string;
+  };
 }
 
 const strings: IStrings = new LocalizedStrings({

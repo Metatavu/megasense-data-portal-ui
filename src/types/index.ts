@@ -18,12 +18,20 @@ export type NullableToken = AccessToken | null;
 /**
  * Type for possible routing modes
  */
- export type RoutingModes = "Strict" | "Efficient" | "Relaxed" | "Custom";
+export type RoutingModes = "Strict" | "Efficient" | "Relaxed" | "Custom";
+
+/**
+ * Interface describing routing mode
+ */
+export interface RoutingModeData{
+  name: RoutingModes;
+  associatedRouteData?: RouteData;
+}
 
 /**
  * Type for popup options
  */
- export type PopupOptions = "source" | "destination" | "options";
+export type PopupOptions = "source" | "destination" | "options";
 
 /**
  * Interface describing an access token
@@ -65,4 +73,12 @@ export interface RoutingModeIcons {
 export interface PointCoordinates {
   lat: number;
   lng: number;
+}
+
+/**
+ * Interface describing route data
+ */
+ export interface RouteData {
+  lineCoordinates: LatLng[];
+  duration?: string;
 }
