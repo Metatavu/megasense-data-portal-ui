@@ -22,7 +22,7 @@ import { AirQuality, Route, FavouriteLocation } from "../../../generated/client"
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
-import { Location, NullableToken, GeocodeCoordinate } from "../../../types";
+import { Location, NullableToken, GeocodeCoordinate, RouteTotalAirQuality } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
 import FavouriteLocations from "../../favourite-locations/favourite-locations";
@@ -36,7 +36,6 @@ import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import { NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES } from "../../../constants/map"
 import PollutantControl from "../../pollutant-control/pollutant-control";
 import AirQualitySlider from "../../pollutant-exposures/air-quality-slider";
-import RouteTotalExposure from "../../pollutant-exposures/route-total-exposure";
 
 /**
  * Interface describing component props
@@ -80,7 +79,7 @@ interface State {
   selectedFavouriteLocation?: Location; 
   pollutantControlMapCenter: [number, number];
   heatmapLayerVisible: boolean;
-  routeTotalExposures: RouteTotalExposure[];
+  routeTotalExposures: RouteTotalAirQuality[];
 }
 
 /**
@@ -199,7 +198,6 @@ class MapScreen extends React.Component<Props, State> {
         error={ error }
         clearError={ this.onClearError }
       >
-                        
         { this.renderMap() }
         { this.renderSaveRouteConfirmDialog() }
         { this.renderSaveLocationConfirmDialog() }
@@ -1033,7 +1031,6 @@ class MapScreen extends React.Component<Props, State> {
    */
   private updateRoute = async () => {
     this.setState({ loadingRoute: true });
-    const { accessToken } = this.props;
 
     try {
       const { locationTo, locationFrom, mapViewport, departureTime } = this.state;
@@ -1057,40 +1054,9 @@ class MapScreen extends React.Component<Props, State> {
         newCenter[0] = newCenterCoordinates[0];
         newCenter[1] = newCenterCoordinates[1];
       }
-
-      let formattedRoute: string[] = []
-      for (var index in route) {
-        const coordinates = route[index]
-        formattedRoute.push(coordinates[0]+','+coordinates[1])
-      }
       
-      const airQualityApi = Api.getAirQualityApi(accessToken);
-      const routeAirQuality = await airQualityApi.getAirQualityForCoordinatesArray({ 
-        requestBody: formattedRoute,
-        routingTime: departureTime
-      }
-    );
-      const routePollutionTotals = routeAirQuality.pollutionDataTotals
-      const pollutantsApi = Api.getPollutantsApi(accessToken);
-
-      var routeTotalExposures: RouteTotalExposure[] = [];
-      for (var routePollutionIndex in routePollutionTotals) {
-        let value:number = routePollutionTotals[routePollutionIndex].value || 0;
-        let providedPollId: string = routePollutionTotals[routePollutionIndex].pollutantId || '';
-        if (providedPollId === '') {
-          break;
-        }
-        let pollutantName = await pollutantsApi.findPollutant({
-          pollutantId: providedPollId
-        })
-
-        routeTotalExposures.push({
-          pollutantName: pollutantName.displayName,
-          pollutionValue: value
-        });      
-    }
-      
-      this.setState({ routeTotalExposures, route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13, polyline }); 
+      this.updateRouteTotalAirQualityData(route);
+      this.setState({ route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13, polyline }); 
     } catch (error) {
       this.setState({
         locationFrom: undefined,
@@ -1100,6 +1066,50 @@ class MapScreen extends React.Component<Props, State> {
         error: error
       });
     }
+  }
+
+  /**
+   * Updates air quality for route info
+   */
+  private updateRouteTotalAirQualityData = async(routePoints: []) => {
+    const { accessToken } = this.props;
+    const { departureTime } = this.state;
+    
+    if (routePoints === undefined) {
+      return;
+    }
+
+    let formattedRoute: string[] = []
+    for (var index in routePoints) {
+      const coordinates = routePoints[index]
+      formattedRoute.push(coordinates[0]+','+coordinates[1])
+    }
+    
+    const airQualityApi = Api.getAirQualityApi(accessToken);
+    const routeAirQuality = await airQualityApi.getAirQualityForCoordinatesArray({ 
+      requestBody: formattedRoute,
+      routingTime: departureTime
+    });
+    const routePollutionTotals = routeAirQuality.pollutionDataTotals
+    const pollutantsApi = Api.getPollutantsApi(accessToken);
+
+    var routeTotalExposures: RouteTotalAirQuality[] = [];
+    for (var routePollutionIndex in routePollutionTotals) {
+      let value:number = routePollutionTotals[routePollutionIndex].value || 0;
+      let providedPollId: string = routePollutionTotals[routePollutionIndex].pollutantId || '';
+      if (providedPollId === '') {
+        break;
+      }
+      let pollutantName = await pollutantsApi.findPollutant({
+        pollutantId: providedPollId
+      })
+
+      routeTotalExposures.push({
+        pollutantName: pollutantName.displayName,
+        pollutionValue: value
+      });          
+    }
+    this.setState({ routeTotalExposures })
   }
 
   /**
