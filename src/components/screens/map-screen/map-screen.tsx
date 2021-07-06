@@ -1055,7 +1055,7 @@ class MapScreen extends React.Component<Props, State> {
         newCenter[1] = newCenterCoordinates[1];
       }
       
-      this.updateRouteTotalAirQualityData(route);
+      await this.updateRouteTotalAirQualityData(route);
       this.setState({ route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13, polyline }); 
     } catch (error) {
       this.setState({
@@ -1075,41 +1075,39 @@ class MapScreen extends React.Component<Props, State> {
     const { accessToken } = this.props;
     const { departureTime } = this.state;
     
-    if (routePoints === undefined) {
+    if (!routePoints) {
       return;
     }
 
-    let formattedRoute: string[] = []
-    for (var index in routePoints) {
-      const coordinates = routePoints[index]
-      formattedRoute.push(coordinates[0]+','+coordinates[1])
-    }
+    const formattedRoute: string[] = routePoints.map(point => {
+      return `${point[0]},${point[1]}`;
+    });
     
     const airQualityApi = Api.getAirQualityApi(accessToken);
+    const pollutantsApi = Api.getPollutantsApi(accessToken);
     const routeAirQuality = await airQualityApi.getAirQualityForCoordinatesArray({ 
       requestBody: formattedRoute,
       routingTime: departureTime
     });
-    const routePollutionTotals = routeAirQuality.pollutionDataTotals
-    const pollutantsApi = Api.getPollutantsApi(accessToken);
-
-    var routeTotalExposures: RouteTotalAirQuality[] = [];
-    for (var routePollutionIndex in routePollutionTotals) {
-      let value:number = routePollutionTotals[routePollutionIndex].value || 0;
-      let providedPollId: string = routePollutionTotals[routePollutionIndex].pollutantId || '';
-      if (providedPollId === '') {
-        break;
-      }
-      let pollutantName = await pollutantsApi.findPollutant({
-        pollutantId: providedPollId
-      })
-
-      routeTotalExposures.push({
-        pollutantName: pollutantName.displayName,
-        pollutionValue: value
-      });          
+    const routePollutionTotals = routeAirQuality.pollutionDataTotals;
+    let routeTotalExposures: RouteTotalAirQuality[] = [];
+    for (const routePollutionIndex in routePollutionTotals) {
+      const pollutionValue = routePollutionTotals[routePollutionIndex].value || 0;
+      const providedPollId = routePollutionTotals[routePollutionIndex].pollutantId || "";
+      if (providedPollId !== "") {
+        const pollutantName = await pollutantsApi.findPollutant({
+          pollutantId: providedPollId
+        });
+        routeTotalExposures.push({
+          pollutantName: pollutantName.displayName,
+          pollutionValue: pollutionValue
+        });   
+      }     
     }
-    this.setState({ routeTotalExposures })
+    
+    this.setState({
+      routeTotalExposures
+    });
   }
 
   /**

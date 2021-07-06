@@ -39,11 +39,11 @@ class AirQualitySlider extends React.Component<Props, State> {
     const { routeTotalExposures } = this.props;
 
     if (routeTotalExposures.length === 0) {
-      return <></>;
+      return null;
     }
-
-    var maxPollution = Math.round(Math.max(...routeTotalExposures.flatMap(e => e.pollutionValue)));
-    var sliders = this.getSlidersList(maxPollution, routeTotalExposures)
+    
+    const sliders = this.getSlidersList(routeTotalExposures)
+    
     return (
       <>
         <Toolbar>
@@ -56,16 +56,23 @@ class AirQualitySlider extends React.Component<Props, State> {
       );
   }
 
-  private getSlidersList(maxPollution: number, routeTotalExposures: RouteTotalAirQuality[]) {
+  /**
+   * Builds list of ListItems for pollutants exposure data
+   * 
+   * @param routeTotalExposures air quality total data for different pollutants for the route
+   * @returns list of sliders 
+   */
+  private getSlidersList(routeTotalExposures: RouteTotalAirQuality[]) {
     const { classes } = this.props;
-    
-    return routeTotalExposures.map((d) => (
+    const maxPollution = Math.round(Math.max(...routeTotalExposures.flatMap(e => e.pollutionValue)));
+
+    return routeTotalExposures.map((pollutantData) => (
         <ListItem>
           <Typography id="discrete-slider-custom" gutterBottom>
-            { d.pollutantName }
+            { pollutantData.pollutantName }
           </Typography>
           <Slider className={ classes.slider }
-            value={ Math.round(d.pollutionValue) }
+            value={ Math.round(pollutantData.pollutionValue) }
             getAriaValueText= { valuetext }
             aria-labelledby="continuous-slider"
             min={0}
