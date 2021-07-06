@@ -73,7 +73,7 @@ class AirQualitySlider extends React.Component<Props, State> {
           </Typography>
           <Slider className={ classes.slider }
             value={ Math.round(pollutantData.pollutionValue) }
-            getAriaValueText= { valuetext }
+            getAriaValueText= { value => `${value}°C` }
             aria-labelledby="continuous-slider"
             min={0}
             max={ maxPollution }
@@ -84,10 +84,6 @@ class AirQualitySlider extends React.Component<Props, State> {
         )
       )    
   }
-}
-
-function valuetext(value: number) {
-  return `${value}°C`;
 }
 
 export default withStyles(styles)(AirQualitySlider);
