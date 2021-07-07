@@ -80,6 +80,7 @@ interface State {
   heatmapLayerVisible: boolean;
   selectedRoutingMode?: RoutingModeData;
   routeTotalExposures: RouteTotalAirQuality[];
+  displayAirQualitySection: boolean;
   loadingRouteAirQuality: boolean;
 }
 
@@ -120,6 +121,7 @@ class MapScreen extends React.Component<Props, State> {
       mapInteractive: true,
       heatmapLayerVisible: false,
       routeTotalExposures: [],
+      displayAirQualitySection: false,
       loadingRouteAirQuality: false
     };
 
@@ -227,7 +229,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderDrawerContent = () => {
     const { accessToken, classes } = this.props;
-    const { userSavedRoutes, userFavouriteLocations, routeTotalExposures, loadingRouteAirQuality } = this.state;
+    const { userSavedRoutes, userFavouriteLocations, routeTotalExposures, displayAirQualitySection, loadingRouteAirQuality } = this.state;
     return (
       <>
         {/* //TODO: make transportation selector similar to routing mode selector */}
@@ -247,12 +249,7 @@ class MapScreen extends React.Component<Props, State> {
           </div>
         </Toolbar>
         { this.renderRoutingForm() }
-        { loadingRouteAirQuality ?
-          <CircularProgress size={ 40 } color="inherit" className={ classes.airQualityDataLoader } /> :
-          <AirQualitySlider routeTotalExposures = { routeTotalExposures } />
-        }
-        
-        
+        <AirQualitySlider routeTotalExposures={ routeTotalExposures } displayRouteAirQuality={ displayAirQualitySection } loadingRouteAirQuality={ loadingRouteAirQuality } />
         <SavedRoutes 
           savedRoutes={ userSavedRoutes } 
           showSavedRoutes={ !!accessToken } 
@@ -1284,10 +1281,10 @@ class MapScreen extends React.Component<Props, State> {
    * Requests a route from Open Trip Planner
    */
   private updateRoute = async () => {
-    this.setState({ loadingRoute: true, route: undefined });
+    this.setState({ loadingRoute: true, route: undefined, displayAirQualitySection: true });
 
     try {
-      const { locationTo, locationFrom, mapViewport, selectedRoutingMode } = this.state;
+      const { locationTo, locationFrom, mapViewport } = this.state;
 
       if (! locationFrom || !locationFrom?.coordinates || !locationTo || !locationTo?.coordinates) {
         return;
@@ -1517,7 +1514,8 @@ class MapScreen extends React.Component<Props, State> {
       routeAltEfficient: undefined,
       routeAltRelaxed: undefined,
       loadingRoute: false,
-      routeTotalExposures: []
+      routeTotalExposures: [],
+      displayAirQualitySection: false
     })
   }
 

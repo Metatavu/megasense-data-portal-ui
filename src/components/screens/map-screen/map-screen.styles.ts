@@ -81,13 +81,6 @@ export const styles = createStyles({
 
   },
 
-  airQualityDataLoader: {
-    display: "flex",
-    flexDirection: "row",
-    alignSelf: "center",
-    margin: "20px"
-  },
-
   autoCompleteInputWrapper: {
     display: "flex",
     alignItems: "center",
