@@ -144,6 +144,7 @@
   "user": "Käyttäjä",
   "showMore": "Näytä kaikki",
   "showLess": "Näytä vähemmän",
+  "airQuality": "Ilman laatu",
 
   "pollutants": {
     "PM25": "Pienhiukkaset",

@@ -36,3 +36,11 @@ export interface Location {
   name: string;
   coordinates: string;
 }
+
+/**
+ * Total exposure of pollutant for the route
+ */
+export interface RouteTotalAirQuality {
+  pollutantName: string;
+  pollutionValue: number;
+}

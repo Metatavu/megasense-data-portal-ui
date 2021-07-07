@@ -22,7 +22,7 @@ import { AirQuality, Route, FavouriteLocation } from "../../../generated/client"
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
-import { Location, NullableToken, GeocodeCoordinate } from "../../../types";
+import { Location, NullableToken, GeocodeCoordinate, RouteTotalAirQuality } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
 import FavouriteLocations from "../../favourite-locations/favourite-locations";
@@ -35,6 +35,7 @@ import moment from "moment";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import { NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES } from "../../../constants/map"
 import PollutantControl from "../../pollutant-control/pollutant-control";
+import AirQualitySlider from "../../pollutant-exposures/air-quality-slider";
 
 /**
  * Interface describing component props
@@ -78,6 +79,7 @@ interface State {
   selectedFavouriteLocation?: Location; 
   pollutantControlMapCenter: [number, number];
   heatmapLayerVisible: boolean;
+  routeTotalExposures: RouteTotalAirQuality[];
 }
 
 /**
@@ -115,7 +117,8 @@ class MapScreen extends React.Component<Props, State> {
       userFavouriteLocations: [],
       savingLocationCoordinates: "",
       mapInteractive: true,
-      heatmapLayerVisible: false
+      heatmapLayerVisible: false,
+      routeTotalExposures: []
     };
 
     this.mapRef = React.createRef();
@@ -208,7 +211,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderDrawerContent = () => {
     const { accessToken, classes } = this.props;
-    const { userSavedRoutes, userFavouriteLocations } = this.state;
+    const { userSavedRoutes, userFavouriteLocations, routeTotalExposures } = this.state;
     return (
       <>
         <Toolbar />
@@ -224,6 +227,9 @@ class MapScreen extends React.Component<Props, State> {
           </IconButton>
         </Toolbar>
         { this.renderRoutingForm() }
+        <AirQualitySlider
+          routeTotalExposures = { routeTotalExposures }
+        />
         <SavedRoutes 
           savedRoutes={ userSavedRoutes } 
           showSavedRoutes={ !!accessToken } 
@@ -1048,7 +1054,8 @@ class MapScreen extends React.Component<Props, State> {
         newCenter[0] = newCenterCoordinates[0];
         newCenter[1] = newCenterCoordinates[1];
       }
-
+      
+      await this.updateRouteTotalAirQualityData(route);
       this.setState({ route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13, polyline }); 
     } catch (error) {
       this.setState({
@@ -1059,6 +1066,48 @@ class MapScreen extends React.Component<Props, State> {
         error: error
       });
     }
+  }
+
+  /**
+   * Updates air quality for route info
+   */
+  private updateRouteTotalAirQualityData = async(routePoints: []) => {
+    const { accessToken } = this.props;
+    const { departureTime } = this.state;
+    
+    if (!routePoints) {
+      return;
+    }
+
+    const formattedRoute: string[] = routePoints.map(point => {
+      return `${point[0]},${point[1]}`;
+    });
+    
+    const airQualityApi = Api.getAirQualityApi(accessToken);
+    const pollutantsApi = Api.getPollutantsApi(accessToken);
+    const routeAirQuality = await airQualityApi.getAirQualityForCoordinatesArray({ 
+      requestBody: formattedRoute,
+      routingTime: departureTime
+    });
+    const routePollutionTotals = routeAirQuality.pollutionDataTotals;
+    let routeTotalExposures: RouteTotalAirQuality[] = [];
+    for (const routePollutionIndex in routePollutionTotals) {
+      const pollutionValue = routePollutionTotals[routePollutionIndex].value || 0;
+      const providedPollId = routePollutionTotals[routePollutionIndex].pollutantId || "";
+      if (providedPollId !== "") {
+        const pollutantName = await pollutantsApi.findPollutant({
+          pollutantId: providedPollId
+        });
+        routeTotalExposures.push({
+          pollutantName: pollutantName.displayName,
+          pollutionValue: pollutionValue
+        });   
+      }     
+    }
+    
+    this.setState({
+      routeTotalExposures
+    });
   }
 
   /**
