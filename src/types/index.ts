@@ -82,3 +82,11 @@ export interface PointCoordinates {
   lineCoordinates: LatLng[];
   duration?: string;
 }
+
+/**
+ * Total exposure of pollutant for the route
+ */
+export interface RouteTotalAirQuality {
+  pollutantName: string;
+  pollutionValue: number;
+}

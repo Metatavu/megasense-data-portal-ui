@@ -16,7 +16,7 @@ import { AirQuality, Route, FavouriteLocation } from "../../../generated/client"
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
-import { Location, NullableToken, GeocodeCoordinate, RoutingModes, RoutingModeIcons, PointCoordinates, RouteData, RoutingModeData } from "../../../types";
+import { Location, NullableToken, GeocodeCoordinate, RouteTotalAirQuality, RoutingModes, RoutingModeIcons, PointCoordinates, RouteData, RoutingModeData } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
 import FavouriteLocations from "../../favourite-locations/favourite-locations";
@@ -31,6 +31,7 @@ import { NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES } from "../../../constants/map"
 import PollutantControl from "../../pollutant-control/pollutant-control";
 import { sourceIcon } from "../../../resources/images/svg/map-marker-source";
 import { destinationIcon } from "../../../resources/images/svg/map-marker-destination";
+import AirQualitySlider from "../../pollutant-exposures/air-quality-slider";
 
 /**
  * Interface describing component props
@@ -78,6 +79,8 @@ interface State {
   pollutantControlMapCenter: [number, number];
   heatmapLayerVisible: boolean;
   selectedRoutingMode?: RoutingModeData;
+  routeTotalExposures: RouteTotalAirQuality[];
+  loadingRouteAirQuality: boolean;
 }
 
 /**
@@ -115,7 +118,9 @@ class MapScreen extends React.Component<Props, State> {
       userSavedRoutes: [],
       userFavouriteLocations: [],
       mapInteractive: true,
-      heatmapLayerVisible: false
+      heatmapLayerVisible: false,
+      routeTotalExposures: [],
+      loadingRouteAirQuality: false
     };
 
     this.mapRef = React.createRef();
@@ -124,7 +129,7 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
-   * Component life cycle method
+   * Component did mount life cycle method
    */
   public componentDidMount = async () => {
     const { displayedFavouriteLocation, displayedRoute, accessToken } = this.props;
@@ -159,6 +164,19 @@ class MapScreen extends React.Component<Props, State> {
     //   const heatLayer = this.overlayRef.current.leafletElement;
     //   map.removeLayer(heatLayer);
     // }
+  }
+
+  /**
+   * Component did update life cycle method
+   */
+   public componentDidUpdate = async (prevProps: Props, prevState: State) => {
+    const { selectedRoutingMode } = this.state;
+
+    if (selectedRoutingMode && prevState.selectedRoutingMode !== selectedRoutingMode) {
+      this.setState({ loadingRouteAirQuality: true });
+      const selectedRouteLine = selectedRoutingMode?.associatedRouteData?.lineCoordinates || [];
+      await this.updateRouteTotalAirQualityData(selectedRouteLine);
+    }
   }
 
   /**
@@ -209,7 +227,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderDrawerContent = () => {
     const { accessToken, classes } = this.props;
-    const { userSavedRoutes, userFavouriteLocations } = this.state;
+    const { userSavedRoutes, userFavouriteLocations, routeTotalExposures, loadingRouteAirQuality } = this.state;
     return (
       <>
         {/* //TODO: make transportation selector similar to routing mode selector */}
@@ -229,6 +247,12 @@ class MapScreen extends React.Component<Props, State> {
           </div>
         </Toolbar>
         { this.renderRoutingForm() }
+        { loadingRouteAirQuality ?
+          <CircularProgress size={ 40 } color="inherit" className={ classes.airQualityDataLoader } /> :
+          <AirQualitySlider routeTotalExposures = { routeTotalExposures } />
+        }
+        
+        
         <SavedRoutes 
           savedRoutes={ userSavedRoutes } 
           showSavedRoutes={ !!accessToken } 
@@ -315,7 +339,8 @@ class MapScreen extends React.Component<Props, State> {
       selectedRoutingMode: {
         name: key,
         associatedRouteData: routeData
-      }
+      },
+      routeTotalExposures: []
     });
   }
 
@@ -1262,7 +1287,7 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({ loadingRoute: true, route: undefined });
 
     try {
-      const { locationTo, locationFrom, mapViewport } = this.state;
+      const { locationTo, locationFrom, mapViewport, selectedRoutingMode } = this.state;
 
       if (! locationFrom || !locationFrom?.coordinates || !locationTo || !locationTo?.coordinates) {
         return;
@@ -1376,6 +1401,51 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
+   * Updates air quality for route info
+   * 
+   * @param routePoints route points array
+   */
+  private updateRouteTotalAirQualityData = async (routePoints: LatLng[]) => {
+    const { accessToken } = this.props;
+    const { departureTime } = this.state;
+
+    if (!routePoints) {
+      return;
+    }
+
+    const formattedRoute: string[] = routePoints
+      .map(point => {
+        return `${point.lat},${point.lng}`;
+      });
+    const airQualityApi = Api.getAirQualityApi(accessToken);
+    const pollutantsApi = Api.getPollutantsApi(accessToken);
+    const routeAirQuality = await airQualityApi.getAirQualityForCoordinatesArray({
+      requestBody: formattedRoute,
+      routingTime: departureTime
+    });
+    const routePollutionTotals = routeAirQuality.pollutionDataTotals;
+    let routeTotalExposures: RouteTotalAirQuality[] = [];
+    for (const routePollutionIndex in routePollutionTotals) {
+      const pollutionValue = routePollutionTotals[routePollutionIndex].value || 0;
+      const providedPollId = routePollutionTotals[routePollutionIndex].pollutantId || "";
+      if (providedPollId !== "") {
+        const pollutantName = await pollutantsApi.findPollutant({
+          pollutantId: providedPollId
+        });
+        routeTotalExposures.push({
+          pollutantName: pollutantName.displayName,
+          pollutionValue: pollutionValue
+        });
+      }
+    }
+
+    this.setState({
+      routeTotalExposures,
+      loadingRouteAirQuality: false
+    });
+  }
+
+  /**
    * Fires when the viewport of the map changes
    *
    * @param mapViewport a new viewport
@@ -1447,6 +1517,7 @@ class MapScreen extends React.Component<Props, State> {
       routeAltEfficient: undefined,
       routeAltRelaxed: undefined,
       loadingRoute: false,
+      routeTotalExposures: []
     })
   }
 

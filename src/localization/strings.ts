@@ -182,6 +182,7 @@ export interface IStrings extends LocalizedStringsMethods {
   user: string;
   showMore: string;
   showLess: string;
+  airQuality: string;
 
   pollutants: {
     PM25: string;

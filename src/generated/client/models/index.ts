@@ -9,4 +9,5 @@ export * from './Pollutant';
 export * from './PollutantPenalty';
 export * from './PollutionEntry';
 export * from './Route';
+export * from './RouteAirQuality';
 export * from './User';
