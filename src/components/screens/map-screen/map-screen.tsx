@@ -1,13 +1,7 @@
 import { Box, Button, CircularProgress, Divider, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
-import AccessibleIcon from "@material-ui/icons/Accessible";
-import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
-import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
-import DestinationIcon from "@material-ui/icons/LocationOn";
-import MyLocationIcon from "@material-ui/icons/MyLocation";
-import SaveIcon from "@material-ui/icons/Save";
-import SearchIcon from "@material-ui/icons/Search";
+import { Eco, Timer, StarBorder, Timeline, DirectionsBike, DirectionsWalk, Accessible, LocationOn, MyLocation, Save, Search } from '@material-ui/icons';
 import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab/Autocomplete";
-import { LatLng, LatLngTuple, LeafletMouseEvent } from "leaflet";
+import { LatLng, LeafletMouseEvent } from "leaflet";
 import Geocode from "react-geocode";
 import * as PolyUtil from "polyline-encoded";
 import React, { ChangeEvent } from "react";
@@ -22,7 +16,7 @@ import { AirQuality, Route, FavouriteLocation } from "../../../generated/client"
 import strings from "../../../localization/strings";
 import { ReduxActions, ReduxState } from "../../../store";
 import theme from "../../../theme/theme";
-import { Location, NullableToken, GeocodeCoordinate, RouteTotalAirQuality } from "../../../types";
+import { Location, NullableToken, GeocodeCoordinate, RouteTotalAirQuality, RoutingModes, RoutingModeIcons, PointCoordinates, RouteData, RoutingModeData } from "../../../types";
 import AppLayout from "../../layouts/app-layout/app-layout";
 import SavedRoutes from "../../routes/saved-routes/saved-routes";
 import FavouriteLocations from "../../favourite-locations/favourite-locations";
@@ -35,6 +29,8 @@ import moment from "moment";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import { NUMBER_OF_RESULTS_FOR_FAVOURITE_PLACES } from "../../../constants/map"
 import PollutantControl from "../../pollutant-control/pollutant-control";
+import { sourceIcon } from "../../../resources/images/svg/map-marker-source";
+import { destinationIcon } from "../../../resources/images/svg/map-marker-destination";
 import AirQualitySlider from "../../pollutant-exposures/air-quality-slider";
 
 /**
@@ -56,7 +52,10 @@ interface State {
   locationFrom?: Location;
   locationTo?: Location;
   departureTime: Date;
-  route?: LatLng[];
+  route?: RouteData;
+  routeAltStrict?: RouteData;
+  routeAltEfficient?: RouteData;
+  routeAltRelaxed?: RouteData;
   mapViewport: Viewport;
   editingLocationFrom: boolean;
   loadingRoute: boolean;
@@ -74,12 +73,15 @@ interface State {
   userFavouriteLocations: FavouriteLocation[];
   userDialogInput?: string;
   error?: string | Error | Response;
-  savingLocationCoordinates: string;
+  savingLocationCoordinates?: LatLng;
   mapInteractive: boolean;
   selectedFavouriteLocation?: Location; 
   pollutantControlMapCenter: [number, number];
   heatmapLayerVisible: boolean;
+  selectedRoutingMode?: RoutingModeData;
   routeTotalExposures: RouteTotalAirQuality[];
+  displayAirQualitySection: boolean;
+  loadingRouteAirQuality: boolean;
 }
 
 /**
@@ -88,6 +90,7 @@ interface State {
 class MapScreen extends React.Component<Props, State> {
   mapRef: React.RefObject<Map>;
   overlayRef: any;
+  sourceMarkerRef: React.RefObject<Marker>;
   /**
    * Component constructor
    *
@@ -115,18 +118,20 @@ class MapScreen extends React.Component<Props, State> {
       loadingUserSettings: false,
       userSavedRoutes: [],
       userFavouriteLocations: [],
-      savingLocationCoordinates: "",
       mapInteractive: true,
       heatmapLayerVisible: false,
-      routeTotalExposures: []
+      routeTotalExposures: [],
+      displayAirQualitySection: false,
+      loadingRouteAirQuality: false
     };
 
     this.mapRef = React.createRef();
     this.overlayRef = React.createRef();
+    this.sourceMarkerRef = React.createRef();
   }
 
   /**
-   * Component life cycle method
+   * Component did mount life cycle method
    */
   public componentDidMount = async () => {
     const { displayedFavouriteLocation, displayedRoute, accessToken } = this.props;
@@ -161,6 +166,19 @@ class MapScreen extends React.Component<Props, State> {
     //   const heatLayer = this.overlayRef.current.leafletElement;
     //   map.removeLayer(heatLayer);
     // }
+  }
+
+  /**
+   * Component did update life cycle method
+   */
+   public componentDidUpdate = async (prevProps: Props, prevState: State) => {
+    const { selectedRoutingMode } = this.state;
+
+    if (selectedRoutingMode && prevState.selectedRoutingMode !== selectedRoutingMode) {
+      this.setState({ loadingRouteAirQuality: true });
+      const selectedRouteLine = selectedRoutingMode?.associatedRouteData?.lineCoordinates || [];
+      await this.updateRouteTotalAirQualityData(selectedRouteLine);
+    }
   }
 
   /**
@@ -211,25 +229,27 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderDrawerContent = () => {
     const { accessToken, classes } = this.props;
-    const { userSavedRoutes, userFavouriteLocations, routeTotalExposures } = this.state;
+    const { userSavedRoutes, userFavouriteLocations, routeTotalExposures, displayAirQualitySection, loadingRouteAirQuality } = this.state;
     return (
       <>
+        {/* //TODO: make transportation selector similar to routing mode selector */}
         <Toolbar />
         <Toolbar className={ classes.toolbar }>
           <IconButton>
-            <DirectionsWalkIcon htmlColor="#fff" />
+            <DirectionsWalk htmlColor="#fff" />
           </IconButton>
           <IconButton>
-            <AccessibleIcon htmlColor="#fff" />
+            <Accessible htmlColor="#fff" />
           </IconButton>
           <IconButton>
-            <DirectionsBikeIcon htmlColor="#fff" />
+            <DirectionsBike htmlColor="#fff" />
           </IconButton>
+          <div className={ classes.modeToggleGroup }>
+            { this.renderRoutingModeSelector() }
+          </div>
         </Toolbar>
         { this.renderRoutingForm() }
-        <AirQualitySlider
-          routeTotalExposures = { routeTotalExposures }
-        />
+        <AirQualitySlider routeTotalExposures={ routeTotalExposures } displayRouteAirQuality={ displayAirQualitySection } loadingRouteAirQuality={ loadingRouteAirQuality } />
         <SavedRoutes 
           savedRoutes={ userSavedRoutes } 
           showSavedRoutes={ !!accessToken } 
@@ -247,29 +267,103 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
+   * Renders air quality routing mode selector
+   * 
+   * @param size component size
+   */
+  private renderRoutingModeSelector = (size?: number) => {
+    const { selectedRoutingMode } = this.state;
+    const routingModeIcons: RoutingModeIcons = {
+      Relaxed: <Timer htmlColor="#fff" />,
+      Efficient: <Timeline htmlColor="#fff" />,
+      Strict: <Eco htmlColor="#fff" />,
+      Custom: <StarBorder htmlColor="#fff" />
+    };
+
+    if (!routingModeIcons) {
+      return;
+    }
+
+    return Object.keys(routingModeIcons).map((key, index) => {
+      const valueKey = key as keyof RoutingModeIcons;
+
+      const opacity = key !== selectedRoutingMode?.name ? 0.6 : 1; 
+
+      return (
+        <IconButton
+          style={{
+            opacity,
+            width: size,
+            height: size,
+            marginLeft: size && size / 4,
+            marginRight: size && size / 4
+          }}
+          onClick={ () => this.onRoutingModeClick(valueKey) }
+        >
+          { routingModeIcons[valueKey] }
+        </IconButton>
+      );
+    });
+  }
+
+  /**
+   * Event handler for selecting the air quality routing mode
+   * 
+   * @param key clicked button identifier key
+   */
+   private onRoutingModeClick = (key: keyof RoutingModeIcons) => {
+    const { selectedRoutingMode, routeAltStrict, routeAltEfficient, routeAltRelaxed } = this.state;
+    
+    if (selectedRoutingMode?.name === key) {
+      this.onRouteOptionSelected(key);
+      return;
+    }
+
+    let routeData: RouteData | undefined;
+    switch (key) {
+      case "Strict":
+        routeData = routeAltStrict;
+        break;
+      case "Efficient":
+        routeData = routeAltEfficient;
+        break;
+      case "Relaxed":
+        routeData = routeAltRelaxed;
+        break;
+    }
+
+    this.setState({
+      selectedRoutingMode: {
+        name: key,
+        associatedRouteData: routeData
+      },
+      routeTotalExposures: []
+    });
+  }
+
+  /**
    * Displays already saved route
    * 
    * @param routeToDisplay route to display
    */
   private displaySavedRoute = (routeToDisplay: Route) => {
     const route = PolyUtil.decode(routeToDisplay.routePoints);
-    const firstItem = route[0];
-    const lastItem = route[ route.length - 1 ];
+    const firstRoutePoint = route[0];
+    const lastRoutePoint = route[ route.length - 1 ];
 
-    const locationFromCoordinates = `${ firstItem[0] },${ firstItem[1] }`;
+    const locationFromCoordinates = new LatLng(firstRoutePoint[0], firstRoutePoint[1]);
     const locationFrom = { coordinates: locationFromCoordinates, name: routeToDisplay.locationFromName };
     
-    const locationToCoordinates = `${ lastItem[0] },${ lastItem[1] }`;
+    const locationToCoordinates = new LatLng(lastRoutePoint[0], lastRoutePoint[1]);
     const locationTo = { coordinates: locationToCoordinates, name: routeToDisplay.locationToName };
     
-    const newCenterCoordinates = this.coordinatesFromString(locationFromCoordinates);
     const newState = {
       route, 
       locationFrom, 
       locationTo, 
       locationFromTextInput: routeToDisplay.locationFromName, 
       locationToTextInput: routeToDisplay.locationToName,
-      mapViewport: { center: [ newCenterCoordinates[0], newCenterCoordinates[1] ] as [number, number], zoom: 13 }
+      mapViewport: { center: [ firstRoutePoint[0], firstRoutePoint[1] ] as [number, number], zoom: 13 }
     }
     this.setState(newState);
   }
@@ -284,7 +378,7 @@ class MapScreen extends React.Component<Props, State> {
       return;
     }
 
-    const coordinates = `${locationToDisplay.latitude},${locationToDisplay.longitude}`;
+    const coordinates = new LatLng(locationToDisplay.latitude, locationToDisplay.longitude);
     const locationObject = { name: locationToDisplay.name, coordinates };
     this.setState({
       mapViewport: {
@@ -335,7 +429,7 @@ class MapScreen extends React.Component<Props, State> {
   private mapLocationsFromFavouriteLocations = (favouriteLocations: FavouriteLocation[]) => {
     return favouriteLocations.map((element) => {
       const name = element.name;
-      const coordinates = element.latitude + "," + element.longitude;
+      const coordinates = new LatLng(element.latitude, element.longitude);
       return { name, coordinates } as Location;
     }).slice(
       0,
@@ -475,7 +569,7 @@ class MapScreen extends React.Component<Props, State> {
             value={ locationFrom }
             renderInput={ (params) => 
               <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
-                <MyLocationIcon fontSize="small" htmlColor="#FFF" />
+                <MyLocation fontSize="small" htmlColor="#FFF" />
                 <TextField
                   variant="standard"
                   className={ classes.routingFormInput }
@@ -498,7 +592,7 @@ class MapScreen extends React.Component<Props, State> {
             style={{ marginTop: theme.spacing(2) }}
             renderInput={ (params) => 
               <div ref={ params.InputProps.ref } className={ classes.autoCompleteInputWrapper }>
-                <DestinationIcon fontSize="small" htmlColor="#FFF" />
+                <LocationOn fontSize="small" htmlColor="#FFF" />
                 <TextField
                   variant="standard"
                   className={ classes.routingFormInput }
@@ -559,7 +653,7 @@ class MapScreen extends React.Component<Props, State> {
               loadingRoute ?
               <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
               :
-              <SearchIcon htmlColor="#fff"
+              <Search htmlColor="#fff"
               />
             }
           >
@@ -574,7 +668,7 @@ class MapScreen extends React.Component<Props, State> {
                 savingRoute ?
                 <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
                 :
-                <SaveIcon htmlColor="#fff"
+                <Save htmlColor="#fff"
                 />
               }
               >
@@ -591,11 +685,28 @@ class MapScreen extends React.Component<Props, State> {
    */
   private renderMap = (): JSX.Element => {
     const { classes } = this.props;
-    const { route, locationFrom, locationTo, selectedFavouriteLocation, airQuality, mapInteractive, locationFromTextInput , locationToTextInput, heatmapLayerVisible } = this.state;
+    const { 
+      route,
+      locationFrom,
+      locationTo,
+      selectedFavouriteLocation,
+      airQuality,
+      mapInteractive,
+      locationToTextInput,
+      heatmapLayerVisible,
+      routeAltStrict,
+      routeAltEfficient,
+      routeAltRelaxed,
+      selectedRoutingMode
+    } = this.state;
+
+    var classNames = require('classnames');
 
     return (
       <Map
-        className={ classes.mapComponent }
+        className={
+          classNames(classes.mapComponent, routeAltStrict?.lineCoordinates.length && routeAltEfficient?.lineCoordinates.length && routeAltRelaxed?.lineCoordinates.length && classes.markerPopupBottom)
+        }
         ref={ this.mapRef }
         zoomControl={ false } 
         ondblclick={ this.addRoutePoint } 
@@ -610,15 +721,44 @@ class MapScreen extends React.Component<Props, State> {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
         />
-        {
-          route && 
-          <Polyline positions={ route }/>
+        { route && 
+          <Polyline positions={ route.lineCoordinates }/>
+        }
+        { routeAltStrict && 
+          <Polyline
+            positions={ routeAltStrict.lineCoordinates }
+            color="green"
+            lineCap="round"
+            lineJoin="bevel"
+            weight={ selectedRoutingMode?.name === "Strict" ? 6 : 4 }
+            onclick={ () => this.onRouteOptionSelected("Strict") }
+          />
+        }
+        { routeAltEfficient && 
+          <Polyline
+            positions={ routeAltEfficient.lineCoordinates }
+            color="yellow"
+            lineCap="round"
+            lineJoin="bevel"
+            weight={ selectedRoutingMode?.name === "Efficient" ? 6 : 4 }
+            onclick={ () => this.onRouteOptionSelected("Efficient") }
+          />
+        }
+        { routeAltRelaxed && 
+          <Polyline
+            positions={ routeAltRelaxed.lineCoordinates }
+            color="red"
+            lineCap="round"
+            lineJoin="bevel"
+            weight={ selectedRoutingMode?.name === "Relaxed" ? 5 : 3 }
+            onclick={ () => this.onRouteOptionSelected("Relaxed") }
+          />
         }
 
         { selectedFavouriteLocation?.coordinates &&
           <Marker
             ref={ this.openPopup }
-            position={ this.coordinatesFromString(selectedFavouriteLocation.coordinates) }
+            position={ selectedFavouriteLocation.coordinates }
           >
             <Popup
               onOpen={ this.switchMapInteraction }
@@ -639,44 +779,39 @@ class MapScreen extends React.Component<Props, State> {
         }
 
         { locationFrom?.coordinates &&
-          <Marker position={ this.coordinatesFromString(locationFrom.coordinates) }>
+          <Marker ref={ this.sourceMarkerRef } position={ locationFrom.coordinates } icon={ sourceIcon }>
             <Popup
               onOpen={ this.switchMapInteraction }
               onClose={ this.switchMapInteraction }
               autoPan={ false }
             >
-              <h3>
-                { `${strings.from}:` }
-              </h3>
-              <p>
-                { locationFromTextInput || "" }
-              </p>
-              <Button onClick={ () => this.onSaveLocationClick(locationFrom.coordinates) }>
-                { strings.locations.saveLocation }
-              </Button>
+              { this.renderLocationFromPopupContents() }
             </Popup>
           </Marker>
         }
 
         { locationTo?.coordinates &&
-          <Marker position={ this.coordinatesFromString(locationTo.coordinates) }>
-            <Popup
-              onOpen={ this.switchMapInteraction }
-              onClose={ this.switchMapInteraction }
-              autoPan={ false }
-            >
-              <h3>
-                { `${strings.to}:` }
-              </h3>
-              <p>
-                { locationToTextInput || "" }
-              </p>
-              <Button onClick={ () => this.onSaveLocationClick(locationTo.coordinates) }>
-                { strings.locations.saveLocation }
-              </Button>
-            </Popup>
+          <Marker position={ locationTo.coordinates } icon={ destinationIcon }>
+            { !routeAltStrict || !routeAltEfficient || !routeAltRelaxed &&
+              <Popup
+                onOpen={ this.switchMapInteraction }
+                onClose={ this.switchMapInteraction }
+                autoPan={ false }
+              >
+                <h3>
+                  { `${strings.to}:` }
+                </h3>
+                <p>
+                  { locationToTextInput || "" }
+                </p>
+                <Button onClick={ () => this.onSaveLocationClick(locationTo.coordinates) }>
+                  { strings.locations.saveLocation }
+                </Button>
+              </Popup>
+            }
           </Marker>
         }
+
         { heatmapLayerVisible &&
           <div>
             <HeatmapLayer
@@ -689,6 +824,7 @@ class MapScreen extends React.Component<Props, State> {
               />
           </div>
         }
+
         <PollutantControl
           parentMapRef={ this.mapRef }
           parentLayerRef={ this.overlayRef }
@@ -749,6 +885,63 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
+   * Renders popup context for location from marker
+   * 
+   * @returns popup contents
+   */
+  private renderLocationFromPopupContents = () => {
+    const { classes } = this.props;
+    const {
+      locationFrom,
+      locationFromTextInput,
+      routeAltStrict,
+      routeAltEfficient,
+      routeAltRelaxed,
+      selectedRoutingMode
+    } = this.state;
+
+    if (!locationFrom) {
+      return;
+    }
+
+    if (routeAltStrict?.lineCoordinates.length && routeAltEfficient?.lineCoordinates.length && routeAltRelaxed?.lineCoordinates.length && selectedRoutingMode) {
+      return (
+        <div>
+          <div className={ classes.markerPopupInfoText }>
+            <h4 className={ classes.markerPopupRouteDuration }>
+              { selectedRoutingMode.associatedRouteData?.duration || "" }
+            </h4>
+            <h4 className={ classes.markerPopupRoutePollution }>
+              {/* TODO: change to the real route exposure value */}
+              { "72pi" }
+            </h4>
+          </div>
+          <div className={ classes.popupRoutingMode }>
+            { this.renderRoutingModeSelector(20) }
+          </div>
+          <h3 className={ classes.markerPopupRoutingModeText }>
+            { selectedRoutingMode.name }
+          </h3>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <h3>
+          { `${strings.from}:` }
+        </h3>
+        <p>
+          { locationFromTextInput || "" }
+        </p>
+        <Button onClick={ () => this.onSaveLocationClick(locationFrom.coordinates) }>
+          { strings.locations.saveLocation }
+        </Button>
+      </div>
+    );
+  }
+
+  /**
    * Opens popup when component renders
    *
    * @param marker marker
@@ -767,6 +960,40 @@ class MapScreen extends React.Component<Props, State> {
   private onSaveRouteClick = () => {
     this.setState({
       savingRoute: true
+    });
+  }
+
+  /**
+   * Handles one route option selection action
+   * 
+   * @param routingMode routing mode 
+   */
+  private onRouteOptionSelected = (routingMode: RoutingModes) => {
+    const { routeAltStrict, routeAltEfficient, routeAltRelaxed } = this.state;
+
+    this.sourceMarkerRef.current?.leafletElement.closePopup();
+    
+    let polyline = "";
+    switch (routingMode) {
+      case "Strict":
+        this.setState({ route: routeAltStrict });
+        polyline = PolyUtil.encode(routeAltStrict) as string;
+        break;
+      case "Efficient":
+        this.setState({ route: routeAltEfficient });
+        polyline = PolyUtil.encode(routeAltEfficient) as string;
+        break;
+      case "Relaxed":
+        this.setState({ route: routeAltRelaxed });
+        polyline = PolyUtil.encode(routeAltRelaxed) as string;
+        break;
+    }
+
+    this.setState({
+      routeAltStrict: undefined,
+      routeAltEfficient: undefined,
+      routeAltRelaxed: undefined,
+      polyline
     });
   }
 
@@ -855,7 +1082,7 @@ class MapScreen extends React.Component<Props, State> {
    *
    * @param coordinates coordinates string
    */
-  private onSaveLocationClick = (coordinates: string) => {
+  private onSaveLocationClick = (coordinates: LatLng) => {
     this.setState({
       savingLocation: true,
       savingLocationCoordinates: coordinates
@@ -875,17 +1102,16 @@ class MapScreen extends React.Component<Props, State> {
 
     try {
       const locationsApi = Api.getLocationsApi(accessToken);
-      const [latitude, longitude] = this.coordinatesFromString(savingLocationCoordinates);
       const createdLocation = await locationsApi.createUserFavouriteLocation({
         favouriteLocation: {
           name: userDialogInput,
-          latitude: latitude,
-          longitude: longitude
+          latitude: savingLocationCoordinates.lat,
+          longitude: savingLocationCoordinates.lng
         }
       });
       this.setState({
         userFavouriteLocations: userFavouriteLocations.concat(createdLocation),
-        savingLocationCoordinates: "",
+        savingLocationCoordinates: undefined,
         savingLocation: false,
         userDialogInput: ""
       });
@@ -908,15 +1134,43 @@ class MapScreen extends React.Component<Props, State> {
   }
 
   /**
-   * Converts coordinates from string to LatLngTuple
-   *
-   * @param stringCoordinates coordinates to convert
-   *
-   * @returns coordinates in LatLngTuple format
+   * Creates a route line offset
+   * 
+   * @param routeLine the route line as array of points
+   * @param offsetDistance coordinates offset distance
+   * @returns modified route line
    */
-  private coordinatesFromString = (stringCoordinates: string): LatLngTuple => {
-    const coordinates = stringCoordinates.split(",");
-    return [ Number.parseFloat(coordinates[0]), Number.parseFloat(coordinates[1]) ];
+  private routeOffset = (routeLine: LatLng[], offsetDistance: number): LatLng[] => {
+
+    if (!routeLine.length) {
+      return [];
+    }
+
+    const firstPoint = this.convertPointToCoordinates(routeLine[0]);
+    const lastPoint = this.convertPointToCoordinates(routeLine[routeLine.length - 1]);
+    const segmentAngle = Math.atan2(firstPoint.lat - lastPoint.lat, firstPoint.lng - lastPoint.lng);
+    const offsetAngle = segmentAngle - Math.PI/2;
+    return routeLine.map( p => {
+      const point = this.convertPointToCoordinates(p);
+      let x = point.lng + offsetDistance * Math.cos(offsetAngle);
+      let y = point.lat + offsetDistance * Math.sin(offsetAngle);
+      return new LatLng(y, x);
+    });
+  }
+
+  /**
+   * Converts point to coordinates
+   * 
+   * @param point point
+   * @returns custom formatted point
+   */
+  private convertPointToCoordinates = (point: LatLng): PointCoordinates => {
+    const pointString = point.toString().split(",");
+
+    return {
+      lat: parseFloat(pointString[0]),
+      lng: parseFloat(pointString[1])
+    }
   }
 
   /**
@@ -976,9 +1230,6 @@ class MapScreen extends React.Component<Props, State> {
     if (!date) {
       return null;
     }
-    console.log("Current time was ", this.state.departureTime);
-    const selectedTime = date.format("h.mma");
-    console.log("Selected time is ", new Date(selectedTime));
 
     this.setState({
       departureTime: date.toDate()
@@ -1030,62 +1281,142 @@ class MapScreen extends React.Component<Props, State> {
    * Requests a route from Open Trip Planner
    */
   private updateRoute = async () => {
-    this.setState({ loadingRoute: true });
+    this.setState({ loadingRoute: true, route: undefined, displayAirQualitySection: true });
 
     try {
-      const { locationTo, locationFrom, mapViewport, departureTime } = this.state;
+      const { locationTo, locationFrom, mapViewport } = this.state;
 
-      if (locationFrom && !locationFrom.coordinates) {
-        locationFrom.coordinates = locationFrom.name;
+      if (! locationFrom || !locationFrom?.coordinates || !locationTo || !locationTo?.coordinates) {
+        return;
       }
 
-      if (locationTo && !locationTo.coordinates) {
-        locationTo.coordinates = locationTo.name;
-      }
+      const locationFromCoordinates = locationFrom.coordinates;
+      const locationToCoordinates = locationTo.coordinates;
 
-      const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=${moment(departureTime).format("h:mma")}&date=${moment(departureTime).format("MM-DD-yyyy")}&maxWalkDistance=100000&sulfur_dioxide_threshold=1&sulfur_dioxide_penalty=20&pm25Threshold=1&pm25Penalty=20`);
-      const jsonResponse = await routingResponse.json();
-      const polyline = jsonResponse.plan.itineraries[0].legs[0].legGeometry.points;
-      const route = PolyUtil.decode(polyline);
+      const routeAltStrict = await this.fetchRouteLine("20", "1");
+      const routeAltEfficient = await this.fetchRouteLine("8", "1");
+      const routeAltRelaxed = await this.fetchRouteLine("1", "1");
 
-      const newCenter = [mapViewport.center![0], mapViewport.center![1]];
-      if (locationFrom && locationFrom.coordinates) {
-        const newCenterCoordinates = this.coordinatesFromString(locationFrom.coordinates);
-        newCenter[0] = newCenterCoordinates[0];
-        newCenter[1] = newCenterCoordinates[1];
-      }
-      
-      await this.updateRouteTotalAirQualityData(route);
-      this.setState({ route, locationFrom, locationTo, loadingRoute: false, mapViewport: { center: newCenter as [number, number], zoom: 13 }, previousZoom: 13, polyline }); 
-    } catch (error) {
+      let routeAltOneCoordinates = this.routeOffset(routeAltStrict.lineCoordinates, -0.00003);
+      let routeAltTwoCoordinates = this.routeOffset(routeAltEfficient.lineCoordinates, 0);
+      let routeAltThreeCoordinates = this.routeOffset(routeAltRelaxed.lineCoordinates, 0.00003);
+
+      routeAltOneCoordinates.unshift(locationFromCoordinates);
+      routeAltTwoCoordinates.unshift(locationFromCoordinates);
+      routeAltThreeCoordinates.unshift(locationFromCoordinates);
+
+      routeAltOneCoordinates.push(locationToCoordinates);
+      routeAltTwoCoordinates.push(locationToCoordinates);
+      routeAltThreeCoordinates.push(locationToCoordinates);
+
+      this.sourceMarkerRef.current?.leafletElement.openPopup();
+
       this.setState({
-        locationFrom: undefined,
-        locationTo: undefined,
-        route: undefined,
+        routeAltStrict: {
+          lineCoordinates: routeAltOneCoordinates,
+          duration: routeAltStrict.duration
+        },
+        routeAltEfficient: {
+          lineCoordinates: routeAltTwoCoordinates,
+          duration: routeAltEfficient.duration
+        },
+        routeAltRelaxed: {
+          lineCoordinates: routeAltThreeCoordinates,
+          duration: routeAltRelaxed.duration
+        },
+        locationFrom,
+        locationTo,
         loadingRoute: false,
+        previousZoom: 13,
+        mapViewport: { ...mapViewport, center: [locationFromCoordinates.lat, locationFromCoordinates.lng] }
+      });
+
+      this.defaultSelectedRoutingMode();
+    } catch (error) {
+      this.clearRoutingDetails();
+
+      this.setState({
         error: error
       });
     }
   }
 
   /**
-   * Updates air quality for route info
+   * Sets default selected routing mode
    */
-  private updateRouteTotalAirQualityData = async(routePoints: []) => {
+  private defaultSelectedRoutingMode = () => {
+    const { routeAltStrict, routeAltEfficient, routeAltRelaxed } = this.state;
+    const defaultMode = process.env.REACT_APP_DEFAULT_ROUTING_MODE || "Strict";
+
+    if (defaultMode === "Strict") {
+      this.setState({
+        selectedRoutingMode: {
+          name: "Strict",
+          associatedRouteData: routeAltStrict
+        }
+      });
+    }
+    
+    if (defaultMode === "Efficient") {
+      this.setState({
+        selectedRoutingMode: {
+          name: "Efficient",
+          associatedRouteData: routeAltEfficient
+        }
+      });
+    }
+
+    if (defaultMode === "Relaxed") {
+      this.setState({
+        selectedRoutingMode: {
+          name: "Relaxed",
+          associatedRouteData: routeAltRelaxed
+        }
+      });
+    } 
+  }
+  
+  /**
+   * Returnes a route line represented by array of coordinates 
+   *
+   * @param sulfurDioxidePenalty sulfur dioxide penalty
+   * @param sulfurDioxideThreshold sulfur dioxide threshold
+   * @returns array of coordinates
+   */
+  private fetchRouteLine = async (sulfurDioxidePenalty: string, sulfurDioxideThreshold: string): Promise<RouteData> => {
+    const { locationTo, locationFrom, departureTime } = this.state;
+
+    const routingResponse = await fetch(`${ process.env.REACT_APP_OTP_URL }?fromPlace=${ locationFrom?.coordinates }&toPlace=${ locationTo?.coordinates }&time=${moment(departureTime).format("h:mma")}&date=${moment(departureTime).format("MM-DD-yyyy")}&maxWalkDistance=100000&sulfur_dioxide_threshold=${sulfurDioxideThreshold}&sulfur_dioxide_penalty=${sulfurDioxidePenalty}`);
+    const jsonResponse = await routingResponse.json();
+    const polyline = jsonResponse.plan.itineraries[0].legs[0].legGeometry.points;
+    const duration = new Date(jsonResponse.plan.itineraries[0].duration * 1000).toISOString().substr(11, 5) + strings.units.hours;
+
+    return {
+      lineCoordinates: PolyUtil.decode(polyline),
+      duration: duration
+    };
+  }
+
+  /**
+   * Updates air quality for route info
+   * 
+   * @param routePoints route points array
+   */
+  private updateRouteTotalAirQualityData = async (routePoints: LatLng[]) => {
     const { accessToken } = this.props;
     const { departureTime } = this.state;
-    
+
     if (!routePoints) {
       return;
     }
 
-    const formattedRoute: string[] = routePoints.map(point => {
-      return `${point[0]},${point[1]}`;
-    });
-    
+    const formattedRoute: string[] = routePoints
+      .map(point => {
+        return `${point.lat},${point.lng}`;
+      });
     const airQualityApi = Api.getAirQualityApi(accessToken);
     const pollutantsApi = Api.getPollutantsApi(accessToken);
-    const routeAirQuality = await airQualityApi.getAirQualityForCoordinatesArray({ 
+    const routeAirQuality = await airQualityApi.getAirQualityForCoordinatesArray({
       requestBody: formattedRoute,
       routingTime: departureTime
     });
@@ -1101,12 +1432,13 @@ class MapScreen extends React.Component<Props, State> {
         routeTotalExposures.push({
           pollutantName: pollutantName.displayName,
           pollutionValue: pollutionValue
-        });   
-      }     
+        });
+      }
     }
-    
+
     this.setState({
-      routeTotalExposures
+      routeTotalExposures,
+      loadingRouteAirQuality: false
     });
   }
 
@@ -1125,8 +1457,8 @@ class MapScreen extends React.Component<Props, State> {
    * @param mouseEvent mouse event
    */
   private addRoutePoint = async (mouseEvent: LeafletMouseEvent) => {
-    const position = mouseEvent.latlng.lat.toString() + "," + mouseEvent.latlng.lng.toString();
-    const location = { name: position, coordinates: position };
+    const position = mouseEvent.latlng;
+    const location = { name: position.toString(), coordinates: position };
     let geocodingResponse = null;
     if (this.state.editingLocationFrom) {
       const locationFromOptions = [location];
@@ -1135,6 +1467,8 @@ class MapScreen extends React.Component<Props, State> {
       } catch (e) {
         console.warn("Geocoding error is ", e);
       }
+
+      this.clearRoutingDetails();
 
       this.setState({
         locationFromOptions,
@@ -1165,6 +1499,24 @@ class MapScreen extends React.Component<Props, State> {
         });
       }
     }
+  }
+
+  /**
+   * Clears routing details
+   */
+  private clearRoutingDetails = () => {
+
+    this.setState({
+      locationFrom: undefined,
+      locationTo: undefined,
+      route: undefined,
+      routeAltStrict: undefined,
+      routeAltEfficient: undefined,
+      routeAltRelaxed: undefined,
+      loadingRoute: false,
+      routeTotalExposures: [],
+      displayAirQualitySection: false
+    })
   }
 
   /**
@@ -1219,13 +1571,12 @@ class MapScreen extends React.Component<Props, State> {
   /**
    * Turns selected favourite location to source location 
    */
-  private onSetSourceClick = (coordinates: string, name: string) => () => {
+  private onSetSourceClick = (coordinates: LatLng, name: string) => () => {
     this.setState({
       locationFrom: {coordinates, name}
     });
 
-    const sourceCoordinates = coordinates.split(",");
-    this.reverseGeocodeCoordinates(GeocodeCoordinate.From, sourceCoordinates[0], sourceCoordinates[1]);
+    this.reverseGeocodeCoordinates(GeocodeCoordinate.From, coordinates.lat.toString(), coordinates.lng.toString());
     this.exitSelectedFavouriteLocation();
   }
 
@@ -1235,13 +1586,12 @@ class MapScreen extends React.Component<Props, State> {
    * @param coordinates coordinates string
    * @param name name string
    */
-  private onSetDestinationClick = (coordinates: string, name: string) => () => {
+  private onSetDestinationClick = (coordinates: LatLng, name: string) => () => {
     this.setState({
       locationTo: {coordinates, name}
     });
 
-    const destCoordinates = coordinates.split(",");
-    this.reverseGeocodeCoordinates(GeocodeCoordinate.To, destCoordinates[0], destCoordinates[1]);
+    this.reverseGeocodeCoordinates(GeocodeCoordinate.To, coordinates.lat.toString(), coordinates.lng.toString());
     this.exitSelectedFavouriteLocation();
   }
 

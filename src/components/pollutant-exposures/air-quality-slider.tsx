@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Typography, withStyles, Slider, Toolbar, ListItem, List, WithStyles } from "@material-ui/core";
+import { Typography, withStyles, Slider, Toolbar, ListItem, List, WithStyles, CircularProgress } from "@material-ui/core";
 import { styles } from "./air-quality-slider.styles";
 import strings from "../../localization/strings";
 import { RouteTotalAirQuality } from "../../types";
@@ -10,6 +10,8 @@ import { RouteTotalAirQuality } from "../../types";
  */
 interface Props extends WithStyles<typeof styles> {
   routeTotalExposures: RouteTotalAirQuality[];
+  displayRouteAirQuality: boolean;
+  loadingRouteAirQuality: boolean;
 }
 
 /**
@@ -36,9 +38,9 @@ class AirQualitySlider extends React.Component<Props, State> {
    * Render method to display air quality for route sliders
    */
   public render = () => {
-    const { routeTotalExposures } = this.props;
+    const { classes, routeTotalExposures, loadingRouteAirQuality, displayRouteAirQuality } = this.props;
 
-    if (routeTotalExposures.length === 0) {
+    if (!displayRouteAirQuality) {
       return null;
     }
     
@@ -49,9 +51,12 @@ class AirQualitySlider extends React.Component<Props, State> {
         <Toolbar>
           <Typography variant="h2">{ strings.airQuality }</Typography>
         </Toolbar>
-        <List>
-          { sliders }
-        </List>
+        { loadingRouteAirQuality ?
+          <CircularProgress size={ 40 } color="inherit" className={ classes.airQualityDataLoader } /> :
+          <List>
+            { sliders }
+          </List>
+        }
       </>
       );
   }
@@ -71,7 +76,8 @@ class AirQualitySlider extends React.Component<Props, State> {
           <Typography id="discrete-slider-custom" gutterBottom>
             { pollutantData.pollutantName }
           </Typography>
-          <Slider className={ classes.slider }
+          <Slider 
+            className={ classes.slider }
             value={ Math.round(pollutantData.pollutionValue) }
             getAriaValueText= { value => `${value}°C` }
             aria-labelledby="continuous-slider"
@@ -79,7 +85,7 @@ class AirQualitySlider extends React.Component<Props, State> {
             max={ maxPollution }
             disabled
             valueLabelDisplay="on"
-            />
+          />
         </ListItem>
         )
       )    

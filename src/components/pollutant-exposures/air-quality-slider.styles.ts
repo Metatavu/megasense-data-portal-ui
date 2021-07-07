@@ -8,6 +8,14 @@ export const styles = createStyles({
     width: "90%",
     marginLeft: "5%",
     marginRight: "5%"
-  }
+  },
+
+
+  airQualityDataLoader: {
+    display: "flex",
+    flexDirection: "row",
+    alignSelf: "center",
+    margin: "20px"
+  },
   
 });

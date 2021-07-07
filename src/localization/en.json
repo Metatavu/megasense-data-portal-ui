@@ -169,11 +169,15 @@
     "descriptionMedical": "Please check all that apply. They will be factored in when planning routes.",
     "custom": "Custom Search Option",
     "descriptionCustom": "Set your own custom search option by selecting your own position to different pollutants."
-  } ,
+  },
 
   "medicalConditions": {
     "asthma": "Asthma",
     "ischaemicHeartDisease": "Ischaemic Heart Disease",
     "copd": "COPD"
+  },
+
+  "units": {
+    "hours": "h"
   }
 }
