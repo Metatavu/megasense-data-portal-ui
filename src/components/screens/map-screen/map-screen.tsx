@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, Divider, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Button, CircularProgress, Divider, IconButton, TextField, Toolbar, Typography, withStyles, WithStyles } from "@material-ui/core";
 import { Eco, Timer, StarBorder, Timeline, DirectionsBike, DirectionsWalk, Accessible, LocationOn, MyLocation, Save, Search } from '@material-ui/icons';
 import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab/Autocomplete";
 import { LatLng, LeafletMouseEvent } from "leaflet";
@@ -32,6 +32,7 @@ import PollutantControl from "../../pollutant-control/pollutant-control";
 import { sourceIcon } from "../../../resources/images/svg/map-marker-source";
 import { destinationIcon } from "../../../resources/images/svg/map-marker-destination";
 import AirQualitySlider from "../../pollutant-exposures/air-quality-slider";
+import WarningDialog from "../../generic/dialogs/warning-dialog";
 
 /**
  * Interface describing component props
@@ -51,6 +52,7 @@ interface Props extends WithStyles<typeof styles>{
 interface State {
   locationFrom?: Location;
   locationTo?: Location;
+  duplicateLocation?: FavouriteLocation;
   departureTime: Date;
   route?: RouteData;
   routeAltStrict?: RouteData;
@@ -88,6 +90,9 @@ interface State {
  * Map screen component
  */
 class MapScreen extends React.Component<Props, State> {
+
+  private COORDINATE_DELTA = 0.00001; 
+
   mapRef: React.RefObject<Map>;
   overlayRef: any;
   sourceMarkerRef: React.RefObject<Marker>;
@@ -219,6 +224,7 @@ class MapScreen extends React.Component<Props, State> {
         { this.renderMap() }
         { this.renderSaveRouteConfirmDialog() }
         { this.renderSaveLocationConfirmDialog() }
+        { this.renderDuplicateLocationConfirmDialog() }
       </AppLayout>
       
     );
@@ -870,6 +876,28 @@ class MapScreen extends React.Component<Props, State> {
     )
   }
 
+    /**
+   * Renders duplicate location dialog
+   */
+    private renderDuplicateLocationConfirmDialog = () => {
+      const { duplicateLocation } = this.state;
+      return (
+        <WarningDialog 
+          title={ "duplicate location" }
+          dialogVisible={ !!duplicateLocation } 
+          content={ 
+            <Typography>
+              { duplicateLocation?.name }
+            </Typography>
+          }
+          onClose={ () => this.setState({
+            duplicateLocation: undefined
+            })
+          }
+        />
+      )
+    }
+
   /**
    * Renders user input field for dialog
    */
@@ -1095,6 +1123,22 @@ class MapScreen extends React.Component<Props, State> {
   private onLocationSaveConfirm = async () => {
     const { accessToken } = this.props;
     const { userDialogInput, userFavouriteLocations, savingLocationCoordinates } = this.state;
+
+    const compareCoordinate = (x: number, y: number) => Math.abs(x - y) <= this.COORDINATE_DELTA;
+
+    const duplicateLocations = userFavouriteLocations.filter(location => (
+        compareCoordinate(location.latitude, savingLocationCoordinates!.lat) && 
+        compareCoordinate(location.longitude, savingLocationCoordinates!.lng)) 
+      );
+
+    if (duplicateLocations.length > 0) {
+      const duplicateLocation = duplicateLocations[0];
+      this.setState({
+        duplicateLocation
+      });
+      console.log("existing: ", duplicateLocations)
+      return;
+    }
 
     if (!accessToken || !userDialogInput || !savingLocationCoordinates) {
       return;

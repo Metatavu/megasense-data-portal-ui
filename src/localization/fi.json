@@ -45,6 +45,10 @@
     "reload": "Lataa uudelleen",
     "notice": "Tämä verkkosivu on tarkoitettu vain Megasense-konsortion jäsenten käyttöön. Ole hyvä ja poistu sivulta, jos et kuulu Megasense-konsortioon."
   },
+
+  "warningDialog": {
+    "close": "Sulje"
+  },
   
   "routes": {
     "deleteRoute": "Poista reitti",

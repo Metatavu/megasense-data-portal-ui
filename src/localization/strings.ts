@@ -68,6 +68,13 @@ export interface IStrings extends LocalizedStringsMethods {
   };
 
   /**
+   * Translations for warning dialog
+   */
+  warningDialog: {
+    close: string;
+  };
+
+  /**
    * Translations for routes
    */
   routes: {

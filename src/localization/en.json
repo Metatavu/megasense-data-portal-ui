@@ -46,6 +46,10 @@
     "notice": "This website is under development and is only for Megasense consortium members. Please leave it if you are not a part of Megasense consortium"
   },
 
+  "warningDialog": {
+    "close": "Close"
+  },
+
   "routes": {
     "deleteRoute": "Delete route",
     "savedRoutes": "Saved routes",
