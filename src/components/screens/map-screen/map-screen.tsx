@@ -1,5 +1,5 @@
 import { Box, Button, CircularProgress, Divider, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
-import { Eco, Timer, StarBorder, Timeline, DirectionsBike, DirectionsWalk, Accessible, LocationOn, MyLocation, Save, Search } from '@material-ui/icons';
+import { Eco, Timer, StarBorder, Timeline, DirectionsBike, DirectionsWalk, Accessible, LocationOn, MyLocation, Save, Search, Clear } from '@material-ui/icons';
 import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab/Autocomplete";
 import { LatLng, LeafletMouseEvent } from "leaflet";
 import Geocode from "react-geocode";
@@ -645,35 +645,47 @@ class MapScreen extends React.Component<Props, State> {
           </Box>
         </div>
         <div className={ classes.routingControls }>
-          <Button
-            variant="outlined"
-            onClick={ this.updateRoute }
-            className={ classes.routingFormButton }
-            endIcon={
-              loadingRoute ?
-              <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
-              :
-              <Search htmlColor="#fff"
-              />
-            }
-          >
-            { strings.routes.findRoute }
-          </Button>
-          { accessToken && route &&
+          <Box display="flex">
             <Button
               variant="outlined"
-              onClick={ this.onSaveRouteClick }
+              onClick={ this.updateRoute }
               className={ classes.routingFormButton }
               endIcon={
-                savingRoute ?
+                loadingRoute ?
                 <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
                 :
-                <Save htmlColor="#fff"
+                <Search htmlColor="#fff"
                 />
               }
-              >
-              { strings.routes.saveRoute }
+            >
+              { strings.routes.findRoute }
             </Button>
+            <Button
+              variant="outlined"
+              onClick={ this.cancelAll }
+              className={ classes.cancelFormButton }
+              endIcon={ <Clear htmlColor="#fff"/> }
+            >
+              { strings.routes.cancelButton }
+            </Button>
+          </Box>
+          { accessToken && route &&
+            <Box display="flex">
+              <Button
+                variant="outlined"
+                onClick={ this.onSaveRouteClick }
+                className={ classes.routingFormButton }
+                endIcon={
+                  savingRoute ?
+                  <CircularProgress size={ 20 } color="inherit" className={ classes.routingFormLoader } />
+                  :
+                  <Save htmlColor="#fff"
+                  />
+                }
+                >
+                { strings.routes.saveRoute }
+              </Button>
+            </Box>
           }
         </div>
       </div>
@@ -1275,6 +1287,28 @@ class MapScreen extends React.Component<Props, State> {
         error: error
       });
     }
+  }
+
+  /**
+   * Clear selected locations, routes
+   */
+  private cancelAll = () => {
+    const { loadingRoute } = this.state;
+    this.setState({ selectedFavouriteLocation: undefined })
+
+    if (loadingRoute) {
+      return;
+    }
+
+    this.setState({
+      routeAltStrict: undefined,
+      routeAltEfficient: undefined,
+      routeAltRelaxed: undefined,
+      locationFrom: undefined,
+      locationTo: undefined,
+      selectedFavouriteLocation: undefined,
+      displayAirQualitySection: false
+    });
   }
 
   /**
