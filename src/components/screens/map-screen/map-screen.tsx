@@ -1294,7 +1294,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private cancelAll = () => {
     const { loadingRoute } = this.state;
-    this.setState({ selectedFavouriteLocation: undefined })
+    this.exitSelectedFavouriteLocation();
 
     if (loadingRoute) {
       return;
