@@ -883,17 +883,22 @@ class MapScreen extends React.Component<Props, State> {
       const { duplicateLocation } = this.state;
       return (
         <WarningDialog 
-          title={ "duplicate location" }
+          title={ strings.locations.duplicateLocation }
           dialogVisible={ !!duplicateLocation } 
           content={ 
-            <Typography>
-              { duplicateLocation?.name }
-            </Typography>
+            <>
+              <Typography>
+                { strings.warningDialog.content.duplicateLocation }
+              </Typography>
+              <Typography>
+                { duplicateLocation?.name }
+              </Typography>
+              <Typography>
+                { `${strings.savedLocationsLatitude}: ${ duplicateLocation?.latitude }, ${strings.savedLocationsLongtitude}: ${ duplicateLocation?.longitude }` }
+              </Typography>
+            </>
           }
-          onClose={ () => this.setState({
-            duplicateLocation: undefined
-            })
-          }
+          onClose={ this.exitDuplicateLocation }
         />
       )
     }
@@ -1655,6 +1660,15 @@ class MapScreen extends React.Component<Props, State> {
     this.setState({
       selectedFavouriteLocation: undefined,
       mapInteractive: true
+    })
+  }
+
+  /**
+   * Hides duplicate location waring
+   */
+  private exitDuplicateLocation = () => {
+    this.setState({
+      duplicateLocation: undefined
     })
   }
 

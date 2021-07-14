@@ -47,7 +47,10 @@
   },
 
   "warningDialog": {
-    "close": "Close"
+    "close": "Close",
+    "content": {
+      "duplicateLocation": "The following location already exists:"
+    }
   },
 
   "routes": {
@@ -65,7 +68,8 @@
     "deleteLocation": "Delete location",
     "savedLocations": "Saved locations",
     "saveLocation": "Save location",
-    "findLocation": "Find location"
+    "findLocation": "Find location",
+    "duplicateLocation": "Duplicate location"
   },
 
   "map":{

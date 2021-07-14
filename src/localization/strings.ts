@@ -72,6 +72,9 @@ export interface IStrings extends LocalizedStringsMethods {
    */
   warningDialog: {
     close: string;
+    content: {
+      duplicateLocation: string
+    }
   };
 
   /**
@@ -96,6 +99,7 @@ export interface IStrings extends LocalizedStringsMethods {
     savedLocations: string;
     saveLocation: string;
     findLocation: string;
+    duplicateLocation: string;
   };
 
   /**

@@ -47,7 +47,10 @@
   },
 
   "warningDialog": {
-    "close": "Sulje"
+    "close": "Sulje",
+    "content": {
+      "duplicateLocation": "Seuraava sijainti on jo olemassa:"
+    }
   },
   
   "routes": {
@@ -65,7 +68,8 @@
     "deleteLocation": "Poista paikka",
     "savedLocations": "Tallennetut paikat",
     "saveLocation": "Tallenna paikka",
-    "findLocation": "Löytää paikka"
+    "findLocation": "Löytää paikka",
+    "duplicateLocation": "Kopioi sijainti"
   },
 
   "map":{
