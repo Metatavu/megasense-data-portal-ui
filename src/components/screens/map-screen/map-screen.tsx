@@ -1681,7 +1681,7 @@ class MapScreen extends React.Component<Props, State> {
   private exitDuplicateLocation = () => {
     this.setState({
       duplicateLocation: undefined
-    })
+    });
   }
 
   /**
