@@ -1301,6 +1301,7 @@ class MapScreen extends React.Component<Props, State> {
     }
 
     this.setState({
+      route: undefined,
       routeAltStrict: undefined,
       routeAltEfficient: undefined,
       routeAltRelaxed: undefined,
