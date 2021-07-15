@@ -1175,8 +1175,8 @@ class MapScreen extends React.Component<Props, State> {
   private getDuplicateLocations = (locationToCompare: LatLng) => {
     const { userFavouriteLocations } = this.state;
     const compareCoordinate = (x: number, y: number) => Math.abs(x - y) <= this.COORDINATE_DELTA;
-    
-    return duplicateLocations = userFavouriteLocations.filter(
+
+    return userFavouriteLocations.filter(
       location => (
         compareCoordinate(location.latitude, locationToCompare.lat) && 
         compareCoordinate(location.longitude, locationToCompare.lng)
