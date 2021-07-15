@@ -1169,19 +1169,19 @@ class MapScreen extends React.Component<Props, State> {
 
   /**
    * Utility method for getting duplicate locations from the userFavouriteLocations array 
+   * 
+   * @param locationToCompare location to be compared
    */
   private getDuplicateLocations = (locationToCompare: LatLng) => {
     const { userFavouriteLocations } = this.state;
-
     const compareCoordinate = (x: number, y: number) => Math.abs(x - y) <= this.COORDINATE_DELTA;
-
     const duplicateLocations = userFavouriteLocations.filter(
       location => (
         compareCoordinate(location.latitude, locationToCompare!.lat) && 
         compareCoordinate(location.longitude, locationToCompare!.lng)
       ) 
     );
-    return duplicateLocations
+    return duplicateLocations;
   }
 
   /**
