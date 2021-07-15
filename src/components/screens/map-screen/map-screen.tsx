@@ -890,11 +890,11 @@ class MapScreen extends React.Component<Props, State> {
                 { strings.locations.duplicateLocationWarning }
               </Typography>
               <br/>
-              <Typography>
-                { duplicateLocation?.name }
+              <Typography style={{ fontWeight: 500, fontSize: 17 }}>
+                { strings.savedLocationsName }: <i>{ duplicateLocation?.name }</i>
               </Typography>
               <Typography>
-                { `${strings.savedLocationsLatitude}: ${ duplicateLocation?.latitude }, ${strings.savedLocationsLongtitude}: ${ duplicateLocation?.longitude }` }
+                { `${strings.savedLocationsLatitude}: ${duplicateLocation?.latitude}, ${strings.savedLocationsLongtitude}: ${duplicateLocation?.longitude}` }
               </Typography>
             </>
           }

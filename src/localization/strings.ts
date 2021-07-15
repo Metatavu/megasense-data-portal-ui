@@ -161,6 +161,7 @@ export interface IStrings extends LocalizedStringsMethods {
   savedRoutesFrom: string;
   savedRoutesSavedText: string;
   savedLocations: string;
+  savedLocationsName: string;
   savedLocationsLatitude: string;
   savedLocationsLongtitude: string;
   savedLocationsSavedText: string;
