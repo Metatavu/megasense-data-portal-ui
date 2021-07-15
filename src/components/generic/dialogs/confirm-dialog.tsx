@@ -72,7 +72,8 @@ class ConfirmDialog extends React.Component<Props, State> {
           >
             { cancelButtonText }
           </Button>
-          { positiveButtonText && <Button
+          { positiveButtonText &&
+            <Button
               variant="contained"
               className={ classes.primaryButton }
               onClick={ onDialogConfirm }
