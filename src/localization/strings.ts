@@ -89,6 +89,8 @@ export interface IStrings extends LocalizedStringsMethods {
     savedLocations: string;
     saveLocation: string;
     findLocation: string;
+    duplicateLocation: string;
+    duplicateLocationWarning: string;
   };
 
   /**
@@ -159,6 +161,7 @@ export interface IStrings extends LocalizedStringsMethods {
   savedRoutesFrom: string;
   savedRoutesSavedText: string;
   savedLocations: string;
+  savedLocationsName: string;
   savedLocationsLatitude: string;
   savedLocationsLongtitude: string;
   savedLocationsSavedText: string;
@@ -196,6 +199,7 @@ export interface IStrings extends LocalizedStringsMethods {
   common: {
     save: string;
     cancel: string;
+    close: string;
     reset: string;
     yes: string;
   };

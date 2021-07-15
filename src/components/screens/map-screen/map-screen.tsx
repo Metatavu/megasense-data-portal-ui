@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, Divider, IconButton, TextField, Toolbar, withStyles, WithStyles } from "@material-ui/core";
+import { Box, Button, CircularProgress, Divider, IconButton, TextField, Toolbar, Typography, withStyles, WithStyles } from "@material-ui/core";
 import { Eco, Timer, StarBorder, Timeline, DirectionsBike, DirectionsWalk, Accessible, LocationOn, MyLocation, Save, Search, Clear } from '@material-ui/icons';
 import Autocomplete, { AutocompleteChangeReason, AutocompleteInputChangeReason } from "@material-ui/lab/Autocomplete";
 import { LatLng, LeafletMouseEvent } from "leaflet";
@@ -51,6 +51,7 @@ interface Props extends WithStyles<typeof styles>{
 interface State {
   locationFrom?: Location;
   locationTo?: Location;
+  duplicateLocation?: FavouriteLocation;
   departureTime: Date;
   route?: RouteData;
   routeAltStrict?: RouteData;
@@ -88,6 +89,9 @@ interface State {
  * Map screen component
  */
 class MapScreen extends React.Component<Props, State> {
+
+  private COORDINATE_DELTA = 0.00001; 
+
   mapRef: React.RefObject<Map>;
   overlayRef: any;
   sourceMarkerRef: React.RefObject<Marker>;
@@ -219,6 +223,7 @@ class MapScreen extends React.Component<Props, State> {
         { this.renderMap() }
         { this.renderSaveRouteConfirmDialog() }
         { this.renderSaveLocationConfirmDialog() }
+        { this.renderDuplicateLocationConfirmDialog() }
       </AppLayout>
       
     );
@@ -882,6 +887,35 @@ class MapScreen extends React.Component<Props, State> {
     )
   }
 
+    /**
+     * Renders duplicate location dialog
+     */
+    private renderDuplicateLocationConfirmDialog = () => {
+      const { duplicateLocation } = this.state;
+      return (
+        <ConfirmDialog 
+          title={ strings.locations.duplicateLocation }
+          dialogVisible={ !!duplicateLocation } 
+          text={ 
+            <>
+              <Typography>
+                { strings.locations.duplicateLocationWarning }
+              </Typography>
+              <br/>
+              <Typography style={{ fontWeight: 500, fontSize: 17 }}>
+                { strings.savedLocationsName }: <i>{ duplicateLocation?.name }</i>
+              </Typography>
+              <Typography>
+                { `${strings.savedLocationsLatitude}: ${duplicateLocation?.latitude}, ${strings.savedLocationsLongtitude}: ${duplicateLocation?.longitude}` }
+              </Typography>
+            </>
+          }
+          cancelButtonText={ strings.common.close }
+          onDialogCancel={ this.exitDuplicateLocation }
+        />
+      )
+    }
+
   /**
    * Renders user input field for dialog
    */
@@ -1112,6 +1146,16 @@ class MapScreen extends React.Component<Props, State> {
       return;
     }
 
+    const duplicateLocations = this.getDuplicateLocations(savingLocationCoordinates);
+
+    if (duplicateLocations.length > 0) {
+      const duplicateLocation = duplicateLocations[0];
+      this.setState({
+        duplicateLocation
+      });
+      return;
+    }
+
     try {
       const locationsApi = Api.getLocationsApi(accessToken);
       const createdLocation = await locationsApi.createUserFavouriteLocation({
@@ -1133,6 +1177,23 @@ class MapScreen extends React.Component<Props, State> {
         error: error
       });
     }
+  }
+
+  /**
+   * Utility method for getting duplicate locations from the userFavouriteLocations array 
+   * 
+   * @param locationToCompare location to be compared
+   */
+  private getDuplicateLocations = (locationToCompare: LatLng) => {
+    const { userFavouriteLocations } = this.state;
+    const compareCoordinate = (x: number, y: number) => Math.abs(x - y) <= this.COORDINATE_DELTA;
+
+    return userFavouriteLocations.filter(
+      location => (
+        compareCoordinate(location.latitude, locationToCompare.lat) && 
+        compareCoordinate(location.longitude, locationToCompare.lng)
+      ) 
+    );
   }
 
   /**
@@ -1648,6 +1709,15 @@ class MapScreen extends React.Component<Props, State> {
       selectedFavouriteLocation: undefined,
       mapInteractive: true
     })
+  }
+
+  /**
+   * Hides duplicate location waring
+   */
+  private exitDuplicateLocation = () => {
+    this.setState({
+      duplicateLocation: undefined
+    });
   }
 
   /**

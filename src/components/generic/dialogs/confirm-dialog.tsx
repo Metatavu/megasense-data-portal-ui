@@ -1,18 +1,18 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, WithStyles, withStyles } from "@material-ui/core";
 import { styles } from "./dialog.styles";
-import React from "react";
+import React, { ReactNode } from "react";
 
 /**
  * Interface describing component props
  */
 interface Props extends WithStyles<typeof styles> {
   title: string;
-  text?: string;
+  text?: string | ReactNode;
   userInput?: () => JSX.Element;
-  positiveButtonText: string;
+  positiveButtonText?: string;
   cancelButtonText: string;
   dialogVisible: boolean;
-  onDialogConfirm: () => void;
+  onDialogConfirm?: () => void;
   onDialogCancel: () => void;
 }
 
@@ -72,13 +72,15 @@ class ConfirmDialog extends React.Component<Props, State> {
           >
             { cancelButtonText }
           </Button>
-          <Button
-            variant="contained"
-            className={ classes.primaryButton }
-            onClick={ onDialogConfirm }
-          >
-            { positiveButtonText }
-          </Button>
+          { positiveButtonText &&
+            <Button
+              variant="contained"
+              className={ classes.primaryButton }
+              onClick={ onDialogConfirm }
+            >
+              { positiveButtonText }
+            </Button>
+          }
         </DialogActions>
       </Dialog>
     );

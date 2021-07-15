@@ -45,7 +45,7 @@
     "reload": "Lataa uudelleen",
     "notice": "Tämä verkkosivu on tarkoitettu vain Megasense-konsortion jäsenten käyttöön. Ole hyvä ja poistu sivulta, jos et kuulu Megasense-konsortioon."
   },
-  
+
   "routes": {
     "deleteRoute": "Poista reitti",
     "savedRoutes": "Tallennetut reitit",
@@ -61,7 +61,9 @@
     "deleteLocation": "Poista paikka",
     "savedLocations": "Tallennetut paikat",
     "saveLocation": "Tallenna paikka",
-    "findLocation": "Löytää paikka"
+    "findLocation": "Löytää paikka",
+    "duplicateLocation": "Kopioi sijainti",
+    "duplicateLocationWarning": "Seuraava sijainti on jo olemassa:"
   },
 
   "map":{
@@ -121,6 +123,7 @@
   "savedRoutesTo": "Minne",
   "savedRoutesSavedText": "Tallennettu",
   "savedLocations": "Tallennetut sijainnit",
+  "savedLocationsName": "Paikannimi",
   "savedLocationsLatitude": "Leveysaste",
   "savedLocationsLongtitude": "Pituusaste",
   "savedLocationsSavedText": "Tallennettu",
@@ -159,6 +162,7 @@
     "save": "Tallenna",
     "reset": "Palauta",
     "cancel": "Peruuta",
+    "close": "Sulje",
     "yes": "Kyllä"
   },
 

@@ -61,7 +61,9 @@
     "deleteLocation": "Delete location",
     "savedLocations": "Saved locations",
     "saveLocation": "Save location",
-    "findLocation": "Find location"
+    "findLocation": "Find location",
+    "duplicateLocation": "Duplicate location",
+    "duplicateLocationWarning": "The following location already exists:"
   },
 
   "map":{
@@ -121,6 +123,7 @@
   "savedRoutesTo": "To",
   "savedRoutesSavedText": "Saved",
   "savedLocations": "Saved locations",
+  "savedLocationsName": "Location name",
   "savedLocationsLatitude": "Latitude",
   "savedLocationsLongtitude": "Longtitude",
   "savedLocationsSavedText": "Saved",
@@ -159,6 +162,7 @@
     "save": "Save",
     "reset": "reset",
     "cancel": "cancel",
+    "close": "Close",
     "yes": "Yes"
   },
 
