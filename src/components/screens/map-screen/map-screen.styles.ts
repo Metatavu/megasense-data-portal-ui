@@ -75,6 +75,15 @@ export const styles = createStyles({
     color: theme.palette.primary.light,
     marginBottom: theme.spacing(2),
     borderColor: theme.palette.primary.light,
+    flexGrow: 2
+  },
+
+  cancelFormButton: {
+    color: theme.palette.primary.light,
+    marginBottom: theme.spacing(2),
+    marginLeft: theme.spacing(2),
+    borderColor: theme.palette.primary.light,
+    width: "35%"
   },
 
   routingFormLoader: {
