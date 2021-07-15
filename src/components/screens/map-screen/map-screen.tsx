@@ -976,18 +976,24 @@ class MapScreen extends React.Component<Props, State> {
     let polyline = "";
     switch (routingMode) {
       case "Strict":
+        console.log("Strict")
+        console.log("routeAltStrict: ", routeAltStrict)
         this.setState({ route: routeAltStrict });
-        polyline = PolyUtil.encode(routeAltStrict) as string;
+        polyline = PolyUtil.encode(routeAltStrict?.lineCoordinates) as string;
         break;
       case "Efficient":
+        console.log("Efficient")
         this.setState({ route: routeAltEfficient });
         polyline = PolyUtil.encode(routeAltEfficient) as string;
         break;
       case "Relaxed":
+        console.log("Relaxed")
         this.setState({ route: routeAltRelaxed });
         polyline = PolyUtil.encode(routeAltRelaxed) as string;
         break;
     }
+
+    console.log("polyline(onRouteOptionSelected): ", polyline)
 
     this.setState({
       routeAltStrict: undefined,
@@ -1027,10 +1033,17 @@ class MapScreen extends React.Component<Props, State> {
    * Handles save route confirm dialog button click
    */
   private onRouteSaveConfirm = async () => {
+    console.log("onRouteSaveConfirm")
     const { accessToken } = this.props;
     const { polyline, locationFrom, locationTo, userDialogInput, userSavedRoutes } = this.state;
 
     if (!accessToken || !polyline || !locationFrom || !locationTo || !userDialogInput) {
+      console.log("accessToken: ", accessToken)
+      console.log("polyline: ", polyline)
+      console.log("locationFrom: ", locationFrom)
+      console.log("locationTo: ", locationTo)
+      console.log("userDialogInput: ", userDialogInput)
+      console.log("exiting")
       return;
     }
 
