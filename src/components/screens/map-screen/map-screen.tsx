@@ -348,6 +348,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private displaySavedRoute = (routeToDisplay: Route) => {
     const route = PolyUtil.decode(routeToDisplay.routePoints);
+    console.log("route(displaySavedRoute): ", route)
     const firstRoutePoint = route[0];
     const lastRoutePoint = route[ route.length - 1 ];
 
@@ -1565,6 +1566,8 @@ class MapScreen extends React.Component<Props, State> {
    * @param route route to display
    */
   private onUserRouteSelect = (route: Route) => {
+    console.log("onUserRouteSelect")
+    console.log(route)
     const sourceCoordinates = route.locationFromName.split(",");
     const destCoordinates = route.locationToName.split(",");
     this.reverseGeocodeCoordinates(GeocodeCoordinate.From, sourceCoordinates[0], sourceCoordinates[1]);
