@@ -46,13 +46,6 @@
     "notice": "Tämä verkkosivu on tarkoitettu vain Megasense-konsortion jäsenten käyttöön. Ole hyvä ja poistu sivulta, jos et kuulu Megasense-konsortioon."
   },
 
-  "warningDialog": {
-    "close": "Sulje",
-    "content": {
-      "duplicateLocation": "Seuraava sijainti on jo olemassa:"
-    }
-  },
-  
   "routes": {
     "deleteRoute": "Poista reitti",
     "savedRoutes": "Tallennetut reitit",
@@ -69,7 +62,8 @@
     "savedLocations": "Tallennetut paikat",
     "saveLocation": "Tallenna paikka",
     "findLocation": "Löytää paikka",
-    "duplicateLocation": "Kopioi sijainti"
+    "duplicateLocation": "Kopioi sijainti",
+    "duplicateLocationWarning": "Seuraava sijainti on jo olemassa:"
   },
 
   "map":{
@@ -167,6 +161,7 @@
     "save": "Tallenna",
     "reset": "Palauta",
     "cancel": "Peruuta",
+    "close": "Sulje",
     "yes": "Kyllä"
   },
 

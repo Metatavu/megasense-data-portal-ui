@@ -46,13 +46,6 @@
     "notice": "This website is under development and is only for Megasense consortium members. Please leave it if you are not a part of Megasense consortium"
   },
 
-  "warningDialog": {
-    "close": "Close",
-    "content": {
-      "duplicateLocation": "The following location already exists:"
-    }
-  },
-
   "routes": {
     "deleteRoute": "Delete route",
     "savedRoutes": "Saved routes",
@@ -69,7 +62,8 @@
     "savedLocations": "Saved locations",
     "saveLocation": "Save location",
     "findLocation": "Find location",
-    "duplicateLocation": "Duplicate location"
+    "duplicateLocation": "Duplicate location",
+    "duplicateLocationWarning": "The following location already exists:"
   },
 
   "map":{
@@ -167,6 +161,7 @@
     "save": "Save",
     "reset": "reset",
     "cancel": "cancel",
+    "close": "Close",
     "yes": "Yes"
   },
 

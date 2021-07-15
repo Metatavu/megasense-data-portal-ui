@@ -32,7 +32,6 @@ import PollutantControl from "../../pollutant-control/pollutant-control";
 import { sourceIcon } from "../../../resources/images/svg/map-marker-source";
 import { destinationIcon } from "../../../resources/images/svg/map-marker-destination";
 import AirQualitySlider from "../../pollutant-exposures/air-quality-slider";
-import WarningDialog from "../../generic/dialogs/warning-dialog";
 
 /**
  * Interface describing component props
@@ -224,7 +223,7 @@ class MapScreen extends React.Component<Props, State> {
         { this.renderMap() }
         { this.renderSaveRouteConfirmDialog() }
         { this.renderSaveLocationConfirmDialog() }
-        { this.renderDuplicateLocationWarningDialog() }
+        { this.renderDuplicateLocationConfirmDialog() }
       </AppLayout>
       
     );
@@ -879,16 +878,16 @@ class MapScreen extends React.Component<Props, State> {
     /**
    * Renders duplicate location dialog
    */
-    private renderDuplicateLocationWarningDialog = () => {
+    private renderDuplicateLocationConfirmDialog = () => {
       const { duplicateLocation } = this.state;
       return (
-        <WarningDialog 
+        <ConfirmDialog 
           title={ strings.locations.duplicateLocation }
           dialogVisible={ !!duplicateLocation } 
-          content={ 
+          text={ 
             <>
               <Typography>
-                { strings.warningDialog.content.duplicateLocation }
+                { strings.locations.duplicateLocationWarning }
               </Typography>
               <br/>
               <Typography>
@@ -899,7 +898,8 @@ class MapScreen extends React.Component<Props, State> {
               </Typography>
             </>
           }
-          onClose={ this.exitDuplicateLocation }
+          cancelButtonText={ strings.common.close }
+          onDialogCancel={ this.exitDuplicateLocation }
         />
       )
     }

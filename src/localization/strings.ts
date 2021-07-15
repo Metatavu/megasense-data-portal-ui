@@ -68,16 +68,6 @@ export interface IStrings extends LocalizedStringsMethods {
   };
 
   /**
-   * Translations for warning dialog
-   */
-  warningDialog: {
-    close: string;
-    content: {
-      duplicateLocation: string
-    }
-  };
-
-  /**
    * Translations for routes
    */
   routes: {
@@ -100,6 +90,7 @@ export interface IStrings extends LocalizedStringsMethods {
     saveLocation: string;
     findLocation: string;
     duplicateLocation: string;
+    duplicateLocationWarning: string;
   };
 
   /**
@@ -207,6 +198,7 @@ export interface IStrings extends LocalizedStringsMethods {
   common: {
     save: string;
     cancel: string;
+    close: string;
     reset: string;
     yes: string;
   };
