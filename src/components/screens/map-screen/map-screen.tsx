@@ -224,7 +224,7 @@ class MapScreen extends React.Component<Props, State> {
         { this.renderMap() }
         { this.renderSaveRouteConfirmDialog() }
         { this.renderSaveLocationConfirmDialog() }
-        { this.renderDuplicateLocationConfirmDialog() }
+        { this.renderDuplicateLocationWarningDialog() }
       </AppLayout>
       
     );
@@ -879,7 +879,7 @@ class MapScreen extends React.Component<Props, State> {
     /**
    * Renders duplicate location dialog
    */
-    private renderDuplicateLocationConfirmDialog = () => {
+    private renderDuplicateLocationWarningDialog = () => {
       const { duplicateLocation } = this.state;
       return (
         <WarningDialog 
@@ -890,6 +890,7 @@ class MapScreen extends React.Component<Props, State> {
               <Typography>
                 { strings.warningDialog.content.duplicateLocation }
               </Typography>
+              <br/>
               <Typography>
                 { duplicateLocation?.name }
               </Typography>
@@ -1141,7 +1142,6 @@ class MapScreen extends React.Component<Props, State> {
       this.setState({
         duplicateLocation
       });
-      console.log("existing: ", duplicateLocations)
       return;
     }
 
