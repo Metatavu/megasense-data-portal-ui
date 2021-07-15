@@ -100,7 +100,6 @@ class SavedRoutes extends React.Component<Props, State> {
 
     return routesToDisplay.map((route, index) => {
       const routeName = route.name;
-      console.log("route(renderListItems): ", route)
       const from = this.truncateName(route.locationFromName, 40);
       const to = this.truncateName(route.locationToName, 40);
 

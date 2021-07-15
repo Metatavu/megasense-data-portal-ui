@@ -351,8 +351,6 @@ class MapScreen extends React.Component<Props, State> {
     const route: RouteData = {
       lineCoordinates: routeRaw.map(coordinate => new LatLng(coordinate[0], coordinate[1]))
     };
-    console.log("route(displaySavedRoute): ", route)
-    console.log("typeof route(displaySavedRoute): ", typeof route)
     const locationFromCoordinates = route.lineCoordinates[0];
     const locationToCoordinates = route.lineCoordinates[ route.lineCoordinates.length - 1 ];
 
@@ -992,8 +990,6 @@ class MapScreen extends React.Component<Props, State> {
         break;
     }
 
-    console.log("polyline(onRouteOptionSelected): ", polyline)
-
     this.setState({
       routeAltStrict: undefined,
       routeAltEfficient: undefined,
@@ -1032,11 +1028,8 @@ class MapScreen extends React.Component<Props, State> {
    * Handles save route confirm dialog button click
    */
   private onRouteSaveConfirm = async () => {
-    console.log("onRouteSaveConfirm")
     const { accessToken } = this.props;
     const { polyline, locationFrom, locationTo, userDialogInput, userSavedRoutes } = this.state;
-
-    console.log("polyline: ", PolyUtil.decode(polyline))
 
     if (!accessToken || !polyline || !locationFrom || !locationTo || !userDialogInput) {
       return;
@@ -1466,7 +1459,10 @@ class MapScreen extends React.Component<Props, State> {
    */
   private addRoutePoint = async (mouseEvent: LeafletMouseEvent) => {
     const position = mouseEvent.latlng;
-    const location = { name: position.lat.toString() + "," + position.lng.toString(), coordinates: position };
+    const location = { 
+      coordinates: position,
+      name: `${position.lat.toString()}, ${position.lng.toString()}`
+    };
     let geocodingResponse = null;
     if (this.state.editingLocationFrom) {
       const locationFromOptions = [location];
@@ -1560,8 +1556,6 @@ class MapScreen extends React.Component<Props, State> {
    * @param route route to display
    */
   private onUserRouteSelect = (route: Route) => {
-    console.log("onUserRouteSelect")
-    console.log(route)
     const sourceCoordinates = route.locationFromName.split(",");
     const destCoordinates = route.locationToName.split(",");
     this.reverseGeocodeCoordinates(GeocodeCoordinate.From, sourceCoordinates[0], sourceCoordinates[1]);
