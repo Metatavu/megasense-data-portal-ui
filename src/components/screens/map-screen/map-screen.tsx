@@ -347,15 +347,17 @@ class MapScreen extends React.Component<Props, State> {
    * @param routeToDisplay route to display
    */
   private displaySavedRoute = (routeToDisplay: Route) => {
-    const route = PolyUtil.decode(routeToDisplay.routePoints);
+    const routeRaw = PolyUtil.decode(routeToDisplay.routePoints) as number[][];
+    const route: RouteData = {
+      lineCoordinates: routeRaw.map(coordinate => new LatLng(coordinate[0], coordinate[1]))
+    };
     console.log("route(displaySavedRoute): ", route)
-    const firstRoutePoint = route[0];
-    const lastRoutePoint = route[ route.length - 1 ];
+    console.log("typeof route(displaySavedRoute): ", typeof route)
+    const locationFromCoordinates = route.lineCoordinates[0];
+    const locationToCoordinates = route.lineCoordinates[ route.lineCoordinates.length - 1 ];
 
-    const locationFromCoordinates = new LatLng(firstRoutePoint[0], firstRoutePoint[1]);
     const locationFrom = { coordinates: locationFromCoordinates, name: routeToDisplay.locationFromName };
     
-    const locationToCoordinates = new LatLng(lastRoutePoint[0], lastRoutePoint[1]);
     const locationTo = { coordinates: locationToCoordinates, name: routeToDisplay.locationToName };
     
     const newState = {
@@ -364,7 +366,7 @@ class MapScreen extends React.Component<Props, State> {
       locationTo, 
       locationFromTextInput: routeToDisplay.locationFromName, 
       locationToTextInput: routeToDisplay.locationToName,
-      mapViewport: { center: [ firstRoutePoint[0], firstRoutePoint[1] ] as [number, number], zoom: 13 }
+      mapViewport: { center: [ locationFromCoordinates.lat, locationFromCoordinates.lng ] as [number, number], zoom: 13 }
     }
     this.setState(newState);
   }
@@ -977,20 +979,16 @@ class MapScreen extends React.Component<Props, State> {
     let polyline = "";
     switch (routingMode) {
       case "Strict":
-        console.log("Strict")
-        console.log("routeAltStrict: ", routeAltStrict)
         this.setState({ route: routeAltStrict });
         polyline = PolyUtil.encode(routeAltStrict?.lineCoordinates) as string;
         break;
       case "Efficient":
-        console.log("Efficient")
         this.setState({ route: routeAltEfficient });
-        polyline = PolyUtil.encode(routeAltEfficient) as string;
+        polyline = PolyUtil.encode(routeAltEfficient?.lineCoordinates) as string;
         break;
       case "Relaxed":
-        console.log("Relaxed")
         this.setState({ route: routeAltRelaxed });
-        polyline = PolyUtil.encode(routeAltRelaxed) as string;
+        polyline = PolyUtil.encode(routeAltRelaxed?.lineCoordinates) as string;
         break;
     }
 
@@ -1038,13 +1036,9 @@ class MapScreen extends React.Component<Props, State> {
     const { accessToken } = this.props;
     const { polyline, locationFrom, locationTo, userDialogInput, userSavedRoutes } = this.state;
 
+    console.log("polyline: ", PolyUtil.decode(polyline))
+
     if (!accessToken || !polyline || !locationFrom || !locationTo || !userDialogInput) {
-      console.log("accessToken: ", accessToken)
-      console.log("polyline: ", polyline)
-      console.log("locationFrom: ", locationFrom)
-      console.log("locationTo: ", locationTo)
-      console.log("userDialogInput: ", userDialogInput)
-      console.log("exiting")
       return;
     }
 
@@ -1472,7 +1466,7 @@ class MapScreen extends React.Component<Props, State> {
    */
   private addRoutePoint = async (mouseEvent: LeafletMouseEvent) => {
     const position = mouseEvent.latlng;
-    const location = { name: position.toString(), coordinates: position };
+    const location = { name: position.lat.toString() + "," + position.lng.toString(), coordinates: position };
     let geocodingResponse = null;
     if (this.state.editingLocationFrom) {
       const locationFromOptions = [location];
