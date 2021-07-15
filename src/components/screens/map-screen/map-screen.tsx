@@ -876,8 +876,8 @@ class MapScreen extends React.Component<Props, State> {
   }
 
     /**
-   * Renders duplicate location dialog
-   */
+     * Renders duplicate location dialog
+     */
     private renderDuplicateLocationConfirmDialog = () => {
       const { duplicateLocation } = this.state;
       return (
@@ -1130,22 +1130,17 @@ class MapScreen extends React.Component<Props, State> {
     const { accessToken } = this.props;
     const { userDialogInput, userFavouriteLocations, savingLocationCoordinates } = this.state;
 
-    const compareCoordinate = (x: number, y: number) => Math.abs(x - y) <= this.COORDINATE_DELTA;
+    if (!accessToken || !userDialogInput || !savingLocationCoordinates) {
+      return;
+    }
 
-    const duplicateLocations = userFavouriteLocations.filter(location => (
-        compareCoordinate(location.latitude, savingLocationCoordinates!.lat) && 
-        compareCoordinate(location.longitude, savingLocationCoordinates!.lng)) 
-      );
+    const duplicateLocations = this.getDuplicateLocations(savingLocationCoordinates);
 
     if (duplicateLocations.length > 0) {
       const duplicateLocation = duplicateLocations[0];
       this.setState({
         duplicateLocation
       });
-      return;
-    }
-
-    if (!accessToken || !userDialogInput || !savingLocationCoordinates) {
       return;
     }
 
@@ -1170,6 +1165,23 @@ class MapScreen extends React.Component<Props, State> {
         error: error
       });
     }
+  }
+
+  /**
+   * Utility method for getting duplicate locations from the userFavouriteLocations array 
+   */
+  private getDuplicateLocations = (locationToCompare: LatLng) => {
+    const { userFavouriteLocations } = this.state;
+
+    const compareCoordinate = (x: number, y: number) => Math.abs(x - y) <= this.COORDINATE_DELTA;
+
+    const duplicateLocations = userFavouriteLocations.filter(
+      location => (
+        compareCoordinate(location.latitude, locationToCompare!.lat) && 
+        compareCoordinate(location.longitude, locationToCompare!.lng)
+      ) 
+    );
+    return duplicateLocations
   }
 
   /**
