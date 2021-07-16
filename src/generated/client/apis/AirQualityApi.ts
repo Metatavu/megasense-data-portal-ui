@@ -27,11 +27,13 @@ export interface GetAirQualityRequest {
     pollutantId?: string;
     boundingBoxCorner1?: string;
     boundingBoxCorner2?: string;
+    routingTime?: Date;
 }
 
 export interface GetAirQualityForCoordinatesRequest {
     coordinates: string;
     pollutantId: string;
+    routingTime?: Date;
 }
 
 export interface GetAirQualityForCoordinatesArrayRequest {
@@ -61,6 +63,10 @@ export class AirQualityApi extends runtime.BaseAPI {
 
         if (requestParameters.boundingBoxCorner2 !== undefined) {
             queryParameters['boundingBoxCorner2'] = requestParameters.boundingBoxCorner2;
+        }
+
+        if (requestParameters.routingTime !== undefined) {
+            queryParameters['routingTime'] = (requestParameters.routingTime as any).toISOString();
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -104,6 +110,10 @@ export class AirQualityApi extends runtime.BaseAPI {
         }
 
         const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.routingTime !== undefined) {
+            queryParameters['routingTime'] = (requestParameters.routingTime as any).toISOString();
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
