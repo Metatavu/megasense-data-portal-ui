@@ -1384,7 +1384,7 @@ class MapScreen extends React.Component<Props, State> {
       const { locationTo, locationFrom, mapViewport } = this.state;
 
       if (! locationFrom || !locationFrom?.coordinates || !locationTo || !locationTo?.coordinates) {
-        this.setState({ loadingRoute: false });
+        this.setState({ loadingRoute: false, displayAirQualitySection: false });
         return;
       }
 
