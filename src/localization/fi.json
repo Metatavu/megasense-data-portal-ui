@@ -1,0 +1,187 @@
+{
+  "auth": {
+    "login": "Kirjaudu sisään",
+    "logout": "Kirjaudu ulos",
+    "register": "Luo käyttäjätili",
+    "guestUser": "Jatka kirjautumatta",
+    "name": "Nimi",
+    "email": "Sähköposti",
+    "password": "Salasana",
+    "repeatPassword": "Toista salasana",
+    "passwordCheckFail": "Salasanat eivät täsmää..."
+  },
+
+  "welcome": {
+    "hello": "Hei",
+    "goodMorning": "Hyvää huomenta",
+    "goodAfternoon": "hyvää iltapäivää",
+    "goodEvening": "hyvää iltaa"
+  },
+
+  "header": {
+    "statistics": "Statistiikka",
+    "map": "Kartta",
+    "settings": "Asetukset",
+    "about": "Tietoa projektista",
+    "logoText": "GREEN PATHS"
+  },
+
+  "timePicker": {
+    "cancel": "Peruuta",
+    "clear": "Tyhjennä",
+    "today": "Tänään"
+  },
+  
+  "errorDialog": {
+    "title": "Hups! Jokin meni pieleen",
+    "reloadPage": "Kokeile ladata sivu uudelleen.",
+    "unsavedContents": "Huomaathan, että tallentamattomat sisällöt häviävät uudelleenladattaessa. Mikäli sinulla on sivulla tallentamattomia sisältöjä, voit sulkea tämän ilmoituksen ja kopioida sisällöt leikepöydälle ennen uudelleenlatausta.",
+    "reportIssue": "Mikäli ongelma jatkuu, ota sähköpostilla yhteyttä osoitteeseen support@metatavu.fi. Liitä tekniset lisätiedot osaksi sähköpostia nopeuttaaksesi ongelan selvittelyä.",
+    "technicalDetails": "Teknisiä lisätietoja:",
+    "time": "Aika: {0}",
+    "url": "Osoite: {0}",
+    "errorMessage": "Virheilmoitus: ",
+    "close": "Sulje",
+    "reload": "Lataa uudelleen",
+    "notice": "Tämä verkkosivu on tarkoitettu vain Megasense-konsortion jäsenten käyttöön. Ole hyvä ja poistu sivulta, jos et kuulu Megasense-konsortioon."
+  },
+
+  "routes": {
+    "deleteRoute": "Poista reitti",
+    "savedRoutes": "Tallennetut reitit",
+    "findRoute": "Hae reitti",
+    "saveRoute": "Tallenna reitti",
+    "deleteDialog": "Vahvista poisto",
+    "deleteButton": "Poista",
+    "cancelButton": "Peruuta",
+    "routeNameInput": "Anna reitin nimi"
+  },
+
+  "locations": {
+    "deleteLocation": "Poista paikka",
+    "savedLocations": "Tallennetut paikat",
+    "saveLocation": "Tallenna paikka",
+    "findLocation": "Löytää paikka",
+    "duplicateLocation": "Kopioi sijainti",
+    "duplicateLocationWarning": "Seuraava sijainti on jo olemassa:"
+  },
+
+  "map":{
+    "myLocation": "Minun paikka",
+    "zoomIn": "Loitonna",
+    "zoomOut": "Lähennä",
+    "showMap": "Näytä kartta",
+    "showDataOverlay":"Näytä data"
+  },
+  
+  "statistics": {
+    "title": "Tilastot",
+    "selectPollution": "Valitse saaste:",
+    "selectTimeRange": "Valitse aikahaarukka",
+    "daily": "Päiväkohtainen",
+    "weekly": "Viikottainen",
+    "monthly": "Kuukausittainen",
+    "annual": "Kausi",
+    "carbonMonoxide": "Häkä",
+    "ozone": "Otsoni",
+    "nitrogenDioxide": "Typpioksidi",
+    "sulfurDioxide": "Rikkioksidi"
+  },
+
+  "settings": {
+    "unsavedChangesWillBeLost": "Tallentamattomat muutokset menetetään. Jatka tallentamatta?",
+    "title": "Asetukset",
+    "applyChanges": "Tallenna muutokset",
+    "homeAddress": "Kotiosoite",
+    "streetAddress": "Katuosoite",
+    "city": "Kaupunki",
+    "zipCode": "Postinumero",
+    "country": "Maa",
+    "postalCode": "Postinumero",
+    "locationNotFoundDialogText": "Paikkaa ei löydetty",
+    "confirmButtonText": "Selvä",
+    "deleteAccount": "Poista tilisi",
+    "deleteAccountDialogTitle": "Oletko varma että haluat poistaa tilisi?",
+    "deleteAccountDialogText": "Jos painat kyllä, tätä tiliä ei voi enää palauttaa. Sinut ohjataan kirjautumissivulle.",
+    "changeUserData": "Muokkaa käyttäjätietoja",
+    "downloadData": "Lataa datasi"
+  },
+
+  "aboutScreen": {
+    "title": "Megasense dataportaali",
+    "subTitle": "Puhtaan ilman reitityssovellus. Sovellus on kehitetty osana Megasense-konsortiota.",
+    "descriptionText": "Sovellus tarjoaa mahdollisuuden reitittää käyttäjiä puhtaan ilman reittiä pitkin. Sovellus on vielä kehitysvaiheessa."
+  },
+
+  "yourTokenIs": "Avaimesi on: ",
+  "to": "Valitse määränpää...",
+  "from": "Valitse aloituspiste...",
+  "departureTime": "Lähtöaika",
+  "departureDate": "Lähtöpäivä",
+  "savedRoutes": "Tallennetut reitit",
+  "savedRoutesFrom": "Mistä",
+  "savedRoutesTo": "Minne",
+  "savedRoutesSavedText": "Tallennettu",
+  "savedLocations": "Tallennetut sijainnit",
+  "savedLocationsName": "Paikannimi",
+  "savedLocationsLatitude": "Leveysaste",
+  "savedLocationsLongtitude": "Pituusaste",
+  "savedLocationsSavedText": "Tallennettu",
+  "deleteConfirm": "Oletko varma että haluat poistaa tämän?",
+  "confirmTimeRange": "Valitse aikaväli",
+  "selectPollution": "Valitse ilmansaaste",
+  "weeklyExposure": "Viikottainen altistuminen",
+  "monthlyExposure": "Kuukausittainen altistuminen",
+  "annualExposure": "Vuosittainen altistuminen",
+  "displayTables": "Valitse aika, jotta voit nähdä taulukot",
+  "selectTime": "Valitse aika",
+  "airQualityMode": "Ilmanlaadun tila",
+  "movementOptions": "Liikkumisasetukset",
+  "walking": "Kävely",
+  "wheelerchair": "Pyörätuoli",
+  "viewRoute": "Näytä reitti",
+  "viewLocation": "Näytä sijainti",
+  "deleteRoute": "Poista reitti",
+  "deleteLocation": "Poista sijainti",
+  "collapseMenuText": "Piilota menu",
+  "user": "Käyttäjä",
+  "showMore": "Näytä kaikki",
+  "showLess": "Näytä vähemmän",
+  "airQuality": "Ilman laatu",
+
+  "pollutants": {
+    "PM25": "Pienhiukkaset",
+    "PM10": "Hengitettävät hiukkaset",
+    "ozone": "Otsoni",
+    "nitrogenOxide": "Typpioksidi",
+    "sulfurOxide": "Rikkioksidi",
+    "carbonMonoxide": "Häkä"
+  },
+
+  "common": {
+    "save": "Tallenna",
+    "reset": "Palauta",
+    "cancel": "Peruuta",
+    "close": "Sulje",
+    "yes": "Kyllä"
+  },
+
+  "settingsDrawer": {
+    "transportation": "Matkustusmuoto",
+    "descriptionTransportation": "Valitse matkustusmuoto, jota käytetään oletusvaihtoehtona suunnitellessasi uutta reittiä.",
+    "medical": "Terveystiedot",
+    "descriptionMedical": "Valitse kaikki soveltuvat kohdat. Ne otetaan huomioon reittejä suunniteltaessa.",
+    "custom": "Kustomoitu hakuoptio",
+    "descriptionCustom": "Määritä uusi hakusuodin valitsemalla herkkyytesi eri epäpuhtauksille."
+  },
+
+  "medicalConditions": {
+    "asthma": "Asthma",
+    "ischaemicHeartDisease": "Sepelvaltimotauti",
+    "copd": "Keuhkoahtaumatauti"
+  },
+
+  "units": {
+    "hours": "t"
+  }
+}
